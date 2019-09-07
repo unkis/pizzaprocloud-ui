@@ -1,0 +1,33 @@
+const de = {
+    authTitle: 'Restaurant-Login',
+    organizationNumber: 'Kundennumer',
+    username: 'Benutzername',
+    password: 'Passwort',
+    autoLogin: 'Automatisch Anmelden',
+    login: 'Login',
+    tableOrders: 'Tischbestellungen',
+    selfPickUp: 'Selbstabholer',
+    sales: 'Hausverkauf',
+    phoneMonitor: 'Telefon monitor',
+    customerNumber: 'Kundennummer',
+    phoneNumber: 'Telefonnumer',
+    name: 'Name',
+    street: 'Strasse',
+    houseNumber: 'Hausnummer',
+    plz: 'PLZ',
+    city: 'Stadt',
+    clientComment: 'Bemerkung',
+    deliveryCost: 'Anfahrtskosten',
+    clear: 'Löschen',
+    goToOrder: 'Bestellung',
+    logout: 'Logout',
+    callForm: 'Lieferdienst',
+    allOrders: 'Alle Bestellungen',
+    cookingMonitor: 'Kuchen monitor',
+    carMonitor: 'Fahrer monitor',
+    report: 'Berichten',
+    settings: 'Einstellungen',
+    help: 'Hilfe'
+};
+
+export default de;
