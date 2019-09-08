@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "758dbdeaf3b91e73104d1b7ad23e68f0",
+    "revision": "fb11038922e4f4a51e15b10a66912ec9",
     "url": "/pizzaprocloud-ui/index.html"
   },
   {
@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/pizzaprocloud-ui/static/css/2.8c467cd4.chunk.css"
   },
   {
-    "revision": "abf9eb85729b664afc3f",
+    "revision": "981310991c4cdfe42db5",
     "url": "/pizzaprocloud-ui/static/css/main.90280c45.chunk.css"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/pizzaprocloud-ui/static/js/2.d83f4b3d.chunk.js"
   },
   {
-    "revision": "abf9eb85729b664afc3f",
-    "url": "/pizzaprocloud-ui/static/js/main.cc1b1222.chunk.js"
+    "revision": "981310991c4cdfe42db5",
+    "url": "/pizzaprocloud-ui/static/js/main.35cff93a.chunk.js"
   },
   {
     "revision": "b632f69ef16e20ee6540",
