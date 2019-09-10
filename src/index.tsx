@@ -7,6 +7,7 @@ import './index.css';
 
 import { Auth } from './components/Auth';
 import { LeftMenu } from './components/LeftMenu';
+import Cart from './components/Cart';
 
 import store from './redux';
 
@@ -18,7 +19,7 @@ ReactDOM.render(
       <Route path={`${ROOT_URL}/menu`} component={LeftMenu}/>
       <Route path={`${ROOT_URL}/index.html`} exact component={Auth}/>
       <Route path={`${ROOT_URL}/`} exact component={Auth}/>
-      <Route path={`${ROOT_URL}/finish`} render={() => <div>DONE</div>}/>
+      <Route path={`${ROOT_URL}/finish`} component={Cart}/>
     </Provider>
   </Router>,
   document.getElementById('root')

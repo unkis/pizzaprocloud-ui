@@ -8,7 +8,8 @@ import {
   logoutUser,
   addToFormData,
   updateAllFieldsOfFormData,
-  clearAllFields
+  clearAllFields,
+  addProductToCart
 } from './actions';
 
 const initialState = {
@@ -19,7 +20,8 @@ const initialState = {
     role: '',
     code: ''
   },
-  formDataState: initialFormDataState
+  formDataState: initialFormDataState,
+  cartProducts: []
 };
 
 let store = createStore(appState, initialState);
@@ -88,5 +90,30 @@ describe('тесты на redux', () => {
     store.dispatch(clearAllFields());
 
     expect(store.getState()).toMatchObject({...initialState, formDataState: initialFormDataState});
+  });
+
+  test('должен добавлять новый продукт в cartProducts после события addProductToCart', () => {
+    const fields = {
+      article: 1,
+      productName: 'testProductName',
+      price: 100
+    }
+    store.dispatch(addProductToCart(fields.article, fields.productName, fields.price));
+
+    expect(store.getState()).toMatchObject({ ...initialState, cartProducts: [{ ...fields, quantity: 1 }] });
+  });
+
+  test('должен увеличивать количество продукта в cartProducts после события addProductToCart, вызванного для уже находящегося в store продукта', () => {
+    const fields = {
+      article: 1,
+      productName: 'testProductName',
+      price: 100
+    };
+
+    store.dispatch(addProductToCart(fields.article, fields.productName, fields.price));
+    store.dispatch(addProductToCart(fields.article, fields.productName, fields.price));
+    store.dispatch(addProductToCart(fields.article, fields.productName, fields.price));
+
+    expect(store.getState()).toMatchObject({ ...initialState, cartProducts: [{ ...fields, quantity: 3 }] });
   });
 });

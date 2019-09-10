@@ -2,12 +2,15 @@ import store from './index';
 import {
   LanguagesState,
   UserState,
-  FormDataStateType } from './reducersTypes';
+  FormDataStateType,
+  CartProductsState
+ } from './reducersTypes';
 
 export interface State {
   languages: LanguagesState;
   user: UserState;
   formDataState: FormDataStateType;
+  cartProducts: CartProductsState;
 }
 
 export type storeType = typeof store;

@@ -1,4 +1,4 @@
-import { CHANGE_LANGUAGE, ADD_USER, LOGOUT_USER, formDataActions } from './actions';
+import { CHANGE_LANGUAGE, ADD_USER, LOGOUT_USER, formDataActions, cartProductsActions } from './actions';
 
 import fieldNames from '../constants/fieldNames';
 import { selectValues } from '../constants/selectValues';
@@ -9,7 +9,9 @@ import {
   UserState,
   UserAction,
   FormDataStateType,
-  FormDataStateAction
+  FormDataStateAction,
+  CartProductsState,
+  CartProductsAction
 } from './reducersTypes';
 
 export const languages = (state: LanguagesState = { lang: 'ru' }, action: LanguageAction) => {
@@ -73,3 +75,27 @@ export const formDataState = (state: FormDataStateType = initialFormDataState, a
         return state;
     };
   };
+
+export const initialCartProductsState = [];
+
+export const cartProducts = (state: CartProductsState = initialCartProductsState, action: CartProductsAction) => {
+  switch (action.type) {
+
+    case cartProductsActions.ADD_PRODUCT_TO_CART: {
+      const { article, productName, price } = action;
+      const newState = [...state];
+      const articleIndex = newState.findIndex(({ article }) => article === article);
+      if (articleIndex !== -1) {
+        const prevQuantity = newState[articleIndex].quantity;
+        if (prevQuantity) {
+          newState[articleIndex] = { ...newState[articleIndex], quantity: prevQuantity + 1 };
+        }
+      } else {
+        newState.push({ article, productName, price, quantity: 1 })
+      }
+      return newState;
+    }
+    default:
+      return state;
+  }
+}

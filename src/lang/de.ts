@@ -27,7 +27,11 @@ const de = {
     carMonitor: 'Fahrer monitor',
     report: 'Berichten',
     settings: 'Einstellungen',
-    help: 'Hilfe'
+    help: 'Hilfe',
+    quantity: 'Количество',
+    article: 'Артикул',
+    productName: 'Номенклатура',
+    price: 'Цена'
 };
 
 export default de;

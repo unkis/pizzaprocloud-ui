@@ -8,6 +8,10 @@ const fieldNames: fieldNamesInterface = {
   city: 'city',
   clientComment: 'clientComment',
   deliveryCost: 'deliveryCost',
+  article: 'article',
+  quantity: 'quantity',
+  productName: 'productName',
+  price: 'price'
 };
 
 export interface fieldNamesInterface {
@@ -20,6 +24,10 @@ export interface fieldNamesInterface {
   city: string,
   clientComment: string,
   deliveryCost: string,
+  article: string;
+  quantity: string;
+  productName: string;
+  price: string;
 };
 
 export default fieldNames;

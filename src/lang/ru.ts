@@ -27,7 +27,11 @@ const ru = {
     carMonitor: 'Монитор доставки',
     report: 'Отчет',
     settings: 'Настройки',
-    help: 'Помощь'
+    help: 'Помощь',
+    quantity: 'Количество',
+    article: 'Артикул',
+    productName: 'Номенклатура',
+    price: 'Цена'
 };
 
 export default ru;
