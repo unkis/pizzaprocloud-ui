@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DeliveryForm snapshot-тесты на компонент DeliveryForm должен вернуть полный шаблон компонента(snapshot) 1`] = `ReactWrapper {}`;
+
+exports[`LeftMenu snapshot-тесты на компонент LeftMenu должен вернуть полный шаблон компонента(snapshot) 1`] = `ReactWrapper {}`;

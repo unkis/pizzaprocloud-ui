@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Auth snapshot-тесты на компонент Auth должен вернуть полный шаблон компонента(snapshot) 1`] = `ReactWrapper {}`;
