@@ -15,7 +15,7 @@ import fieldNames from '../../constants/fieldNames';
 import { selectValues } from '../../constants/selectValues';
 
 import { initialFormDataState } from '../../redux/reducers';
-import { formDataActions, addToFormData, updateAllFieldsOfFormData, clearAllFields } from '../../redux/actions';
+import { addToFormData, updateAllFieldsOfFormData, clearAllFields } from '../../redux/actions';
 import { Action } from 'redux';
 
 import { ROOT_URL } from '../../constants/rootUrl';
@@ -77,7 +77,7 @@ const initialDataSourceState: any = {//TODO: add types
   [fieldNames.deliveryCost]: []
 };
 
-const tryToFetchUser = (fieldId: string, fieldValue: string) => fakeBD.customers.find((customer: any) => customer[fieldId] == fieldValue);
+const tryToFetchUser = (fieldId: string, fieldValue: string) => fakeBD.customers.find((customer: any) => customer[fieldId] === fieldValue);
 
 const compareTwoObjects = (object1: any, object2: any) => {
   if (Object.keys(object1).length !== Object.keys(object2).length)
@@ -112,20 +112,6 @@ const DeliveryForm = Form.create<DeliveryFormProps>(
   const [dataSourceState, dispatchToDataSource] = useReducer(dataSourceReducer, initialDataSourceState);
   const [dataSourceLiveState, dispatchToDataSourceLive] = useReducer(dataSourceReducer, initialDataSourceState);
   const [language, setLanguage] = useState(langMap[lang as langType]);
-
-  useEffect(() => {
-    setLanguage(langMap[lang as langType]);
-  }, [lang]);
-  useEffect(() => {
-    window.addEventListener('keydown', handleEscDown);
-    return () => window.removeEventListener('keydown', handleEscDown);
-  }, []);
-
-  useEffect(() => {
-    if (compareTwoObjects(getFieldsValue(), formDataState))
-      return;
-    setFieldsValue(formDataState);
-  }, [formDataState, setFieldsValue, getFieldsValue]);
 
   const onFieldChange = useCallback((id: string, value: string) => {
     addDataToFormData(id, value);
@@ -175,6 +161,20 @@ const DeliveryForm = Form.create<DeliveryFormProps>(
       updateFieldsOfFormData(customer);
     }
   }, [setFieldsValue, updateFieldsOfFormData]);
+
+  useEffect(() => {
+    setLanguage(langMap[lang as langType]);
+  }, [lang]);
+  useEffect(() => {
+    window.addEventListener('keydown', handleEscDown);
+    return () => window.removeEventListener('keydown', handleEscDown);
+  }, [handleEscDown]);
+
+  useEffect(() => {
+    if (compareTwoObjects(getFieldsValue(), formDataState))
+      return;
+    setFieldsValue(formDataState);
+  }, [formDataState, setFieldsValue, getFieldsValue]);
 
   return (
     <div>

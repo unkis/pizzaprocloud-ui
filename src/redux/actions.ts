@@ -14,6 +14,8 @@ export const formDataActions = {
 export enum cartProductsActions {
   ADD_PRODUCT_TO_CART,
   ADD_ADDITION_TO_PRODUCT_IN_CART,
+  DELETE_PRODUCT_FROM_CART,
+  DELETE_ADDITION_OF_PRODUCT_FROM_CART,
   INCREMENT_QUANTITY_OF_PRODUCT_IN_CART,
   DECREMENT_QUANTITY_OF_PRODUCT_IN_CART,
   INCREMENT_QUANTITY_OF_ADDITION_OF_PRODUCT,
@@ -38,6 +40,12 @@ export const addProductToCart= (article: number, productName: string, price: num
 
 export const addAdditionToProductInCart = (productArticle: number, additionArticle: number, additionName: string, additionPrice: number) => 
   ({ type: cartProductsActions.ADD_ADDITION_TO_PRODUCT_IN_CART, productArticle, additionArticle, additionName, additionPrice });
+
+export const deleteProductFromCart = (productArticle: number) => 
+  ({ type: cartProductsActions.DELETE_PRODUCT_FROM_CART, productArticle });
+
+export const deleteAdditionOfProductFromCart = (productArticle: number, additionArticle: number) => 
+  ({ type: cartProductsActions.DELETE_ADDITION_OF_PRODUCT_FROM_CART, productArticle, additionArticle });
 
 export const incrementQuantityOfProductInCart = (productArticle: number) => ({ type: cartProductsActions.INCREMENT_QUANTITY_OF_PRODUCT_IN_CART, productArticle });
 

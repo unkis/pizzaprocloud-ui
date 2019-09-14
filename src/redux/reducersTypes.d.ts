@@ -47,9 +47,10 @@ interface FormDataStateAction extends Action<FormDataStateActionsTypes> {
 interface CartProductItem {
   productName: string;
   price: number;
-  article?: number;
-  quantity?: number;
-  children?: CartProductItem;
+  article: number;
+  quantity: number;
+  selected?: boolean;
+  children?: CartProductItem[];
 }
 
 export type CartProductsState = Exclude<CartProductItem[], null>;
@@ -58,4 +59,8 @@ export interface CartProductsAction extends Action<cartProductsActions> {
   article: number;
   productName: string;
   price: number;
+  productArticle: number;
+  additionArticle: number; 
+  additionName: string;
+  additionPrice: number;
 };

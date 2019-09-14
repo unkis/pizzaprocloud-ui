@@ -1,0 +1,18 @@
+.cart {
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+}
+
+.cart__order-table {
+  width: 40%;
+}
+
+.cart__products-table {
+  width: 40%;
+}
+
+.didolf {
+  background-color: #e6f7ff;
+}
