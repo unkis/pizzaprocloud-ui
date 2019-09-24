@@ -19,14 +19,7 @@ import { CartOwnProps, CartProps, CartDispatchProps, CartStateProps, ActionColum
 import './Cart.css';
 import { ROOT_URL } from '../../constants/rootUrl';
 
-
-const onRenderFn = (id: string, phase: string, actualDuration: number, baseDuration: number) => {
-  console.log(`${id}'s ${phase} phase`);
-  console.log(`Actual time: ${actualDuration}`);
-  console.log(`Base duration: ${baseDuration}`);
-}
-
-function TableRow(props: any) {
+function TableRow(props: any) {//строка таблицы с товарами для выбора. Нужна для установки выбранным товара
   const isSelected = props.children.find(({ props: { record: { selected } } }: any) => selected);
   return (
     <tr className={`${props.className} ${isSelected ? "didolf" : ""}`}>
@@ -35,33 +28,35 @@ function TableRow(props: any) {
   )
 }
 
-
-
-const customTableComponents = { body: { row: TableRow } };
+const customTableComponents = { body: { row: TableRow } };//передается в prop components компонента Table чтобы использовать свою строку вместо дефолтной
 
 const proudctsTableScrollParams = { y: 'calc(100vh - 40px - 32px - 75px - 60px - 1px)' };
 const cartTableScrollParams = { y: 'calc(100vh - 40px - 32px - 75px - 60px - 240px - 1px - 20px)' };
-const NullComponent = () => null;
 const IconStyle = { fontSize: '16px' };
 
-const selectSearchInputText = () => {
+const selectSearchInputText = () => {//функция для выделения текста в поле поиска
   const target = document.querySelector('.cart__products-table .ant-input') as HTMLInputElement;
   (target).setRangeText(target.value, 0, target.value.length, 'select');
 };
-const ProductNameRenderer = (name: string) => {
+
+const ProductNameRenderer = (name: string) => {//компонент корзины с названием товара/добавки
   const testStr = name.match(/^([+]{1}[0-9]*)(.*)/);
   if (testStr) {
-    const [_, quantity, additionName] = testStr;
+    const [, quantity, additionName] = testStr;
     return (<div className="addition"><span className="addition__quantity">{quantity}</span>{additionName}</div>);
   }
   return (name);
 };
-const scrollToCurrentSelectedItem = () => {
+
+const NullComponent = () => null;//вспомогательный компонент, который ничего не рендерит
+
+const scrollToCurrentSelectedItem = () => {//функция, которая скроллит до текущего выбранного товара/добавки
   const curItem = document.querySelector('.didolf');
   if (curItem) {
     curItem.scrollIntoView();
   }
 }
+
 function Cart({ cartProducts, addDataToFormData, formDataState: { discount = 0 }, formDataState, lang, addProduct, addAddition, deleteProduct, deleteAddition, decrementAddition, decrementProduct, history }: CartProps) {
   const [language, setLanguage] = useState(langMap[lang]);
   const [products, setProducts] = useState(searchProducts('') as typeof cartProducts);
@@ -108,7 +103,7 @@ function Cart({ cartProducts, addDataToFormData, formDataState: { discount = 0 }
     return unsortedProducts;
   }, [products, search, setCurrentSelection]);
 
-  const productsWithSelected = useMemo(() => {
+  const productsWithSelected = useMemo(() => {//обновляем выбранный сейчас товар в таблице с товарами
     return sortedProducts.map((product) => {
       if (product.article === currentSelection.productIndex && currentSelection.additionIndex === undefined) {
         product.selected = true;
@@ -252,7 +247,7 @@ function Cart({ cartProducts, addDataToFormData, formDataState: { discount = 0 }
     }
   }, [setSearch, onMinusKeyDown]);
 
-  const addToCart = useCallback((article: number, parentArticle?: number) => {//добавляем товары в корзину
+  const addToCart = useCallback((article: number, parentArticle?: number) => {//функция добавления товара или добавки в корзину
     return () => {
       selectSearchInputText();
       if (parentArticle) {
@@ -280,7 +275,7 @@ function Cart({ cartProducts, addDataToFormData, formDataState: { discount = 0 }
     }
   }, [sortedProducts, cartProducts, addAddition, addProduct, setIsAlert]);
 
-  const decrementFromCart = useCallback((article: number, parentArticle?: number) => {
+  const decrementFromCart = useCallback((article: number, parentArticle?: number) => {//функция уменьшения продукта или добавки
     return () => {
       selectSearchInputText();
       const product = cartProducts.find(item => item.article === (parentArticle || article));
@@ -301,7 +296,7 @@ function Cart({ cartProducts, addDataToFormData, formDataState: { discount = 0 }
     }
   }, [cartProducts, decrementAddition, decrementProduct, setIsAlert, setAlertMessage]);
 
-  const deleteFromCart = useCallback((article: number, parentArticle?: number) => {
+  const deleteFromCart = useCallback((article: number, parentArticle?: number) => {//функция удаления продукта или добавки из корзины
     return () => {
       selectSearchInputText();
       if (parentArticle) {
@@ -312,7 +307,7 @@ function Cart({ cartProducts, addDataToFormData, formDataState: { discount = 0 }
     }
   }, [deleteAddition, deleteProduct]);
 
-  const onBackButtonClick = useCallback(() => {
+  const onBackButtonClick = useCallback(() => {//функция на нажатие кнопки назад
     history.push(`${ROOT_URL}/menu`)
   }, [history]);
 
@@ -321,12 +316,14 @@ function Cart({ cartProducts, addDataToFormData, formDataState: { discount = 0 }
   const IncrementToCartIcon = useCallback(({ parentArticle, article }: ActionColumn) => <Icon style={IconStyle} type="plus-square" onClick={addToCart(article, parentArticle)} />, [addToCart]);
   const DeleteFromCartIcon = useCallback(({ parentArticle, article }: ActionColumn) => <Icon style={IconStyle} type="close-square" onClick={deleteFromCart(article, parentArticle)} />, [deleteFromCart]);
   const onFreeDeliveryClick = useCallback(() => addDataToFormData('deliveryCost', '0'), [addDataToFormData]);
-  useEffect(() => {
-    const searchedProducts = searchProducts(search.toLowerCase());
-    setProducts(searchedProducts);
-  }, [search, setProducts]);//на изменение строки поиска стягиваем с сервера список продуктов
 
-  const allKeyDown = useCallback((event: KeyboardEvent) => {
+  useEffect(() => {//на изменение строки поиска стягиваем с сервера список продуктов
+    setProducts(searchProducts(search.toLowerCase()));
+  }, [search, setProducts]);
+
+  const onAlertClose = useCallback(() => setIsAlert(false), [setIsAlert]);//функция на закрытие предупреждения по крестику
+
+  const allKeyDown = useCallback((event: KeyboardEvent) => {//функция-слушатель нажатия на кнопки
     if (event.code === 'F4') {
       onBackButtonClick();
     } else if (event.code === 'F5') {
@@ -340,14 +337,14 @@ function Cart({ cartProducts, addDataToFormData, formDataState: { discount = 0 }
     }
   }, [onBackButtonClick, onFreeDeliveryClick, keyDownListener, onPlusOrEnterKeyDown, onMinusKeyDown]);
 
-  useEffect(() => {
+  useEffect(() => {//слушаем события нажатия кнопок
     window.addEventListener('keydown', allKeyDown);
     return () => {
       window.removeEventListener('keydown', allKeyDown);
     }
   }, [allKeyDown]);
 
-  useEffect(() => {
+  useEffect(() => {//изменяем язык при смене языка
     setLanguage(langMap[lang]);
     /* fix бага с переключением языка по нажатию ArrowUp или ArrowDown */
     const selected: HTMLElement | null = document.querySelector('.cart__products-table .ant-input');
@@ -489,9 +486,7 @@ function Cart({ cartProducts, addDataToFormData, formDataState: { discount = 0 }
     return 0;
   }), [sortedProducts]);
 
-  const onAlertClose = useCallback(() => setIsAlert(false), [setIsAlert]);
-
-  useEffect(() => {
+  useEffect(() => {//проверяем не вышли ли мы за пределы области видимости. Если вышли - скроллимся
     const container = document.querySelector('.cart__products-table .ant-table-body');
     const curItem = document.querySelector('.didolf');
     if (container && curItem) {
@@ -536,8 +531,4 @@ function Cart({ cartProducts, addDataToFormData, formDataState: { discount = 0 }
   )
 };
 
-const Tmp = connect(mapStateToProps, mapDispatchToProps)(withRouter<RouteComponentProps<CartDispatchProps & CartOwnProps & CartStateProps>, any>(Cart));
-
-
-export default () => (<Profiler id="test1" onRender={onRenderFn} >
-  <Tmp /></Profiler>);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter<RouteComponentProps<CartDispatchProps & CartOwnProps & CartStateProps>, any>(Cart));
