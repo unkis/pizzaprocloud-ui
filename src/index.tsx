@@ -46,6 +46,12 @@ const App = ({ lang, userRole, logoutFromUser, changeLang, history }: MenuPagePr
     setLanguage(langMap[lang]);
   }, [lang, setLanguage]);
 
+  useEffect(() => {
+    if (!userRole) {
+      history.push(`${ROOT_URL}/`);
+    }
+  }, [userRole]);
+
   const logout = useCallback((e: ClickParam) => {
     logoutFromUser();
     history.push(`${ROOT_URL}/`);
