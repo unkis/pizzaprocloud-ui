@@ -7,7 +7,7 @@
 }
 
 .cart {
-  width: calc(100% - var(--left-menu-width));
+  width: calc(100vw - var(--left-menu-width));
   max-height: 100vh;
   display: flex;
   flex-flow: column nowrap;
@@ -26,7 +26,7 @@
 }
 
 .cart__order-table {
-  width: 47.5%;
+  width: calc((100vw - 200px) * 0.475);
   margin-right: 5%;
   display: flex;
   flex-flow: column nowrap;
@@ -52,7 +52,7 @@
 }
 
 .cart__products-table {
-  width: 47.5%;
+  width: calc((100vw - 200px) * 0.475);
   overflow: hidden;
 }
 
