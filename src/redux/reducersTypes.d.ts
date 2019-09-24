@@ -19,8 +19,8 @@ export type LanguagesState = {
 type LanguagesActionsTypes = typeof CHANGE_LANGUAGE;
 
 export interface LanguageAction extends Action<LanguagesActionsTypes> {
-  lang: langType;
-};
+  lang?: langType;
+}
 
 type UserState = {
   role: string;//FIXME
