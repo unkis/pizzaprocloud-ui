@@ -67,7 +67,7 @@ const App = ({ lang, userRole, logoutFromUser, changeLang, history }: MenuPagePr
   }, [setCollapsed]);
 
   return (
-    <Layout style={{ minHeight: '100vh' }}>
+    <Layout style={{ minHeight: '100vh','--left-menu-width': collapsed ? '80px' : '200px' } as any}>
       {window.location.pathname !==  `${ROOT_URL}/` && <Sider collapsible onCollapse={handleCollapse} theme="light" style={{
         overflow: 'auto',
         height: '100vh',
@@ -117,7 +117,7 @@ const App = ({ lang, userRole, logoutFromUser, changeLang, history }: MenuPagePr
           </Menu>
           <Text style={{ textAlign: 'center', paddingBottom: '20px', borderRight: '1px solid #e8e8e8' }}>{userRole}</Text>
         </div>
-    </Sider>} 
+    </Sider>}
           <Route path={`${ROOT_URL}/menu`} component={DeliveryForm} />
           <Route path={`${ROOT_URL}/index.html`} exact component={Auth} />
           <Route path={`${ROOT_URL}/`} exact component={Auth} />

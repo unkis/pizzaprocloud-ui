@@ -26,7 +26,7 @@
 }
 
 .cart__order-table {
-  width: calc((100vw - 200px) * 0.475);
+  width: calc((100vw - var(--left-menu-width)) * 0.475);
   margin-right: 5%;
   display: flex;
   flex-flow: column nowrap;
@@ -52,7 +52,7 @@
 }
 
 .cart__products-table {
-  width: calc((100vw - 200px) * 0.475);
+  width: calc((100vw - var(--left-menu-width)) * 0.475);
   overflow: hidden;
 }
 
