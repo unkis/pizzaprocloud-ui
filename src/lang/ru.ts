@@ -17,7 +17,7 @@ const ru = {
     plz: 'Почтовый индекс',
     city: 'Город',
     clientComment: 'Комментарий клиента',
-    deliveryCost: 'Стоимость доставки',
+    deliveryCost: 'Доставка',
     clear: 'Очистить',
     goToOrder: 'Продолжить заказ',
     logout: 'Выйти',
@@ -28,10 +28,21 @@ const ru = {
     report: 'Отчет',
     settings: 'Настройки',
     help: 'Помощь',
-    quantity: 'Количество',
-    article: 'Артикул',
+    quantity: 'Кол-во',
+    article: 'Арт.',
     productName: 'Номенклатура',
-    price: 'Цена'
+    price: 'Цена',
+    back: 'Назад',
+    freeDelivery: 'Бесплатная доставка',
+    print: 'Печать',
+    comment: 'Комментарий заказчика',
+    goods: 'Товары',
+    additions: 'Добавки',
+    discount: 'Скидка',
+    totalPrice: 'Общая цена',
+    tax_7: 'Налог 7%',
+    tax_19: 'Налог 19%',
+    articlePrices: 'Номенклатура'
 };
 
 export default ru;

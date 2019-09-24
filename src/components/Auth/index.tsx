@@ -20,17 +20,19 @@ import { ROOT_URL } from '../../constants/rootUrl';
 
 const { Title } = Typography;
 
-export const LoginForm = ({ form, history, lang, addUser, code, userRole }: LoginFormProps) => {
+export const LoginForm = ({ form: { setFieldsValue, getFieldsValue, validateFields, getFieldDecorator }, history, lang, addUser, code, userRole }: LoginFormProps) => {
   const [errMsg, setErrMsg] = useState('');
   const [language, setLanguage] = useState(langMap[lang]);
 
-  useEffect(() => form.setFieldsValue({ code }), []);
+  useEffect(() => {
+    setFieldsValue({ code })
+  }, [setFieldsValue, code]);
 
   useEffect(() => {
     if (userRole) {
       history.push(`${ROOT_URL}/menu`);
     }
-  }, [userRole]);
+  }, [history, userRole]);
 
   useEffect(() => {
     setLanguage(langMap[lang]);
@@ -38,10 +40,10 @@ export const LoginForm = ({ form, history, lang, addUser, code, userRole }: Logi
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    form.validateFields((err: any, values: LoginFormValues) => {
+    validateFields((err: any, values: LoginFormValues) => {
       const user = auth(values.username, values.password);
       if (!err && user) {
-        addUser(user.role, form.getFieldsValue().code);
+        addUser(user.role, getFieldsValue().code);
         history.push(`${ROOT_URL}/menu`);
       } else if (!user) {
         setErrMsg('Вы неверно ввели логин или пароль');
@@ -49,7 +51,6 @@ export const LoginForm = ({ form, history, lang, addUser, code, userRole }: Logi
     });
   };
 
-    const { getFieldDecorator } = form;
     return (
         <div id="components-form-demo-normal-login">
         <Form onSubmit={handleSubmit} className="login-form" autoComplete="off">
@@ -62,7 +63,6 @@ export const LoginForm = ({ form, history, lang, addUser, code, userRole }: Logi
               ],
             })(
                 <Input
-                
                 autoFocus
                 autoComplete="off"
                 prefix={<Icon type="number" style={{ color: 'rgba(0,0,0,.25)' }} />}

@@ -192,7 +192,7 @@ describe('тесты на redux', () => {
       store.dispatch(addProductToCart(fields.article, fields.productName, fields.price));
       store.dispatch(addProductToCart(fields.article, fields.productName, fields.price));
 
-      expect(store.getState()).toMatchObject({ ...initialState, cartProducts: [...initialState.cartProducts, { ...fields, quantity: 3 }] });
+      expect(store.getState()).toMatchObject({ ...initialState, cartProducts: [{ ...fields, quantity: 3 }, ...initialState.cartProducts] });
     });
   });
 
@@ -221,7 +221,7 @@ describe('тесты на redux', () => {
       const newCartProducts = deepCopy(initialState.cartProducts);
       const productArticleIndex = newCartProducts.findIndex(({ article }) => article === fields.productArticle);
       const { article, productName, price } = fields;
-      newCartProducts[productArticleIndex] = { ...newCartProducts[productArticleIndex], children: [...newCartProducts[productArticleIndex].children, { article, productName, price, quantity: 1 }] };
+      newCartProducts[productArticleIndex] = { ...newCartProducts[productArticleIndex], children: [{ article, productName, price, quantity: 1 }, ...newCartProducts[productArticleIndex].children] };
 
       store.dispatch(addAdditionToProductInCart(fields.productArticle, fields.article, fields.productName, fields.price));
 

@@ -1,5 +1,4 @@
 import { changeLanguageType, addUserType, logoutUserType } from './actionsTypes';
-import { number } from 'prop-types';
 
 export const CHANGE_LANGUAGE = 'CHANGE_LANGUAGE';
 export const ADD_USER = 'ADD_USER';
@@ -35,11 +34,11 @@ export const updateAllFieldsOfFormData = (newState: any) => ({ type: formDataAct
 
 export const clearAllFields = () => ({ type: formDataActions.CLEAR_ALL_FIELDS });
 
-export const addProductToCart= (article: number, productName: string, price: number) => 
-  ({ type: cartProductsActions.ADD_PRODUCT_TO_CART, article, productName, price });
+export const addProductToCart= (article: number, productName: string, price: number, mwst: '7' | '19') => 
+  ({ type: cartProductsActions.ADD_PRODUCT_TO_CART, article, productName, price, mwst });
 
-export const addAdditionToProductInCart = (productArticle: number, additionArticle: number, additionName: string, additionPrice: number) => 
-  ({ type: cartProductsActions.ADD_ADDITION_TO_PRODUCT_IN_CART, productArticle, additionArticle, additionName, additionPrice });
+export const addAdditionToProductInCart = (productArticle: number, additionArticle: number, additionName: string, additionPrice: number, additionMwst: '7' | '19') => 
+  ({ type: cartProductsActions.ADD_ADDITION_TO_PRODUCT_IN_CART, productArticle, additionArticle, additionName, additionPrice, additionMwst });
 
 export const deleteProductFromCart = (productArticle: number) => 
   ({ type: cartProductsActions.DELETE_PRODUCT_FROM_CART, productArticle });

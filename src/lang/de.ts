@@ -28,10 +28,21 @@ const de = {
     report: 'Berichten',
     settings: 'Einstellungen',
     help: 'Hilfe',
-    quantity: 'Количество',
-    article: 'Артикул',
-    productName: 'Номенклатура',
-    price: 'Цена'
+    quantity: 'Anzahl',
+    article: 'Karte Nr.',
+    productName: 'Name von Artiel',
+    price: 'Preise',
+    back: 'Zuruck',
+    freeDelivery: 'Anfahrtkosten Frei',
+    print: 'Drucken',
+    comment: 'Hinweis',
+    goods: 'Artikel',
+    additions: 'Zutaten',
+    discount: 'Rabatt',
+    totalPrice: 'Gesamt preis',
+    tax_7: 'MWST 7%',
+    tax_19: 'MWST 19%',
+    articlePrices: 'Artikel'
 };
 
 export default de;

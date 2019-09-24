@@ -48,9 +48,14 @@ interface CartProductItem {
   productName: string;
   price: number;
   article: number;
+  articleView?: number;
+  viewName?: string;
+  viewQuantity?: number;
+  key?: string;
   quantity: number;
+  mwst: '7' | '19';
   selected?: boolean;
-  children?: CartProductItem[];
+  children?: (CartProductItem & { parentArticle: number; })[];
 }
 
 export type CartProductsState = Exclude<CartProductItem[], null>;
@@ -59,8 +64,10 @@ export interface CartProductsAction extends Action<cartProductsActions> {
   article: number;
   productName: string;
   price: number;
+  mwst: '7' | '19';
   productArticle: number;
   additionArticle: number; 
   additionName: string;
   additionPrice: number;
+  additionMwst: '7' | '19';
 };

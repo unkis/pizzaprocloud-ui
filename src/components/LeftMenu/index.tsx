@@ -32,10 +32,6 @@ const MenuPage = ({ lang, userRole, logoutFromUser, changeLang, history }: MenuP
     setLanguage(langMap[lang]);
   }, [lang, setLanguage]);
 
-  useEffect(() => {
-    setLanguage(langMap[lang]);
-  }, [lang]);
-
   const logout = useCallback((e: ClickParam) => {
     logoutFromUser();
     history.push(`${ROOT_URL}/`);
