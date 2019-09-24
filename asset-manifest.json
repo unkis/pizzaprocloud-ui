@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "/pizzaprocloud-ui/static/css/main.8168a489.chunk.css",
-    "main.js": "/pizzaprocloud-ui/static/js/main.a5cf4d1c.chunk.js",
-    "main.js.map": "/pizzaprocloud-ui/static/js/main.a5cf4d1c.chunk.js.map",
+    "main.css": "/pizzaprocloud-ui/static/css/main.ad4b1dd3.chunk.css",
+    "main.js": "/pizzaprocloud-ui/static/js/main.2a6a05e3.chunk.js",
+    "main.js.map": "/pizzaprocloud-ui/static/js/main.2a6a05e3.chunk.js.map",
     "runtime~main.js": "/pizzaprocloud-ui/static/js/runtime~main.619d02ab.js",
     "runtime~main.js.map": "/pizzaprocloud-ui/static/js/runtime~main.619d02ab.js.map",
     "static/css/2.8c467cd4.chunk.css": "/pizzaprocloud-ui/static/css/2.8c467cd4.chunk.css",
-    "static/js/2.ba8d8c5a.chunk.js": "/pizzaprocloud-ui/static/js/2.ba8d8c5a.chunk.js",
-    "static/js/2.ba8d8c5a.chunk.js.map": "/pizzaprocloud-ui/static/js/2.ba8d8c5a.chunk.js.map",
+    "static/js/2.230aa7db.chunk.js": "/pizzaprocloud-ui/static/js/2.230aa7db.chunk.js",
+    "static/js/2.230aa7db.chunk.js.map": "/pizzaprocloud-ui/static/js/2.230aa7db.chunk.js.map",
     "index.html": "/pizzaprocloud-ui/index.html",
-    "precache-manifest.54c2c63be5c41f339de2145e1f915d16.js": "/pizzaprocloud-ui/precache-manifest.54c2c63be5c41f339de2145e1f915d16.js",
+    "precache-manifest.4b590869e8f492dc7ff4ac89aac8cc09.js": "/pizzaprocloud-ui/precache-manifest.4b590869e8f492dc7ff4ac89aac8cc09.js",
     "service-worker.js": "/pizzaprocloud-ui/service-worker.js",
     "static/css/2.8c467cd4.chunk.css.map": "/pizzaprocloud-ui/static/css/2.8c467cd4.chunk.css.map",
-    "static/css/main.8168a489.chunk.css.map": "/pizzaprocloud-ui/static/css/main.8168a489.chunk.css.map"
+    "static/css/main.ad4b1dd3.chunk.css.map": "/pizzaprocloud-ui/static/css/main.ad4b1dd3.chunk.css.map"
   }
 }
