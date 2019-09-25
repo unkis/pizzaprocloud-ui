@@ -70,13 +70,17 @@ function Cart({ cartProducts, addDataToFormData, formDataState: { discount = 0 }
     const unsortedProducts = products.sort((a, b) => {
       if (a.article && b.article) {
         return a.article - b.article
+      } else if (a.productName && b.productName) {
+        return a.productName.localeCompare(b.productName);
       }
       return 0;
     });
     unsortedProducts.forEach(product => {
       product.articleView = product.article;
       if (Array.isArray(product.children)) {
-        product.children = product.children.sort((a, b) => a.productName.localeCompare(b.productName));
+        product.children = product.children.sort((a, b) => {
+          return a.productName.localeCompare(b.productName);
+        });
       }
     });
     const formattedSearch = search.toLowerCase();
@@ -138,7 +142,7 @@ function Cart({ cartProducts, addDataToFormData, formDataState: { discount = 0 }
           if (children && children.length !== 0) {//если есть добавки
             newSelectionArticle.additionIndex = children[children.length - 1].article;//берем последнюю добавку
           }
-        } else if (sortedProducts[sortedProducts.length - 1]){
+        } else if (sortedProducts[sortedProducts.length - 1]) {
           const newProduct = sortedProducts[sortedProducts.length - 1];
           newSelectionArticle.productIndex = newProduct.article;
           if (Array.isArray(newProduct.children)) {

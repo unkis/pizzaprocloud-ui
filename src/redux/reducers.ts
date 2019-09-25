@@ -86,7 +86,7 @@ export const cartProducts = (state: CartProductsState = initialCartProductsState
         const prevQuantity = state[articleIndex].quantity;
         return [...state.slice(0, articleIndex), { ...state[articleIndex], quantity: prevQuantity + 1 }, ...state.slice(articleIndex + 1)]
       } else {
-        return [{ article, productName, price, mwst, quantity: 1 }, ...state]
+        return [...state, { article, productName, price, mwst, quantity: 1 }]
       }
     }
 
@@ -117,8 +117,8 @@ export const cartProducts = (state: CartProductsState = initialCartProductsState
                 ...state.slice(0, productArticleIndex),
                 {
                   ...state[productArticleIndex], children: [
-                    { article: additionArticle, productName: additionName, price: additionPrice, mwst: additionMwst, quantity: 1 },
-                    ...productAdditions
+                    ...productAdditions,
+                    { article: additionArticle, productName: additionName, price: additionPrice, mwst: additionMwst, quantity: 1 }
                   ]
                 },
                 ...state.slice(productArticleIndex + 1)
