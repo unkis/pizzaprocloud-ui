@@ -13,7 +13,6 @@ import { Auth } from '../../components/Auth';
 import Cart from '../../components/Cart';
 import { LeftMenu } from '../../components/LeftMenu';
 
-
 import { ROOT_URL } from '../../constants/rootUrl';
 
 import { RouteComponentProps } from 'react-router';

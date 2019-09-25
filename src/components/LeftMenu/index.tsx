@@ -83,7 +83,6 @@ const MenuPage = ({ lang, userRole, logoutFromUser, changeLang, history, collaps
 
 const mapStatetoProps: MapStateToProps<MenuPageStateProps, MenuPageOwnProps, State> = (state) => {
   return {
-    formDataState: state.formDataState,
     lang: state.languages.lang,
     userRole: state.user.role
   }

@@ -92,7 +92,7 @@ const compareTwoObjects = (object1: any, object2: any) => {
 }
 
 
-const mapDispatchToProps: MapDispatchToPropsNonObject<any, any> = (dispatch, ownProps) => ({
+const mapDispatchToProps: MapDispatchToPropsNonObject<any, any> = (dispatch) => ({
   addDataToFormData(id: string, value: string) {
     dispatch(addToFormData(id, value))
   },

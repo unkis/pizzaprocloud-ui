@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useMemo, Profiler } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
@@ -17,6 +17,7 @@ import { RouteComponentProps } from 'react-router';
 import { CartOwnProps, CartProps, CartDispatchProps, CartStateProps, ActionColumn } from './CartTypes';
 
 import './Cart.css';
+
 import { ROOT_URL } from '../../constants/rootUrl';
 
 function TableRow(props: any) {//строка таблицы с товарами для выбора. Нужна для установки выбранным товара
