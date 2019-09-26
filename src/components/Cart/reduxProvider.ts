@@ -26,29 +26,29 @@ export const mapStateToProps: MapStateToProps<CartStateProps, CartOwnProps, Stat
 
 export const mapDispatchToProps: MapDispatchToPropsFunction<CartDispatchProps, CartOwnProps> = (dispatch) => {
   return {
-    addProduct(article: number, productName: string, price: number, mwst: '7' | '19') {
-      dispatch(addProductToCart(article, productName, price, mwst));
+    addProduct(id: number, article: string, productName: string, price: number, tax: '7' | '19') {
+      dispatch(addProductToCart(id, article, productName, price, tax));
     },
-    addAddition(productArticle: number, additionArticle: number, additionName: string, additionPrice: number, additionMwst: '7' | '19') {
-      dispatch(addAdditionToProductInCart(productArticle, additionArticle, additionName, additionPrice, additionMwst));
+    addAddition(productId: number, additionId: number, additionName: string, additionPrice: number, additionTax: '7' | '19') {
+      dispatch(addAdditionToProductInCart(productId, additionId, additionName, additionPrice, additionTax));
     },
-    deleteProduct(productArticle: number) {
-      dispatch(deleteProductFromCart(productArticle));
+    deleteProduct(productId: number) {
+      dispatch(deleteProductFromCart(productId));
     },
-    deleteAddition(productArticle: number, additionArticle: number) {
-      dispatch(deleteAdditionOfProductFromCart(productArticle, additionArticle));
+    deleteAddition(productId: number, additionId: number) {
+      dispatch(deleteAdditionOfProductFromCart(productId, additionId));
     },
-    incrementProduct(productArticle: number) {
-      dispatch(incrementQuantityOfProductInCart(productArticle));
+    incrementProduct(productId: number) {
+      dispatch(incrementQuantityOfProductInCart(productId));
     },
-    decrementProduct(productArticle: number) {
-      dispatch(decrementQuantityOfProductInCart(productArticle));
+    decrementProduct(productId: number) {
+      dispatch(decrementQuantityOfProductInCart(productId));
     },
-    incrementAddition(productArticle: number, additionArticle: number) {
-      dispatch(incrementQuantityOfAdditionOfProduct(productArticle, additionArticle));
+    incrementAddition(productId: number, additionId: number) {
+      dispatch(incrementQuantityOfAdditionOfProduct(productId, additionId));
     },
-    decrementAddition(productArticle: number, additionArticle: number) {
-      dispatch(decrementQuantityOfAdditionOfProduct(productArticle, additionArticle));
+    decrementAddition(productId: number, additionId: number) {
+      dispatch(decrementQuantityOfAdditionOfProduct(productId, additionId));
     },
     addDataToFormData(id: string, value: string) {
       dispatch(addToFormData(id, value))

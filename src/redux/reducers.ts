@@ -79,71 +79,71 @@ export const cartProducts = (state: CartProductsState = initialCartProductsState
   switch (action.type) {
 
     case cartProductsActions.ADD_PRODUCT_TO_CART: {
-      const { article, productName, price, mwst } = action;
+      const { id, article, productName, price, tax } = action;
 
-      const articleIndex = state.findIndex(({ article: newStateArticle }) => newStateArticle === article);
+      const articleIndex = state.findIndex(({ id: newStateId }) => newStateId === id);
       if (articleIndex !== -1) {
         const prevQuantity = state[articleIndex].quantity;
         return [...state.slice(0, articleIndex), { ...state[articleIndex], quantity: prevQuantity + 1 }, ...state.slice(articleIndex + 1)]
       } else {
-        return [...state, { article, productName, price, mwst, quantity: 1 }]
+        return [...state, { id, article, productName, price, tax, quantity: 1 }]
       }
     }
 
     case cartProductsActions.ADD_ADDITION_TO_PRODUCT_IN_CART: {
-      const { productArticle, additionArticle, additionName, additionPrice, additionMwst } = action;
-      const productArticleIndex = state.findIndex(({ article }) => article === productArticle);
-      if (productArticleIndex !== -1) {
-        const oldAdditions = state[productArticleIndex].children;
-        if (state[productArticleIndex] && Array.isArray(oldAdditions)) {
-          const additionArticleIndex = oldAdditions.findIndex(({ article }) => article === additionArticle);
-          if (additionArticleIndex !== -1 && Array.isArray(state[productArticleIndex].children)) {
+      const { productId, additionId, additionName, additionPrice, additionTax } = action;
+      const productIndex = state.findIndex(({ id }) => id === productId);
+      if (productIndex !== -1) {
+        const oldAdditions = state[productIndex].additions;
+        if (state[productIndex] && Array.isArray(oldAdditions)) {
+          const additionArticleIndex = oldAdditions.findIndex(({ id }) => id === additionId);
+          if (additionArticleIndex !== -1 && Array.isArray(state[productIndex].additions)) {
             const prevQiantity = oldAdditions[additionArticleIndex].quantity;
             return [
-              ...state.slice(0, productArticleIndex),
+              ...state.slice(0, productIndex),
               {
-                ...state[productArticleIndex], children: [
+                ...state[productIndex], additions: [
                   ...oldAdditions.slice(0, additionArticleIndex),
                   { ...oldAdditions[additionArticleIndex], quantity: prevQiantity + 1 },
                   ...oldAdditions.slice(additionArticleIndex + 1)
                 ]
               },
-              ...state.slice(productArticleIndex + 1)
+              ...state.slice(productIndex + 1)
             ];
           } else {
-            const productAdditions = state[productArticleIndex].children;
+            const productAdditions = state[productIndex].additions;
             if (productAdditions !== undefined) {
               return [
-                ...state.slice(0, productArticleIndex),
+                ...state.slice(0, productIndex),
                 {
-                  ...state[productArticleIndex], children: [
+                  ...state[productIndex], additions: [
                     ...productAdditions,
-                    { article: additionArticle, productName: additionName, price: additionPrice, mwst: additionMwst, quantity: 1 }
+                    { id: additionId, productName: additionName, price: additionPrice, tax: additionTax, quantity: 1 }
                   ]
                 },
-                ...state.slice(productArticleIndex + 1)
+                ...state.slice(productIndex + 1)
               ];
             } else {
               return [
-                ...state.slice(0, productArticleIndex),
+                ...state.slice(0, productIndex),
                 {
-                  ...state[productArticleIndex], children: [
-                    { article: additionArticle, productName: additionName, price: additionPrice, mwst: additionMwst, quantity: 1 },
+                  ...state[productIndex], additions: [
+                    { id: additionId, productName: additionName, price: additionPrice, tax: additionTax, quantity: 1 },
                   ]
                 },
-                ...state.slice(productArticleIndex + 1)
+                ...state.slice(productIndex + 1)
               ];
             }
           }
         } else {
           return [
-            ...state.slice(0, productArticleIndex),
+            ...state.slice(0, productIndex),
             {
-              ...state[productArticleIndex], children: [
-                { article: additionArticle, productName: additionName, price: additionPrice, mwst: additionMwst, quantity: 1 },
+              ...state[productIndex], additions: [
+                { id: additionId, productName: additionName, price: additionPrice, tax: additionTax, quantity: 1 },
               ]
             },
-            ...state.slice(productArticleIndex + 1)
+            ...state.slice(productIndex + 1)
           ];
         }
       }
@@ -151,19 +151,19 @@ export const cartProducts = (state: CartProductsState = initialCartProductsState
     }
     /* FIXME TESTS */
     case cartProductsActions.DELETE_PRODUCT_FROM_CART: {
-      const { productArticle } = action;
-      return state.filter(({ article }) => article !== productArticle);
+      const { productId } = action;
+      return state.filter(({ id }) => id !== productId);
     }
 
     case cartProductsActions.DELETE_ADDITION_OF_PRODUCT_FROM_CART: {
-      const { productArticle, additionArticle } = action;
-      const productIndex = state.findIndex(({ article }) => article === productArticle);
+      const { productId, additionId } = action;
+      const productIndex = state.findIndex(({ id }) => id === productId);
       if (productIndex !== -1) {
-        const additions = state[productIndex].children;
+        const additions = state[productIndex].additions;
         if (additions) {
           return [
             ...state.slice(0, productIndex),
-            { ...state[productIndex], children: additions.filter(({ article }) => article !== additionArticle) },
+            { ...state[productIndex], additions: additions.filter(({ id }) => id !== additionId) },
             ...state.slice(productIndex + 1)
           ]
         }
@@ -172,8 +172,8 @@ export const cartProducts = (state: CartProductsState = initialCartProductsState
     }
     /* END FIXME */
     case cartProductsActions.INCREMENT_QUANTITY_OF_PRODUCT_IN_CART: {
-      const { productArticle } = action;
-      const productIndex = state.findIndex(({ article }) => article === productArticle);
+      const { productId } = action;
+      const productIndex = state.findIndex(({ id }) => id === productId);
       if (productIndex !== -1) {
         return [
           ...state.slice(0, productIndex),
@@ -185,8 +185,8 @@ export const cartProducts = (state: CartProductsState = initialCartProductsState
     }
 
     case cartProductsActions.DECREMENT_QUANTITY_OF_PRODUCT_IN_CART: {
-      const { productArticle } = action;
-      const productIndex = state.findIndex(({ article }) => article === productArticle);
+      const { productId } = action;
+      const productIndex = state.findIndex(({ id }) => id === productId);
       if (productIndex !== -1) {
         const currentQuantity = state[productIndex].quantity;
         if (currentQuantity > 1) {
@@ -206,18 +206,18 @@ export const cartProducts = (state: CartProductsState = initialCartProductsState
     }
 
     case cartProductsActions.INCREMENT_QUANTITY_OF_ADDITION_OF_PRODUCT: {
-      const { productArticle, additionArticle } = action;
-      const productIndex = state.findIndex(({ article }) => productArticle === article);
+      const { productId, additionId } = action;
+      const productIndex = state.findIndex(({ id }) => productId === id);
       if (productIndex !== -1) {
-        const additions = state[productIndex].children;
+        const additions = state[productIndex].additions;
         if (additions) {
-          const additionIndex = additions.findIndex(({ article }) => article === additionArticle);
+          const additionIndex = additions.findIndex(({ id }) => id === additionId);
           if (additionIndex !== -1) {
             const addition = additions[additionIndex];
             return [
               ...state.slice(0, productIndex),
               {
-                ...state[productIndex], children: [
+                ...state[productIndex], additions: [
                   ...additions.slice(0, additionIndex),
                   { ...addition, quantity: addition.quantity + 1 },
                   ...additions.slice(additionIndex + 1)
@@ -232,19 +232,19 @@ export const cartProducts = (state: CartProductsState = initialCartProductsState
     }
 
     case cartProductsActions.DECREMENT_QUANTITY_OF_ADDITION_OF_PRODUCT: {
-      const { productArticle, additionArticle } = action;
-      const productIndex = state.findIndex(({ article }) => productArticle === article);
+      const { productId, additionId } = action;
+      const productIndex = state.findIndex(({ id }) => id === productId);
       if (productIndex !== -1) {
-        const additions = state[productIndex].children;
+        const additions = state[productIndex].additions;
         if (additions) {
-          const additionIndex = additions.findIndex(({ article }) => article === additionArticle);
+          const additionIndex = additions.findIndex(({ id }) => id === additionId);
           if (additionIndex !== -1) {
             const addition = additions[additionIndex];
             if (addition.quantity > 1) {
               return [
                 ...state.slice(0, productIndex),
                 {
-                  ...state[productIndex], children: [
+                  ...state[productIndex], additions: [
                     ...additions.slice(0, additionIndex),
                     { ...addition, quantity: addition.quantity - 1 },
                     ...additions.slice(additionIndex + 1)
@@ -256,7 +256,7 @@ export const cartProducts = (state: CartProductsState = initialCartProductsState
               return [
                 ...state.slice(0, productIndex),
                 {
-                  ...state[productIndex], children: [
+                  ...state[productIndex], additions: [
                     ...additions.slice(0, additionIndex),
                     ...additions.slice(additionIndex + 1)
                   ]

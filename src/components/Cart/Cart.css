@@ -40,6 +40,14 @@
   overflow: hidden;
 }
 
+.cart__table-header {
+  border-right: 1px solid rgb(232, 232, 232);
+  padding: 4px 8px;
+  border-bottom: 1px solid rgb(232, 232, 232);
+  display: block !important;
+  text-align: center;
+}
+
 .sum-form {
   height: 240px;
 }
@@ -88,10 +96,12 @@
   width: 40vw;
   height: 20vh;
 }
+
 .addition__quantity {
   font-weight: bold;
   /* font-size: 16px; */
 }
+
 .cart__order-table .ant-table-thead th,
 .cart__products-table .ant-table-thead th {
   padding: 16px 4px;

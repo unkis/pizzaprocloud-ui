@@ -25,109 +25,79 @@ const fakeBD = {
     ],
     products: [
         {
-            key: 2,
-            article: 2,
-            quantity: 10,
-            productName: 'Test5',
-            price: 60,
-            mwst: '19',
-            children: [
-                {
-                    key: 21,
-                    parentArticle: 2,
-                    article: 21,
-                    productName: 'Test6',
-                    price: 60,
-                    mwst: '19',
-                },
-                {
-                    key: 22,
-                    mwst: '19',
-                    parentArticle: 2,
-                    article: 22,
-                    productName: 'Test7',
-                    price: 60,
-                },
-                {
-                    key: 23,
-                    parentArticle: 2,
-                    article: 23,
-                    mwst: '19',
-                    productName: 'Test8',
-                    price: 60,
-                },
-            ],
+            id: 1,
+            article: '1',
+            productName: 'Pizza Margherita',
+            price: 10.00,
+            tax: '19',
+            type: 'product'
         },
         {
-            key: 3,
-            article: 3,
-            quantity: 10,
-            productName: 'Test9',
-            price: 60,
-            mwst: '19',
-            children: [
-                {
-                    key: 31,
-                    parentArticle: 3,
-                    article: 31,
-                    productName: 'Test10',
-                    price: 60,
-                    mwst: '19',
-                },
-                {
-                    key: 32,
-                    mwst: '19',
-                    parentArticle: 3,
-                    article: 32,
-                    productName: 'Test11',
-                    price: 60,
-                },
-                {
-                    key: 33,
-                    parentArticle: 3,
-                    article: 33,
-                    mwst: '19',
-                    productName: 'Test12',
-                    price: 60,
-                },
-            ],
+            id: 2,
+            article: '1k',
+            productName: 'Pizza Margherita klein',
+            price: 5.0,
+            tax: '19',
+            type: 'product'
         },
         {
-            key: 1,
-            article: 1,
-            quantity: 10,
-            productName: 'Test1 ghjkhbjnkvbnkm vhjk vbjnkmlgvbhjnkml yvgbhjnkm vytbnjk vbhnjkmltybuniml vbynu vytbunio',
-            price: 60,
-            mwst: '7',
-            children: [
-                {
-                    key: 12,
-
-                    parentArticle: 1,
-                    article: 12,
-                    productName: 'Test3',
-                    price: 60,
-                    mwst: '7'
-                },
-                {
-                    key: 13,
-
-                    parentArticle: 1,
-                    article: 13,
-                    productName: 'Test4',
-                    price: 60,
-                    mwst: '7'
-                },
-                {
-                    key: 11,
-                    parentArticle: 1,
-                    article: 11,
-                    productName: 'Test2',
-                    price: 60,
-                    mwst: '7'
-                },
-            ],
+            id: 3,
+            article: '105',
+            productName: 'Salat Capri',
+            price: 10.00,
+            tax: '7',
+            type: 'product'
         },
+        {
+            id: 4,
+            article: '105g',
+            productName: 'Salat capri groß',
+            price: 15.00,
+            tax: '7',
+            type: 'product'
+        },
+        {
+            id: 5,
+            productName: 'Ananas',
+            price: 1.00,
+            tax: '19',
+            type: 'addition'
+        },
+        {
+            id: 6,
+            productName: 'Salami',
+            price: 0.50,
+            tax: '19',
+            type: 'addition'
+        },
+        {
+            id: 7,
+            productName: 'kl. Tomaten',
+            price: 0.50,
+            tax: '19',
+            type: 'addition'
+        },
+        {
+            id: 8,
+            productName: 'ohne Zwiebeln',
+            price: 0.00,
+            tax: '19',
+            type: 'addition'
+        },
+        {
+            id: 9,
+            productName: 'extra Käse',
+            price: 1.00,
+            tax: '7',
+            type: 'addition'
+        },
+        {
+            id: 10,
+            productName: 'extra Käse gross',
+            price: 1.50,
+            tax: '7',
+            type: 'addition'
+        }
     ]
 
 };
@@ -143,19 +113,11 @@ export const searchProducts: any = (searchString: string) => {
         return fakeBD.products.slice(0, 10);
     }
     searchString = searchString.toLowerCase();
-    const res = fakeBD.products.map((product) => {
-        const { article, productName, children } = product;
-        const productChildren = children.filter(({ productName }) => productName.toString().toLowerCase().includes(searchString.toLowerCase()));
-        if (productChildren.length !== 0) {
-            return { ...product, children: productChildren };
-        }
-        const isProduct = article.toString().toLowerCase().includes(searchString.toLowerCase()) || productName.toString().toLowerCase().includes(searchString.toLowerCase());
-        if (isProduct) {
-            return product;
-        } else {
-            return null;
-        }
-    }).filter(Boolean);
+    const res = fakeBD.products.filter((product) => {
+        const { article, productName } = product;
+        const isProduct = (article && article.toLowerCase().includes(searchString.toLowerCase())) || productName.toLowerCase().includes(searchString.toLowerCase());
+        return isProduct;
+    });
     return res;
 }
 export default fakeBD;

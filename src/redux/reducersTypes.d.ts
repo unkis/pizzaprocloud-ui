@@ -10,7 +10,7 @@ import {
   cartProductsActions
 } from './actions';
 
-import { number } from 'prop-types';
+import { SearchItem } from '../components/Cart/CartTypes';
 
 export type LanguagesState = {
   lang: langType;
@@ -32,7 +32,7 @@ type UserActionsTypes = typeof ADD_USER | typeof LOGOUT_USER;
 interface UserAction extends Action<UserActionsTypes> {
   role: string;//FIXME
   code: string;
-};
+}
 
 type FormDataStateType = any;//FIXME
 
@@ -42,32 +42,29 @@ interface FormDataStateAction extends Action<FormDataStateActionsTypes> {
   fieldName: string;//FIXME
   fieldValue: string;
   newState?: FormDataStateType //FIXME
-};
-
-interface CartProductItem {
-  productName: string;
-  price: number;
-  article: number;
-  articleView?: number;
-  viewName?: string;
-  viewQuantity?: number;
-  key?: string;
-  quantity: number;
-  mwst: '7' | '19';
-  selected?: boolean;
-  children?: (CartProductItem & { parentArticle: number; })[];
 }
 
-export type CartProductsState = Exclude<CartProductItem[], null>;
+interface CartAddition extends SearchItem {
+  quantity: number;
+}
+
+export interface CartProduct extends Exclude<SearchItem, 'type'> {
+  quantity: number;
+  additions?: CartAddition[];
+}
+
+export type CartProductsState = Exclude<CartProduct[], null>;
 
 export interface CartProductsAction extends Action<cartProductsActions> {
+  id: number;
   article: number;
   productName: string;
   price: number;
-  mwst: '7' | '19';
-  productArticle: number;
-  additionArticle: number; 
+  tax: '7' | '19';
+  productId: number;
+  additionId: number;
+  productArticle: string; 
   additionName: string;
   additionPrice: number;
-  additionMwst: '7' | '19';
-};
+  additionTax: '7' | '19';
+}
