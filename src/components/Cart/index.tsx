@@ -20,6 +20,7 @@ import './Cart.css';
 
 import { ROOT_URL } from '../../constants/rootUrl';
 
+const naturalSort: any = require('javascript-natural-sort');
 
 
 
@@ -29,6 +30,7 @@ const IconStyle = { fontSize: '16px' };
 
 const selectSearchInputText = () => {//функция для выделения текста в поле поиска
   const target = document.querySelector('.cart__products-table .ant-input') as HTMLInputElement;
+  target.focus();
   (target).setRangeText(target.value, 0, target.value.length, 'select');
 };
 
@@ -58,9 +60,10 @@ function Cart({ cartProducts, addDataToFormData, formDataState: { discount = 0 }
   const [alertMessage, setAlertMessage] = useState({ message: '', description: '' });
   const [currentSelection, setCurrentSelection] = useState(0);
   const [currentSelectedProductInCart, setProductInCart] = useState(0);
+  const [wasImplisitySetted, setWasImplicitySetted] = useState(false);
 
   useEffect(() => {
-    if (cartProducts[cartProducts.length - 1]) {
+    if (!wasImplisitySetted && cartProducts[cartProducts.length - 1]) {
       setProductInCart(cartProducts[cartProducts.length - 1].id);
     }
   }, [cartProducts]);
@@ -68,7 +71,7 @@ function Cart({ cartProducts, addDataToFormData, formDataState: { discount = 0 }
   const sortedProducts = useMemo(() => {//сортируем продукты с бека
     const unsortedProducts = products.sort((a, b) => {
       if (a.article && b.article) {
-        return a.article.localeCompare(b.article);
+        return naturalSort(a, b);
       } else if (!a.article && !b.article && a.productName && b.productName) {
         return a.productName.localeCompare(b.productName);
       }
@@ -96,7 +99,7 @@ function Cart({ cartProducts, addDataToFormData, formDataState: { discount = 0 }
       return product;
     })
   }, [sortedProducts, currentSelection]);
-  const filteredProducts = useMemo(() => [{ header: 'ПРОДУКТЫ'}, ...productsWithSelected.filter(({ type }) => type === 'product'), { header: 'ДОБАВКИ'}, ...productsWithSelected.filter(({ type }) => type === 'addition')], [productsWithSelected])
+  const filteredProducts = useMemo(() => [{ header: 'ПРОДУКТЫ' }, ...productsWithSelected.filter(({ type }) => type === 'product'), { header: 'ДОБАВКИ' }, ...productsWithSelected.filter(({ type }) => type === 'addition')], [productsWithSelected])
   const keyDownListener = useCallback((event: KeyboardEvent) => {//слушаем нажатия Arrow Up и Down и на их основе пушим в currentSelection
     event.stopPropagation();
     let newSelectionArticle: typeof currentSelection = currentSelection;
@@ -128,14 +131,15 @@ function Cart({ cartProducts, addDataToFormData, formDataState: { discount = 0 }
     });
     console.log(props.children);
     return (
-      <tr onClick={isInCart ? () => setProductInCart(parentId || id) : () => null} className={`${props.className} ${isSelected ? "didolf" : ""} ${isHeader ? "cart__table-header" : ""}`}>
-        {(isHeader && isHeader.props.record.header)|| props.children}
+      <tr onClick={isInCart ? () => {setProductInCart(parentId || id); setWasImplicitySetted(true);} : () => null} className={`${props.className} ${isSelected ? "didolf" : ""} ${isHeader ? "cart__table-header" : ""}`}>
+        {(isHeader && isHeader.props.record.header) || props.children}
       </tr>
     )
   }, []);
   const customTableComponents = useMemo(() => ({ body: { row: TableRow } }), [TableRow]);//передается в prop components компонента Table чтобы использовать свою строку вместо дефолтной
 
   const onMinusKeyDown = useCallback(() => {//слушаем нажатия клавиши '-' и изменяем товары в корзине на основе этого
+    selectSearchInputText();
     const currentProduct = sortedProducts.find((product) => product.id === currentSelection);
     if (!currentProduct) {
       return;
@@ -162,7 +166,6 @@ function Cart({ cartProducts, addDataToFormData, formDataState: { discount = 0 }
         setIsAlert(true);
       }
     }
-    selectSearchInputText();
   }, [cartProducts, currentSelection, decrementAddition, decrementProduct, setIsAlert, setAlertMessage]);
 
   const onPlusOrEnterKeyDown = useCallback(() => {//слушаем нажатия '+' и 'enter' и изменяем товары в корзине на основе этого
@@ -189,7 +192,9 @@ function Cart({ cartProducts, addDataToFormData, formDataState: { discount = 0 }
   }, [sortedProducts, isAlert, cartProducts, currentSelection, addAddition, addProduct, setIsAlert, setAlertMessage]);
 
   const onSearchChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {//слушаем изменение строки поиска и убираем оттуда нажатие '-'
-    if (event.target.value.slice(-1) === '-') {
+    const lastChar = event.target.value.slice(-1);
+    if (lastChar === '-' || lastChar === '+') {
+      selectSearchInputText();
       return;
     } else {
       setSearch(event.target.value);
@@ -205,7 +210,7 @@ function Cart({ cartProducts, addDataToFormData, formDataState: { discount = 0 }
       }
       const typeOfCurrentProduct = currentProduct.type;
       if (typeOfCurrentProduct === 'addition') {
-        const lastAddedProduct = cartProducts.find(({ id }) => id === (parentId ||currentSelectedProductInCart));
+        const lastAddedProduct = cartProducts.find(({ id }) => id === (parentId || currentSelectedProductInCart));
         if (lastAddedProduct) {
           const { id, productName, price, tax } = currentProduct;
           addAddition(lastAddedProduct.id, id, productName, price, tax);
@@ -268,10 +273,6 @@ function Cart({ cartProducts, addDataToFormData, formDataState: { discount = 0 }
   const IncrementToCartIcon = useCallback(({ id, parentId }: ActionColumn) => <Icon style={IconStyle} type="plus-square" onClick={addToCart(id, parentId)} />, [addToCart]);
   const DeleteFromCartIcon = useCallback(({ id, parentId }: ActionColumn) => <Icon style={IconStyle} type="close-square" onClick={deleteFromCart(id, parentId)} />, [deleteFromCart]);
   const onFreeDeliveryClick = useCallback(() => addDataToFormData('deliveryCost', '0'), [addDataToFormData]);
-
-  useEffect(() => {//на изменение строки поиска стягиваем с сервера список продуктов
-    setProducts(searchProducts(search.toLowerCase()));
-  }, [search, setProducts]);
 
   const onAlertClose = useCallback(() => setIsAlert(false), [setIsAlert]);//функция на закрытие предупреждения по крестику
 
