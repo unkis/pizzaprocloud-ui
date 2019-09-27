@@ -1,1 +1,1 @@
-export const ROOT_URL = '/pizzaprocloud-ui';
+export const ROOT_URL = '';
