@@ -6,7 +6,7 @@ import { Table, Icon, Input, Button, Alert } from 'antd';
 import SumForm from './subcomponents/SumForm';
 
 import { langMap } from '../../lang';
-
+import { findLastIndexOf } from '../../helpers/findLastIndexOf';
 import fakeBD, { searchProducts } from '../../fakeBD';
 
 //redux actions
@@ -20,22 +20,20 @@ import './Cart.css';
 
 import { ROOT_URL } from '../../constants/rootUrl';
 
-const naturalSort: any = require('javascript-natural-sort');
-
-
+const naturalSort: any = require('javascript-natural-sort');//FIXME: добавить тайпинги и сделать импорт
 
 const proudctsTableScrollParams = { y: 'calc(100vh - 40px - 32px - 75px - 60px - 1px)' };
 const cartTableScrollParams = { y: 'calc(100vh - 40px - 32px - 75px - 60px - 240px - 1px - 20px)' };
 const IconStyle = { fontSize: '16px' };
 
-const selectSearchInputText = () => {//функция для выделения текста в поле поиска
-  const target = document.querySelector('.cart__products-table .ant-input') as HTMLInputElement;
+const selectSearchInputText = (targetElem?: any) => {//функция для выделения текста в поле поиска
+  const target = targetElem || document.querySelector('.cart__products-table .ant-input') as HTMLInputElement;
   target.focus();
-  (target).setRangeText(target.value, 0, target.value.length, 'select');
+  target.setRangeText(target.value, 0, target.value.length, 'select');
 };
 
 const ProductNameRenderer = (name: string) => {//компонент корзины с названием товара/добавки
-  const testStr = name.match(/^([+]{1}[0-9]*)(.*)/);
+  const testStr = name && name.match(/^([+-]{0,1}[0-9]*)(.*)/);
   if (testStr) {
     const [, quantity, additionName] = testStr;
     return (<div className="addition"><span className="addition__quantity">{quantity}</span>{additionName}</div>);
@@ -46,27 +44,34 @@ const ProductNameRenderer = (name: string) => {//компонент корзин
 const NullComponent = () => null;//вспомогательный компонент, который ничего не рендерит
 
 const scrollToCurrentSelectedItem = () => {//функция, которая скроллит до текущего выбранного товара/добавки
-  const curItem = document.querySelector('.didolf');
+  const curItem = document.querySelector('.cart__products-table_selected');
   if (curItem) {
     curItem.scrollIntoView();
   }
 }
 
-function Cart({ cartProducts, addDataToFormData, formDataState: { discount = 0 }, formDataState, lang, addProduct, addAddition, deleteProduct, deleteAddition, decrementAddition, decrementProduct, history }: CartProps) {
+const scrollToLastItemOfCart = () => {//функция, которая скроллит до последнего элемента корзины
+  const curItem = document.querySelector('.cart__order .ant-table-tbody tr:last-child');
+  if (curItem) {
+    curItem.scrollIntoView();
+  }
+}
+
+function Cart({ cartProducts, addDataToFormData, formDataState: { discount = 0 }, formDataState, lang, addProduct, addAddition, incrementProduct, incrementAddition, deleteProduct, deleteAddition, decrementAddition, decrementProduct, history }: CartProps) {
   const [language, setLanguage] = useState(langMap[lang]);
   const [products, setProducts] = useState(searchProducts('') as TableProduct[]);
   const [search, setSearch] = useState('');
   const [isAlert, setIsAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState({ message: '', description: '' });
   const [currentSelection, setCurrentSelection] = useState(0);
-  const [currentSelectedProductInCart, setProductInCart] = useState(0);
+  const [currentSelectedProductInCart, setProductInCart] = useState(-1);
   const [wasImplisitySetted, setWasImplicitySetted] = useState(false);
 
-  useEffect(() => {
+  useEffect(() => {//если не был установлен руками текущий товар в корзине - ставим последний
     if (!wasImplisitySetted && cartProducts[cartProducts.length - 1]) {
-      setProductInCart(cartProducts[cartProducts.length - 1].id);
+      setProductInCart(cartProducts.length - 1);
     }
-  }, [cartProducts]);
+  }, [cartProducts, wasImplisitySetted, setProductInCart]);
 
   const sortedProducts = useMemo(() => {//сортируем продукты с бека
     const unsortedProducts = products.sort((a, b) => {
@@ -78,7 +83,7 @@ function Cart({ cartProducts, addDataToFormData, formDataState: { discount = 0 }
       return 0;
     });
     const formattedSearch = search.toLowerCase();
-    let newSelection: typeof currentSelection = 0;
+    let newSelection = 0;
     for (let product of unsortedProducts) {
       if ((product.article && product.article.toLowerCase().includes(formattedSearch)) || product.productName.toLowerCase().includes(formattedSearch)) {
         newSelection = product.id;
@@ -90,7 +95,8 @@ function Cart({ cartProducts, addDataToFormData, formDataState: { discount = 0 }
   }, [products, search, setCurrentSelection]);
 
   const productsWithSelected = useMemo(() => {//обновляем выбранный сейчас товар в таблице с товарами
-    return sortedProducts.map((product) => {
+    return sortedProducts.map((product, idx) => {
+      product.key = idx.toString();
       if (product.id === currentSelection) {
         product.selected = true;
       } else if (product.selected) {
@@ -99,7 +105,9 @@ function Cart({ cartProducts, addDataToFormData, formDataState: { discount = 0 }
       return product;
     })
   }, [sortedProducts, currentSelection]);
-  const filteredProducts = useMemo(() => [{ header: 'ПРОДУКТЫ' }, ...productsWithSelected.filter(({ type }) => type === 'product'), { header: 'ДОБАВКИ' }, ...productsWithSelected.filter(({ type }) => type === 'addition')], [productsWithSelected])
+
+  const filteredProducts = useMemo(() => [{ header: 'ПРОДУКТЫ', key: 'ПРОДУКТЫ' }, ...productsWithSelected.filter(({ type }) => type === 'product'), { header: 'ДОБАВКИ', key: 'ДОБАВКИ' }, ...productsWithSelected.filter(({ type }) => type === 'addition')], [productsWithSelected])
+
   const keyDownListener = useCallback((event: KeyboardEvent) => {//слушаем нажатия Arrow Up и Down и на их основе пушим в currentSelection
     event.stopPropagation();
     let newSelectionArticle: typeof currentSelection = currentSelection;
@@ -120,53 +128,33 @@ function Cart({ cartProducts, addDataToFormData, formDataState: { discount = 0 }
     setCurrentSelection(newSelectionArticle);
   }, [sortedProducts, currentSelection, setCurrentSelection]);
 
-  const TableRow = useCallback(function TableRow(props: any) {//строка таблицы с товарами для выбора. Нужна для установки выбранным товара
-    let id: number, parentId: number;
-    const isSelected = props.children.find(({ props: { record: { selected } } }: any) => selected);
-    const isHeader = props.children.find(({ props: { record: { header } } }: any) => header);
-    const isInCart = props.children.find(({ props: { record: { cart } } }: any) => cart);
-    props.children.forEach(({ props: { record: { id: recordId, parentId: recordParentId } } }: any) => {
-      id = recordId;
-      parentId = recordParentId
-    });
-    console.log(props.children);
-    return (
-      <tr onClick={isInCart ? () => {setProductInCart(parentId || id); setWasImplicitySetted(true);} : () => null} className={`${props.className} ${isSelected ? "didolf" : ""} ${isHeader ? "cart__table-header" : ""}`}>
-        {(isHeader && isHeader.props.record.header) || props.children}
-      </tr>
-    )
-  }, []);
-  const customTableComponents = useMemo(() => ({ body: { row: TableRow } }), [TableRow]);//передается в prop components компонента Table чтобы использовать свою строку вместо дефолтной
-
   const onMinusKeyDown = useCallback(() => {//слушаем нажатия клавиши '-' и изменяем товары в корзине на основе этого
-    selectSearchInputText();
     const currentProduct = sortedProducts.find((product) => product.id === currentSelection);
     if (!currentProduct) {
+      setAlertMessage({ message: 'Не удалось уменьшить количество продукта/добавки', description: 'Не выбран продукт/добавка' })
+      setIsAlert(true);
       return;
     }
     const typeOfCurrentProduct = currentProduct.type;
     if (typeOfCurrentProduct === 'addition') {
-      const lastAddedProduct = cartProducts.find(({ id }) => id === currentSelectedProductInCart);
+      const lastAddedProduct = cartProducts[currentSelectedProductInCart];
       if (!lastAddedProduct) {
+        setAlertMessage({ message: 'Не удалось уменьшить количество добавки', description: 'В корзине нет продуктов' })
+        setIsAlert(true);
         return;
       }
-      const hasAddition = lastAddedProduct.additions && lastAddedProduct.additions.find(({ id }) => id === currentProduct.id);
-      if (hasAddition) {
-        decrementAddition(lastAddedProduct.id, currentProduct.id);
-      } else {
-        setAlertMessage({ message: 'Не удалось уменьшить количество добавки', description: 'Добавки нет в корзине' });
-        setIsAlert(true);
-      }
+      const { productName, price, tax } = currentProduct;
+      decrementAddition(currentSelectedProductInCart, currentProduct.id, productName, price, tax);
     } else if (typeOfCurrentProduct === 'product') {
-      const isProductInCart = cartProducts.find(({ id }) => id === currentProduct.id);
-      if (isProductInCart) {
-        decrementProduct(currentProduct.id);
+      const isProductInCart = findLastIndexOf(cartProducts, ({ id }) => id === currentProduct.id);
+      if (isProductInCart !== -1) {
+        decrementProduct(isProductInCart);
       } else {
         setAlertMessage({ message: 'Не удалось уменьшить количество товара', description: 'Товара нет в корзине' });
         setIsAlert(true);
       }
     }
-  }, [cartProducts, currentSelection, decrementAddition, decrementProduct, setIsAlert, setAlertMessage]);
+  }, [cartProducts, currentSelection, decrementAddition, decrementProduct, setIsAlert, setAlertMessage, currentSelectedProductInCart, sortedProducts]);
 
   const onPlusOrEnterKeyDown = useCallback(() => {//слушаем нажатия '+' и 'enter' и изменяем товары в корзине на основе этого
     if (isAlert) {
@@ -177,9 +165,9 @@ function Cart({ cartProducts, addDataToFormData, formDataState: { discount = 0 }
     if (currentProduct) {
       const { id, article, productName, price, tax, type } = currentProduct;
       if (type === 'addition') {
-        const lastAddedProduct = cartProducts.find(({ id }) => id === currentSelectedProductInCart);
+        const lastAddedProduct = cartProducts[currentSelectedProductInCart];
         if (lastAddedProduct) {
-          addAddition(lastAddedProduct.id, id, productName, price, tax);// FIXME: Проверка на то, есть ли товар в корзине
+          addAddition(currentSelectedProductInCart, id, productName, price, tax);
         } else {
           setAlertMessage({ message: 'Не удалось выбрать добавку', description: 'Товаров нет в корзине' });
           setIsAlert(true);
@@ -189,89 +177,202 @@ function Cart({ cartProducts, addDataToFormData, formDataState: { discount = 0 }
       }
     }
     selectSearchInputText();
-  }, [sortedProducts, isAlert, cartProducts, currentSelection, addAddition, addProduct, setIsAlert, setAlertMessage]);
+  }, [sortedProducts, isAlert, cartProducts, currentSelection, addAddition, addProduct, currentSelectedProductInCart]);
 
   const onSearchChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {//слушаем изменение строки поиска и убираем оттуда нажатие '-'
+    event.preventDefault();
+    event.stopPropagation();
     const lastChar = event.target.value.slice(-1);
     if (lastChar === '-' || lastChar === '+') {
-      selectSearchInputText();
+      setTimeout(() => selectSearchInputText(event.target), 0);//FIXME: разобраться, почему так
       return;
     } else {
       setSearch(event.target.value);
     }
-  }, [setSearch, onMinusKeyDown]);
+  }, [setSearch]);
 
-  const addToCart = useCallback((id: number, parentId?: number) => {//функция добавления товара или добавки в корзину
+  const addInProducts = useCallback((id: number) => {//функция добавления товара или добавки в корзину
     return () => {
-      selectSearchInputText();
-      const currentProduct = products.find(({ id: productId }) => productId === id);
+      setCurrentSelection(id);
+      const currentProduct = sortedProducts.find(({ id: productId }) => productId === id);
       if (!currentProduct) {
+        setAlertMessage({ message: 'Не удалось ничего добавить', description: 'Не выбран продукт/добавка' })
+        setIsAlert(true);
         return;
       }
       const typeOfCurrentProduct = currentProduct.type;
+      const { article, productName, price, tax } = currentProduct;
       if (typeOfCurrentProduct === 'addition') {
-        const lastAddedProduct = cartProducts.find(({ id }) => id === (parentId || currentSelectedProductInCart));
+        const lastAddedProduct = cartProducts[currentSelectedProductInCart];
         if (lastAddedProduct) {
-          const { id, productName, price, tax } = currentProduct;
-          addAddition(lastAddedProduct.id, id, productName, price, tax);
+          addAddition(currentSelectedProductInCart, id, productName, price, tax);
         } else {
           setAlertMessage({ message: 'Не удалось выбрать добавку', description: 'Товаров нет в корзине' });
           setIsAlert(true);
         }
       } else if (typeOfCurrentProduct === 'product') {
-        const { id, article, productName, price, tax } = currentProduct;
         addProduct(id, article, productName, price, tax);
       }
     }
-  }, [sortedProducts, cartProducts, addAddition, addProduct, setIsAlert]);
+  }, [sortedProducts, cartProducts, addAddition, addProduct, setIsAlert, setCurrentSelection, currentSelectedProductInCart]);
 
-  const decrementFromCart = useCallback((id: number, parentId?: number) => {//функция уменьшения продукта или добавки
+  const decrementInProducts = useCallback((id: number) => {//функция уменьшения продукта или добавки
     return () => {
-      selectSearchInputText();
-      const currentProduct = products.find(({ id: productId }) => productId === id);
+      setCurrentSelection(id);
+      const currentProduct = sortedProducts.find(({ id: productId }) => productId === id);
       if (!currentProduct) {
+        setAlertMessage({ message: 'Не удалось ничего добавить', description: 'Нет такого товара/добавки' })
+        setIsAlert(true);
         return;
       }
       const typeOfCurrentProduct = currentProduct.type;
-      const lastAddedProduct = cartProducts.find(({ id }) => id === (parentId || currentSelectedProductInCart));
-      if (lastAddedProduct) {
-        if (typeOfCurrentProduct === 'addition') {
-          const isAdditionInCart = lastAddedProduct.additions && lastAddedProduct.additions.find(({ id: additionId }) => additionId === id);
-          if (isAdditionInCart) {
-            decrementAddition(lastAddedProduct.id, id)
-          } else {
-            setAlertMessage({ message: 'Не удалось уменьшить количество добавки', description: 'Добавки нет в корзине' });
-            setIsAlert(true);
-          }
-        } else if (typeOfCurrentProduct === 'product') {
-          decrementProduct(id);
+      const lastAddedProduct = cartProducts[currentSelectedProductInCart];
+      if (typeOfCurrentProduct === 'addition') {
+        const { id, productName, tax, price } = currentProduct;
+        if (lastAddedProduct) {
+          decrementAddition(currentSelectedProductInCart, id, productName, price, tax);
+        } else {
+          setAlertMessage({ message: 'Не удалось выбрать добавку', description: 'В корзине нет товаров' })
+          setIsAlert(true);
+        }
+      } else if (typeOfCurrentProduct === 'product') {
+        if (lastAddedProduct && lastAddedProduct.id === id) {
+          decrementProduct(currentSelectedProductInCart);
+        } else {
+          setAlertMessage({ message: 'Не удалось уменьшить количество товара', description: 'В корзине нет такого товара' })
+          setIsAlert(true);
+        }
+      }
+    }
+  }, [sortedProducts, cartProducts, decrementAddition, decrementProduct, setIsAlert, setAlertMessage, currentSelectedProductInCart]);
+
+  const incrementInCart = useCallback((idx: number, parentIdx?: number) => {//функция добавления товара или добавки в корзину
+    return () => {
+      let currentProduct;
+      if (parentIdx === undefined) {
+        currentProduct = cartProducts[idx];
+      } else {
+        const adds = cartProducts[parentIdx].additions;
+        if (adds !== undefined) {
+          currentProduct = adds[idx];
+        } else {
+          setAlertMessage({ message: 'Не удалось ничего добавить', description: 'Нет такой добавки' })
+          setIsAlert(true);
+          return;
+        }
+      }
+      if (!currentProduct) {
+        setAlertMessage({ message: 'Не удалось ничего добавить', description: 'Нет такой добавки/товара' })
+        setIsAlert(true);
+        return;
+      }
+      const { id } = currentProduct;
+      if (parentIdx !== undefined) {
+        const lastAddedProduct = cartProducts[parentIdx];
+        if (lastAddedProduct) {
+          incrementAddition(parentIdx, id);
+        } else {
+          setAlertMessage({ message: 'Не удалось выбрать добавку', description: 'Товаров нет в корзине' });
+          setIsAlert(true);
         }
       } else {
-        setAlertMessage({ message: `Не удалось уменьшить количество ${typeOfCurrentProduct === 'addition' ? 'добавки' : 'товара'}`, description: 'Товара нет в корзине' });
-        setIsAlert(true);
+        incrementProduct(idx);
       }
-    }
-  }, [cartProducts, decrementAddition, decrementProduct, setIsAlert, setAlertMessage]);
 
-  const deleteFromCart = useCallback((id: number, parentId?: number) => {//функция удаления продукта или добавки из корзины
+    }
+  }, [sortedProducts, cartProducts, addAddition, addProduct, setIsAlert, setCurrentSelection, currentSelectedProductInCart]);
+
+  const decrementInCart = useCallback((idx: number, parentIdx?: number) => {//функция уменьшения продукта или добавки
     return () => {
-      selectSearchInputText();
-      if (parentId) {
-        deleteAddition(parentId, id);
+      let currentProduct;
+      if (parentIdx === undefined) {
+        currentProduct = cartProducts[idx]
       } else {
-        deleteProduct(id);
+        const adds = cartProducts[parentIdx].additions;
+        if (adds !== undefined) {
+          currentProduct = adds[idx];
+        } else {
+          setAlertMessage({ message: 'Не удалось ничего добавить', description: 'Нет такой добавки' })
+          setIsAlert(true);
+          return;
+        }
+      }
+      if (!currentProduct) {
+        setAlertMessage({ message: 'Не удалось ничего добавить', description: 'Нет такой добавки/товара' })
+        setIsAlert(true);
+        return;
+      }
+      if (parentIdx !== undefined) {
+        const { id, productName, tax, price } = currentProduct;
+        if (parentIdx !== undefined) {
+          decrementAddition(parentIdx, id, productName, price, tax);
+        }
+      } else  {
+        decrementProduct(idx);
+      } 
+    }
+  }, [sortedProducts, cartProducts, decrementAddition, decrementProduct, setIsAlert, setAlertMessage, currentSelectedProductInCart]);
+
+  const deleteInCart = useCallback((idx: number, parentIdx?: number) => {//функция удаления продукта или добавки из корзины
+    return () => {
+      let currentProduct;
+      if (parentIdx === undefined) {
+        currentProduct = cartProducts[idx]
+      } else {
+        const adds = cartProducts[parentIdx].additions;
+        if (adds !== undefined) {
+          currentProduct = adds[idx];
+        } else {
+          setAlertMessage({ message: 'Не удалось ничего добавить', description: 'Нет такой добавки' })
+          setIsAlert(true);
+          return;
+        }
+      }
+      if (!currentProduct) {
+        setAlertMessage({ message: 'Не удалось ничего добавить', description: 'Нет такой добавки/товара' })
+        setIsAlert(true);
+        return;
+      }
+      const { id } = currentProduct;
+      if (parentIdx !== -1 && parentIdx !== undefined) {
+        deleteAddition(parentIdx, id);
+      } else {
+        deleteProduct(idx);
       }
     }
-  }, [deleteAddition, deleteProduct]);
+  }, [deleteAddition, deleteProduct, cartProducts, setCurrentSelection]);
 
   const onBackButtonClick = useCallback(() => {//функция на нажатие кнопки назад
     history.push(`${ROOT_URL}/menu`)
   }, [history]);
 
+  const TableRow = useCallback(function TableRow(props: any) {//строка таблицы с товарами для выбора. Нужна для установки выбранным товара
+    let id: number = 0, parentId: number = 0, idx = -1, parentIdx: number | undefined;
+    const isSelected = props.children.find(({ props: { record: { selected } } }: any) => selected);
+    const isHeader = props.children.find(({ props: { record: { header } } }: any) => header);
+    const isInCart = props.children.find(({ props: { record: { cart } } }: any) => cart);
+    props.children.forEach(({ props: { record: { id: recordId, parentId: recordParentId, idx: recordIdx, parentIdx: recordParentIdx } } }: any) => {
+      id = recordId;
+      parentId = recordParentId
+      idx = recordIdx;
+      parentIdx = recordParentIdx;
+    });
+    return (
+      <tr /*onClick={isInCart ? () => { setProductInCart(idx); setWasImplicitySetted(true); } : () => null}*/ onDoubleClick={isInCart ? incrementInCart(idx, parentIdx) : addInProducts(id)} className={`${props.className} ${isHeader ? 'cart__table-header' : ''} ${isSelected ? "cart__products-table_selected" : ""}`}>
+        {isHeader ? props.children[0].props.record.header : props.children}
+      </tr>
+    )
+  }, [/*setProductInCart, setWasImplicitySetted*/incrementInCart, addInProducts]);
+
+  const customTableComponents = useMemo(() => ({ body: { row: TableRow } }), [TableRow]);//передается в prop components компонента Table чтобы использовать свою строку вместо дефолтной
+
   //мемоизируем кнопки
-  const DecrementFromCartIcon = useCallback(({ id, parentId }: ActionColumn) => <Icon style={IconStyle} type="minus-square" onClick={decrementFromCart(id, parentId)} />, [decrementFromCart]);
-  const IncrementToCartIcon = useCallback(({ id, parentId }: ActionColumn) => <Icon style={IconStyle} type="plus-square" onClick={addToCart(id, parentId)} />, [addToCart]);
-  const DeleteFromCartIcon = useCallback(({ id, parentId }: ActionColumn) => <Icon style={IconStyle} type="close-square" onClick={deleteFromCart(id, parentId)} />, [deleteFromCart]);
+  const DecrementInCartIcon = useCallback(({ parentIdx, idx }: ActionColumn) => <Icon style={IconStyle} type="minus-square" onClick={decrementInCart(idx, parentIdx)} />, [decrementInCart]);
+  const IncrementInCartIcon = useCallback(({ parentIdx, idx }: ActionColumn) => <Icon style={IconStyle} type="plus-square" onClick={incrementInCart(idx, parentIdx)} />, [incrementInCart]);
+  const DeleteInCartIcon = useCallback(({ parentIdx, idx }: ActionColumn) => <Icon style={IconStyle} type="close-square" onClick={deleteInCart(idx, parentIdx)} />, [deleteInCart]);
+  const DecrementInProductsIcon = useCallback(({ id }: ActionColumn) => <Icon style={IconStyle} type="minus-square" onClick={decrementInProducts(id)} />, [decrementInCart]);
+  const AddInProductsIcon = useCallback(({ id }: ActionColumn) => <Icon style={IconStyle} type="plus-square" onClick={addInProducts(id)} />, [incrementInCart]);
+
   const onFreeDeliveryClick = useCallback(() => addDataToFormData('deliveryCost', '0'), [addDataToFormData]);
 
   const onAlertClose = useCallback(() => setIsAlert(false), [setIsAlert]);//функция на закрытие предупреждения по крестику
@@ -311,10 +412,12 @@ function Cart({ cartProducts, addDataToFormData, formDataState: { discount = 0 }
     let cartProductsAdditionsSum = 0;
     cartProducts.forEach(product => {
       cartProductsProductsSum += product.price * product.quantity;
+      let additionsSum = 0;
       if (Array.isArray(product.additions)) {
         product.additions.forEach(child => {
-          cartProductsAdditionsSum += child.price * child.quantity;
+          additionsSum += child.price * child.quantity;
         });
+        cartProductsAdditionsSum += additionsSum >= 0 ? additionsSum : 0;
       }
     })
     return {
@@ -356,7 +459,7 @@ function Cart({ cartProducts, addDataToFormData, formDataState: { discount = 0 }
     },
     {
       title: language.productName,
-      dataIndex: 'productName',
+      dataIndex: 'viewName',
       width: '60%',
       key: 'productName',
       render: ProductNameRenderer
@@ -368,17 +471,17 @@ function Cart({ cartProducts, addDataToFormData, formDataState: { discount = 0 }
     },
     {
       key: 'deleteFromCart',
-      render: DeleteFromCartIcon
+      render: DeleteInCartIcon
     },
     {
       key: 'decrementFromCart',
-      render: DecrementFromCartIcon
+      render: DecrementInCartIcon
     },
     {
       key: 'incrementToCart',
-      render: IncrementToCartIcon
+      render: IncrementInCartIcon
     }
-  ], [language, DeleteFromCartIcon, DecrementFromCartIcon, IncrementToCartIcon]);
+  ], [language, DeleteInCartIcon, DecrementInCartIcon, IncrementInCartIcon]);
 
   const columns2 = useMemo(() => [
     {
@@ -398,39 +501,37 @@ function Cart({ cartProducts, addDataToFormData, formDataState: { discount = 0 }
     },
     {
       key: 'decrementFromCart',
-      render: DecrementFromCartIcon
+      render: DecrementInProductsIcon
 
     },
     {
       key: 'incrementToCart',
-      render: IncrementToCartIcon
+      render: AddInProductsIcon
     }
-  ], [DecrementFromCartIcon, IncrementToCartIcon, language]);
+  ], [DecrementInCartIcon, AddInProductsIcon, language]);
 
-  const cartProductsWithKeys: TableCart[] = useMemo(() => {//проставляем ключи продуктам с бека
-    return cartProducts.map((item) => {
-      const additions = (Array.isArray(item.additions)) ? item.additions.map(child => ({
+  const cartProductsWithKeys = useMemo(() => {//проставляем ключи продуктам с бека
+    return cartProducts.map((item, idx) => {
+      const additions = (Array.isArray(item.additions)) ? item.additions.map((child, childIdx) => Object.assign({}, {
         ...child,
-        viewName: `+${child.quantity} ${child.productName}`,
-        key: item.id + ':' + child.id,
+        viewName: `${child.quantity > 0 ? '+' : ''}${child.quantity} ${child.productName}`,
+        key: item.id + ':' + child.id + idx,
+        quantity: undefined,
+        parentIdx: idx,
         parentId: item.id,
+        idx: childIdx,
         cart: true
       })) : undefined;
-      return ({
+      return (Object.assign({}, {
         ...item,
-        key: (item.article && item.article.toString()) || '0',
+        key: (item.id && (item.id.toString() + idx.toString())) || '0',
+        viewName: item.productName,
         children: additions,
+        idx,
         cart: true
-      })
+      }))
     });
   }, [cartProducts]);
-
-  const cartProductsExpandedRowKeys = useMemo(() => cartProducts.map(({ article }) => {
-    if (article) {
-      return article.toString();
-    }
-    return '0';
-  }), [cartProducts]);
 
   const productsExpandedRowKeys = useMemo(() => sortedProducts.map(({ article }) => {
     if (article) {
@@ -440,8 +541,21 @@ function Cart({ cartProducts, addDataToFormData, formDataState: { discount = 0 }
   }), [sortedProducts]);
 
   useEffect(() => {//проверяем не вышли ли мы за пределы области видимости. Если вышли - скроллимся
+    const container = document.querySelector('.cart__order .ant-table-body');
+    const curItem = document.querySelector('.cart__order .ant-table-tbody tr:last-child');
+    if (container && curItem) {
+      const containerRect = container.getBoundingClientRect();
+      const curItemRect = curItem.getBoundingClientRect();
+      if (containerRect.bottom <= curItemRect.bottom || containerRect.top >= curItemRect.top) {
+        const timeoutId = setTimeout(scrollToLastItemOfCart, 0);
+        return () => clearTimeout(timeoutId);
+      }
+    }
+  });
+
+  useEffect(() => {//проверяем не вышли ли мы за пределы области видимости. Если вышли - скроллимся
     const container = document.querySelector('.cart__products-table .ant-table-body');
-    const curItem = document.querySelector('.didolf');
+    const curItem = document.querySelector('.cart__products-table_selected');
     if (container && curItem) {
       const containerRect = container.getBoundingClientRect();
       const curItemRect = curItem.getBoundingClientRect();
@@ -451,6 +565,13 @@ function Cart({ cartProducts, addDataToFormData, formDataState: { discount = 0 }
       }
     }
   }, [currentSelection]);
+
+  const cartProductsExpandedRowKeys = useMemo(() => cartProductsWithKeys.map(({ key }) => {
+    if (key) {
+      return key.toString();
+    }
+    return '0';
+  }), [cartProductsWithKeys]);
 
   return (
     <div className="cart">

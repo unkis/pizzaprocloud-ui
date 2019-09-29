@@ -15,6 +15,7 @@ export interface SearchItem {
 };
 
 export interface TableProduct extends SearchItem {
+  key: string;
   article: string;
   selected?: boolean;
 };
@@ -22,7 +23,7 @@ export interface TableProduct extends SearchItem {
 export interface TableCart extends CartProduct {
   key: string;
   cart: boolean;
-  children?: (CartAddition & { viewName: string, key: string, parentId: number, cart: boolean })[] | undefined
+  children?: (CartAddition & { viewName: string, key: string, parentId: number, parentIdx: number, cart: boolean })[] | undefined
 }
 
 export interface CartOwnProps { };
@@ -33,12 +34,12 @@ export interface CartProps extends CartOwnProps, CartStateProps, CartDispatchPro
 export interface CartDispatchProps {
   addProduct: (id: number, article: string, productName: string, price: number, mwst: '7' | '19') => void;
   addAddition: (productArticle: number, additionArticle: number, additionName: string, additionPrice: number, additionMwst: '7' | '19') => void;
-  deleteProduct: (productArticle: number) => void;
+  deleteProduct: (productIdx: number) => void;
   deleteAddition: (productArticle: number, additionArticle: number) => void;
   incrementProduct: (productArticle: number) => void;
   decrementProduct: (productArticle: number) => void;
   incrementAddition: (productArticle: number, additionArticle: number) => void;
-  decrementAddition: (productArticle: number, additionArticle: number) => void;
+  decrementAddition: (productId: number, additionId: number, productName: string, price: number, tax: '7' | '19') => void;
   addDataToFormData: (id: string, value: string) => void;
 };
 
@@ -50,5 +51,6 @@ export interface CartStateProps {
 
 export interface ActionColumn {
   id: number;
-  parentId?: number;
+  parentIdx?: number;
+  idx: number;
 };

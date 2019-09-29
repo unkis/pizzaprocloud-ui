@@ -37,21 +37,21 @@ export const clearAllFields = () => ({ type: formDataActions.CLEAR_ALL_FIELDS })
 export const addProductToCart = (id: number, article: string, productName: string, price: number, tax: '7' | '19') => 
   ({ type: cartProductsActions.ADD_PRODUCT_TO_CART, id, article, productName, price, tax });
 
-export const addAdditionToProductInCart = (productId: number, additionId: number, additionName: string, additionPrice: number, additionTax: '7' | '19') => 
-  ({ type: cartProductsActions.ADD_ADDITION_TO_PRODUCT_IN_CART, productId, additionId, additionName, additionPrice, additionTax });
+export const addAdditionToProductInCart = (productIdx: number, additionId: number, additionName: string, additionPrice: number, additionTax: '7' | '19') => 
+  ({ type: cartProductsActions.ADD_ADDITION_TO_PRODUCT_IN_CART, productIdx, additionId, additionName, additionPrice, additionTax });
 
-export const deleteProductFromCart = (productId: number) => 
-  ({ type: cartProductsActions.DELETE_PRODUCT_FROM_CART, productId });
+export const deleteProductFromCart = (productIdx: number) => 
+  ({ type: cartProductsActions.DELETE_PRODUCT_FROM_CART, productIdx });
 
-export const deleteAdditionOfProductFromCart = (productId: number, additionId: number) => 
-  ({ type: cartProductsActions.DELETE_ADDITION_OF_PRODUCT_FROM_CART, productId, additionId });
+export const deleteAdditionOfProductFromCart = (productIdx: number, additionId: number) => 
+  ({ type: cartProductsActions.DELETE_ADDITION_OF_PRODUCT_FROM_CART, productIdx, additionId });
 
-export const incrementQuantityOfProductInCart = (productId: number) => ({ type: cartProductsActions.INCREMENT_QUANTITY_OF_PRODUCT_IN_CART, productId });
+export const incrementQuantityOfProductInCart = (productIdx: number) => ({ type: cartProductsActions.INCREMENT_QUANTITY_OF_PRODUCT_IN_CART, productIdx });
 
-export const decrementQuantityOfProductInCart = (productId: number) => ({ type: cartProductsActions.DECREMENT_QUANTITY_OF_PRODUCT_IN_CART, productId });
+export const decrementQuantityOfProductInCart = (productIdx: number) => ({ type: cartProductsActions.DECREMENT_QUANTITY_OF_PRODUCT_IN_CART, productIdx });
 
-export const incrementQuantityOfAdditionOfProduct = (productId: number, additionId: number) => 
-  ({ type: cartProductsActions.INCREMENT_QUANTITY_OF_ADDITION_OF_PRODUCT, productId, additionId });
+export const incrementQuantityOfAdditionOfProduct = (productIdx: number, additionId: number) => 
+  ({ type: cartProductsActions.INCREMENT_QUANTITY_OF_ADDITION_OF_PRODUCT, productIdx, additionId });
 
-export const decrementQuantityOfAdditionOfProduct =  (productId: number, additionId: number) => 
-  ({ type: cartProductsActions.DECREMENT_QUANTITY_OF_ADDITION_OF_PRODUCT, productId, additionId });
+export const decrementQuantityOfAdditionOfProduct =  (productIdx: number, additionId: number, productName: string, price: number, tax: '7' | '19') => 
+  ({ type: cartProductsActions.DECREMENT_QUANTITY_OF_ADDITION_OF_PRODUCT, productIdx, additionId, productName, price, tax });

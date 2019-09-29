@@ -30,7 +30,7 @@ const App = ({ userRole, history }: AppProps) => {
     if (!userRole) {
       history.push(`${ROOT_URL}/`);
     }
-  }, [userRole]);
+  }, [userRole, history]);
 
   const handleCollapse = useCallback((collapsed: boolean) => {
     setCollapsed(collapsed);

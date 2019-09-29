@@ -62,6 +62,7 @@ export interface CartProductsAction extends Action<cartProductsActions> {
   price: number;
   tax: '7' | '19';
   productId: number;
+  productIdx: number;
   additionId: number;
   productArticle: string; 
   additionName: string;

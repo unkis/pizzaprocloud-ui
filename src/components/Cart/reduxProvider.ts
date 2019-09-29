@@ -29,26 +29,26 @@ export const mapDispatchToProps: MapDispatchToPropsFunction<CartDispatchProps, C
     addProduct(id: number, article: string, productName: string, price: number, tax: '7' | '19') {
       dispatch(addProductToCart(id, article, productName, price, tax));
     },
-    addAddition(productId: number, additionId: number, additionName: string, additionPrice: number, additionTax: '7' | '19') {
-      dispatch(addAdditionToProductInCart(productId, additionId, additionName, additionPrice, additionTax));
+    addAddition(productIdx: number, additionId: number, additionName: string, additionPrice: number, additionTax: '7' | '19') {
+      dispatch(addAdditionToProductInCart(productIdx, additionId, additionName, additionPrice, additionTax));
     },
-    deleteProduct(productId: number) {
-      dispatch(deleteProductFromCart(productId));
+    deleteProduct(productIdx: number) {
+      dispatch(deleteProductFromCart(productIdx));
     },
-    deleteAddition(productId: number, additionId: number) {
-      dispatch(deleteAdditionOfProductFromCart(productId, additionId));
+    deleteAddition(productIdx: number, additionId: number) {
+      dispatch(deleteAdditionOfProductFromCart(productIdx, additionId));
     },
-    incrementProduct(productId: number) {
-      dispatch(incrementQuantityOfProductInCart(productId));
+    incrementProduct(productIdx: number) {
+      dispatch(incrementQuantityOfProductInCart(productIdx));
     },
-    decrementProduct(productId: number) {
-      dispatch(decrementQuantityOfProductInCart(productId));
+    decrementProduct(productIdx: number) {
+      dispatch(decrementQuantityOfProductInCart(productIdx));
     },
-    incrementAddition(productId: number, additionId: number) {
-      dispatch(incrementQuantityOfAdditionOfProduct(productId, additionId));
+    incrementAddition(productIdx: number, additionId: number) {
+      dispatch(incrementQuantityOfAdditionOfProduct(productIdx, additionId));
     },
-    decrementAddition(productId: number, additionId: number) {
-      dispatch(decrementQuantityOfAdditionOfProduct(productId, additionId));
+    decrementAddition(productIdx: number, additionId: number, productName: string, price: number, tax: '7' | '19') {
+      dispatch(decrementQuantityOfAdditionOfProduct(productIdx, additionId, productName, price, tax));
     },
     addDataToFormData(id: string, value: string) {
       dispatch(addToFormData(id, value))
