@@ -1,0 +1,6 @@
+node_modules
+*.test.*
+scripts
+next-env.d.ts
+build
+public
