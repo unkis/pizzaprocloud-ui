@@ -2,7 +2,7 @@
   "name": "frontend2",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://didolf.github.io/pizzaprocloud-ui",
+  "homepage": "https://pizzaprocloud.now.sh",
   "dependencies": {
     "@types/enzyme": "^3.10.3",
     "@types/jest": "24.0.18",
