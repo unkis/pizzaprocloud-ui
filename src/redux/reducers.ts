@@ -89,6 +89,19 @@ export const cartProducts = (state: CartProductsState = initialCartProductsState
       }
     }
 
+    case cartProductsActions.ADD_MANY_PRODUCT_TO_CART: {
+      const { id, article, productName, price, tax, quantity } = action;
+      if (quantity <= 0 || isNaN(quantity)) {
+        return state;
+      }
+      // if (state[state.length - 1] && state[state.length - 1].id === id) {
+        // const prevQuantity = state[state.length - 1].quantity;
+        // return [...state.slice(0, -1), { ...state[state.length - 1], quantity: prevQuantity + quantity }]
+      // } else {
+        return [...state, { id, article, productName, price, tax, quantity }]
+      // }
+    }
+
     case cartProductsActions.ADD_ADDITION_TO_PRODUCT_IN_CART: {
       const { productIdx, additionId, additionName, additionPrice, additionTax } = action;
       const productIndex = productIdx;
@@ -153,6 +166,82 @@ export const cartProducts = (state: CartProductsState = initialCartProductsState
             {
               ...state[productIndex], additions: [
                 { id: additionId, productName: additionName, price: additionPrice, tax: additionTax, quantity: 1 },
+              ]
+            },
+            ...state.slice(productIndex + 1)
+          ];
+        }
+      }
+      return state;
+    }
+
+    case cartProductsActions.ADD_MANY_ADDITION_TO_PRODUCT_IN_CART: {
+      const { productIdx, additionId, additionName, additionPrice, additionTax, quantity } = action;
+      if (isNaN(quantity)) {
+        return state;
+      }
+      const productIndex = productIdx;
+      if (productIndex !== -1) {
+        const oldAdditions = state[productIndex].additions;
+        if (state[productIndex] && Array.isArray(oldAdditions)) {
+          const additionArticleIndex = oldAdditions.findIndex(({ id }) => id === additionId);
+          if (additionArticleIndex !== -1 && Array.isArray(state[productIndex].additions)) {
+            const prevQuantity = oldAdditions[additionArticleIndex].quantity;
+            if (prevQuantity !== -1) {
+              return [
+                ...state.slice(0, productIndex),
+                {
+                  ...state[productIndex], additions: [
+                    ...oldAdditions.slice(0, additionArticleIndex),
+                    { ...oldAdditions[additionArticleIndex], quantity: prevQuantity + quantity },
+                    ...oldAdditions.slice(additionArticleIndex + 1)
+                  ]
+                },
+                ...state.slice(productIndex + 1)
+              ];
+            } else {
+              return [
+                ...state.slice(0, productIndex),
+                {
+                  ...state[productIndex], additions: [
+                    ...oldAdditions.slice(0, additionArticleIndex),
+                    ...oldAdditions.slice(additionArticleIndex + 1)
+                  ]
+                },
+                ...state.slice(productIndex + 1)
+              ];
+            }
+          } else {
+            const productAdditions = state[productIndex].additions;
+            if (productAdditions !== undefined) {
+              return [
+                ...state.slice(0, productIndex),
+                {
+                  ...state[productIndex], additions: [
+                    ...productAdditions,
+                    { id: additionId, productName: additionName, price: additionPrice, tax: additionTax, quantity }
+                  ]
+                },
+                ...state.slice(productIndex + 1)
+              ];
+            } else {
+              return [
+                ...state.slice(0, productIndex),
+                {
+                  ...state[productIndex], additions: [
+                    { id: additionId, productName: additionName, price: additionPrice, tax: additionTax, quantity },
+                  ]
+                },
+                ...state.slice(productIndex + 1)
+              ];
+            }
+          }
+        } else {
+          return [
+            ...state.slice(0, productIndex),
+            {
+              ...state[productIndex], additions: [
+                { id: additionId, productName: additionName, price: additionPrice, tax: additionTax, quantity },
               ]
             },
             ...state.slice(productIndex + 1)

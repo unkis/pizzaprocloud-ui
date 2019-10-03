@@ -35,9 +35,10 @@
 }
 
 .cart__order {
-  height: calc(100vh - 240px - 20px);
+  height: calc(100vh - 160px - 20px);
   margin-bottom: 20px;
   overflow: hidden;
+  margin-top: 10px;
 }
 
 .cart__table-header {
@@ -49,7 +50,7 @@
 }
 
 .sum-form {
-  height: 240px;
+  height: 160px;
 }
 
 .cart__buttons {
@@ -99,7 +100,6 @@
 
 .addition__quantity {
   font-weight: bold;
-  /* font-size: 16px; */
 }
 
 .cart__order-table .ant-table-thead th,
@@ -181,11 +181,36 @@
 }
 
 .cart__order-table .ant-table-thead tr,
-.cart__products-table .ant-table-thead tr {
-  display: flex;
-}
-
+.cart__products-table .ant-table-thead tr,
 .cart__order-table .ant-table-tbody tr,
 .cart__products-table .ant-table-tbody tr {
   display: flex;
+  width: calc((100vw - var(--left-menu-width)) * 0.475 - 11px);
+}
+
+.ant-form-item[class] {
+  margin-bottom: 0;
+}
+
+.cart__sum label[class] {
+  font-size: 12px;
+}
+
+.cart__sum .ant-input[class] {
+  height: 25px;
+}
+
+.cart__sum .ant-row {
+  height: 30px;
+}
+
+.ChooseQuantity {
+  height: 160px;
+  width: 300px;
+}
+.BodyOfChooseQuantity {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-between;
+  height: 100px;
 }

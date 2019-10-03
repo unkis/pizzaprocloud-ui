@@ -1,6 +1,8 @@
 import {
   addProductToCart,
+  addManyProductToCart,
   addAdditionToProductInCart,
+  addManyAdditionToProductInCart,
   incrementQuantityOfProductInCart,
   decrementQuantityOfProductInCart,
   incrementQuantityOfAdditionOfProduct,
@@ -29,8 +31,14 @@ export const mapDispatchToProps: MapDispatchToPropsFunction<CartDispatchProps, C
     addProduct(id: number, article: string, productName: string, price: number, tax: '7' | '19') {
       dispatch(addProductToCart(id, article, productName, price, tax));
     },
+    addManyProduct(id: number, article: string, productName: string, price: number, tax: '7' | '19', quantity: number) {
+      dispatch(addManyProductToCart(id, article, productName, price, tax, quantity));
+    },
     addAddition(productIdx: number, additionId: number, additionName: string, additionPrice: number, additionTax: '7' | '19') {
       dispatch(addAdditionToProductInCart(productIdx, additionId, additionName, additionPrice, additionTax));
+    },
+    addManyAddition(productIdx: number, additionId: number, additionName: string, additionPrice: number, additionTax: '7' | '19', quantity: number) {
+      dispatch(addManyAdditionToProductInCart(productIdx, additionId, additionName, additionPrice, additionTax, quantity));
     },
     deleteProduct(productIdx: number) {
       dispatch(deleteProductFromCart(productIdx));

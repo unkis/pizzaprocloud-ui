@@ -33,7 +33,9 @@ export interface CartProps extends CartOwnProps, CartStateProps, CartDispatchPro
 
 export interface CartDispatchProps {
   addProduct: (id: number, article: string, productName: string, price: number, mwst: '7' | '19') => void;
+  addManyProduct: (id: number, article: string, productName: string, price: number, mwst: '7' | '19', quantity: number) => void;
   addAddition: (productArticle: number, additionArticle: number, additionName: string, additionPrice: number, additionMwst: '7' | '19') => void;
+  addManyAddition: (productArticle: number, additionArticle: number, additionName: string, additionPrice: number, additionMwst: '7' | '19', quantity: number) => void;
   deleteProduct: (productIdx: number) => void;
   deleteAddition: (productArticle: number, additionArticle: number) => void;
   incrementProduct: (productArticle: number) => void;
