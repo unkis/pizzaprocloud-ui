@@ -93,41 +93,52 @@ export const cartProducts = (
 ) => {
   switch (action.type) {
     case cartProductsActions.ADD_PRODUCT_TO_CART: {
-      const { id, article, productName, price, tax } = action
+      const {
+        id, article, productName, price, tax,
+      } = action;
 
       if (state[state.length - 1] && state[state.length - 1].id === id) {
-        const prevQuantity = state[state.length - 1].quantity
-        return [...state.slice(0, -1), { ...state[state.length - 1], quantity: prevQuantity + 1 }]
-      } else {
-        return [...state, { id, article, productName, price, tax, quantity: 1 }]
+        const prevQuantity = state[state.length - 1].quantity;
+        return [...state.slice(0, -1), { ...state[state.length - 1], quantity: prevQuantity + 1 }];
       }
+      return [...state, {
+        id, article, productName, price, tax, quantity: 1,
+      }];
     }
 
     case cartProductsActions.ADD_MANY_PRODUCT_TO_CART: {
-      const { id, article, productName, price, tax, quantity } = action
+      const {
+        id, article, productName, price, tax, quantity,
+      } = action;
       if (quantity <= 0 || isNaN(quantity)) {
         if (!isNaN(quantity) && state[state.length - 1] && state[state.length - 1].id === id) {
           const prevQuantity = state[state.length - 1].quantity;
           if (prevQuantity === -quantity) {
             return [...state.slice(0, -1)];
           }
-          return [...state.slice(0, -1), { ...state[state.length - 1], quantity: prevQuantity + quantity }]
-        } else {
-          return state
+          return [
+            ...state.slice(0, -1),
+            { ...state[state.length - 1], quantity: prevQuantity + quantity },
+          ];
         }
+        return state;
       }
-      return [...state, { id, article, productName, price, tax, quantity }]
+      return [...state, {
+        id, article, productName, price, tax, quantity,
+      }];
     }
 
     case cartProductsActions.ADD_ADDITION_TO_PRODUCT_IN_CART: {
-      const { productIdx, additionId, additionName, additionPrice, additionTax } = action
-      const productIndex = productIdx
+      const {
+        productIdx, additionId, additionName, additionPrice, additionTax,
+      } = action;
+      const productIndex = productIdx;
       if (productIndex !== -1) {
-        const oldAdditions = state[productIndex].additions
+        const oldAdditions = state[productIndex].additions;
         if (state[productIndex] && Array.isArray(oldAdditions)) {
-          const additionArticleIndex = oldAdditions.findIndex(({ id }) => id === additionId)
+          const additionArticleIndex = oldAdditions.findIndex(({ id }) => id === additionId);
           if (additionArticleIndex !== -1 && Array.isArray(state[productIndex].additions)) {
-            const prevQiantity = oldAdditions[additionArticleIndex].quantity
+            const prevQiantity = oldAdditions[additionArticleIndex].quantity;
             if (prevQiantity !== -1) {
               return [
                 ...state.slice(0, productIndex),
@@ -140,22 +151,21 @@ export const cartProducts = (
                   ],
                 },
                 ...state.slice(productIndex + 1),
-              ]
-            } else {
-              return [
-                ...state.slice(0, productIndex),
-                {
-                  ...state[productIndex],
-                  additions: [
-                    ...oldAdditions.slice(0, additionArticleIndex),
-                    ...oldAdditions.slice(additionArticleIndex + 1),
-                  ],
-                },
-                ...state.slice(productIndex + 1),
-              ]
+              ];
             }
+            return [
+              ...state.slice(0, productIndex),
+              {
+                ...state[productIndex],
+                additions: [
+                  ...oldAdditions.slice(0, additionArticleIndex),
+                  ...oldAdditions.slice(additionArticleIndex + 1),
+                ],
+              },
+              ...state.slice(productIndex + 1),
+            ];
           }
-          const productAdditions = state[productIndex].additions
+          const productAdditions = state[productIndex].additions;
           if (productAdditions !== undefined) {
             return [
               ...state.slice(0, productIndex),
@@ -173,7 +183,7 @@ export const cartProducts = (
                 ],
               },
               ...state.slice(productIndex + 1),
-            ]
+            ];
           }
           return [
             ...state.slice(0, productIndex),
@@ -190,43 +200,42 @@ export const cartProducts = (
               ],
             },
             ...state.slice(productIndex + 1),
-          ]
-
-
-        } else {
-          return [
-            ...state.slice(0, productIndex),
-            {
-              ...state[productIndex],
-              additions: [
-                {
-                  id: additionId,
-                  productName: additionName,
-                  price: additionPrice,
-                  tax: additionTax,
-                  quantity: 1,
-                },
-              ],
-            },
-            ...state.slice(productIndex + 1),
-          ]
+          ];
         }
+        return [
+          ...state.slice(0, productIndex),
+          {
+            ...state[productIndex],
+            additions: [
+              {
+                id: additionId,
+                productName: additionName,
+                price: additionPrice,
+                tax: additionTax,
+                quantity: 1,
+              },
+            ],
+          },
+          ...state.slice(productIndex + 1),
+        ];
       }
-      return state
+      return state;
     }
 
     case cartProductsActions.ADD_MANY_ADDITION_TO_PRODUCT_IN_CART: {
-      const { productIdx, additionId, additionName, additionPrice, additionTax, quantity } = action
+      const {
+        productIdx, additionId, additionName, additionPrice, additionTax, quantity,
+      } = action;
       if (isNaN(quantity)) {
-        return state
+        return state;
       }
-      const productIndex = productIdx
+      const productIndex = productIdx;
       if (productIndex !== -1) {
-        const oldAdditions = state[productIndex].additions
+        const oldAdditions = state[productIndex].additions;
         if (state[productIndex] && Array.isArray(oldAdditions)) {
-          const additionArticleIndex = oldAdditions.findIndex(({ id }) => id === additionId)
+          const additionArticleIndex = oldAdditions.findIndex(({ id }) => id === additionId);
           if (additionArticleIndex !== -1 && Array.isArray(state[productIndex].additions)) {
-            const prevQuantity = oldAdditions[additionArticleIndex].quantity
+            const prevQuantity = oldAdditions[additionArticleIndex].quantity;
             if (prevQuantity !== -1) {
               if (prevQuantity === -quantity) {
                 return [
@@ -239,7 +248,7 @@ export const cartProducts = (
                     ],
                   },
                   ...state.slice(productIndex + 1),
-                ]
+                ];
               }
               return [
                 ...state.slice(0, productIndex),
@@ -252,7 +261,7 @@ export const cartProducts = (
                   ],
                 },
                 ...state.slice(productIndex + 1),
-              ]
+              ];
             }
             return [
               ...state.slice(0, productIndex),
@@ -264,9 +273,9 @@ export const cartProducts = (
                 ],
               },
               ...state.slice(productIndex + 1),
-            ]
+            ];
           }
-          const productAdditions = state[productIndex].additions
+          const productAdditions = state[productIndex].additions;
           if (productAdditions !== undefined) {
             return [
               ...state.slice(0, productIndex),
@@ -284,7 +293,7 @@ export const cartProducts = (
                 ],
               },
               ...state.slice(productIndex + 1),
-            ]
+            ];
           }
           return [
             ...state.slice(0, productIndex),
@@ -301,9 +310,7 @@ export const cartProducts = (
               ],
             },
             ...state.slice(productIndex + 1),
-          ]
-
-
+          ];
         }
         return [
           ...state.slice(0, productIndex),
@@ -320,75 +327,73 @@ export const cartProducts = (
             ],
           },
           ...state.slice(productIndex + 1),
-        ]
-
+        ];
       }
-      return state
+      return state;
     }
     /* FIXME TESTS */
     case cartProductsActions.DELETE_PRODUCT_FROM_CART: {
-      const { productIdx } = action
-      return state.filter((_, idx) => idx !== productIdx)
+      const { productIdx } = action;
+      return state.filter((_, idx) => idx !== productIdx);
     }
 
     case cartProductsActions.DELETE_ADDITION_OF_PRODUCT_FROM_CART: {
-      const { productIdx, additionId } = action
-      const productIndex = productIdx
-      console.log(productIdx)
+      const { productIdx, additionId } = action;
+      const productIndex = productIdx;
+      console.log(productIdx);
       if (productIndex !== -1) {
-        const additions = state[productIndex].additions
+        const { additions } = state[productIndex];
         if (additions) {
           return [
             ...state.slice(0, productIndex),
             { ...state[productIndex], additions: additions.filter(({ id }) => id !== additionId) },
             ...state.slice(productIndex + 1),
-          ]
+          ];
         }
       }
-      return state
+      return state;
     }
     /* END FIXME */
     case cartProductsActions.INCREMENT_QUANTITY_OF_PRODUCT_IN_CART: {
-      const { productIdx } = action
-      const productIndex = productIdx
+      const { productIdx } = action;
+      const productIndex = productIdx;
       if (productIndex !== -1) {
         return [
           ...state.slice(0, productIndex),
           { ...state[productIndex], quantity: state[productIndex].quantity + 1 },
           ...state.slice(productIndex + 1),
-        ]
+        ];
       }
-      return state
+      return state;
     }
 
     case cartProductsActions.DECREMENT_QUANTITY_OF_PRODUCT_IN_CART: {
-      const { productIdx } = action
-      const productIndex = productIdx
+      const { productIdx } = action;
+      const productIndex = productIdx;
       if (productIndex !== -1) {
-        const currentQuantity = state[productIndex].quantity
+        const currentQuantity = state[productIndex].quantity;
         if (currentQuantity > 1) {
           return [
             ...state.slice(0, productIndex),
             { ...state[productIndex], quantity: currentQuantity - 1 },
             ...state.slice(productIndex + 1),
-          ]
+          ];
         }
-        return [...state.slice(0, productIndex), ...state.slice(productIndex + 1)]
-
+        return [...state.slice(0, productIndex), ...state.slice(productIndex + 1)];
       }
-      return state
+      return state;
     }
 
     case cartProductsActions.INCREMENT_QUANTITY_OF_ADDITION_OF_PRODUCT: {
-      const { productIdx, additionId } = action
-      const productIndex = productIdx
+      const { productIdx, additionId } = action;
+      const productIndex = productIdx;
       if (productIndex !== -1) {
-        const additions = state[productIndex].additions
+        const { additions } = state[productIndex];
         if (additions) {
-          const additionIndex = additions.findIndex(({ id }) => id === additionId)
+          const additionIndex = additions.findIndex(({ id }) => id === additionId);
           if (additionIndex !== -1) {
-            const addition = additions[additionIndex]
-            const oldQuantity = addition.quantity
+            const addition = additions[additionIndex];
+            const oldQuantity = addition.quantity;
             if (oldQuantity !== -1) {
               return [
                 ...state.slice(0, productIndex),
@@ -401,7 +406,7 @@ export const cartProducts = (
                   ],
                 },
                 ...state.slice(productIndex + 1),
-              ]
+              ];
             }
             return [
               ...state.slice(0, productIndex),
@@ -413,23 +418,24 @@ export const cartProducts = (
                 ],
               },
               ...state.slice(productIndex + 1),
-            ]
-
+            ];
           }
         }
       }
-      return state
+      return state;
     }
 
     case cartProductsActions.DECREMENT_QUANTITY_OF_ADDITION_OF_PRODUCT: {
-      const { productIdx, additionId, productName, price, tax } = action
-      const productIndex = productIdx
+      const {
+        productIdx, additionId, productName, price, tax,
+      } = action;
+      const productIndex = productIdx;
       if (productIndex !== -1) {
-        const additions = state[productIndex].additions
+        const { additions } = state[productIndex];
         if (additions) {
-          const additionIndex = additions.findIndex(({ id }) => id === additionId)
+          const additionIndex = additions.findIndex(({ id }) => id === additionId);
           if (additionIndex !== -1) {
-            const addition = additions[additionIndex]
+            const addition = additions[additionIndex];
             if (addition.quantity !== 1) {
               return [
                 ...state.slice(0, productIndex),
@@ -442,7 +448,7 @@ export const cartProducts = (
                   ],
                 },
                 ...state.slice(productIndex + 1),
-              ]
+              ];
             }
             return [
               ...state.slice(0, productIndex),
@@ -454,25 +460,22 @@ export const cartProducts = (
                 ],
               },
               ...state.slice(productIndex + 1),
-            ]
-
+            ];
           }
           return [
             ...state.slice(0, productIndex),
             {
               ...state[productIndex],
-              additions: [
-                ...additions,
-                { id: additionId, productName, price, tax, quantity: -1 },
-              ],
+              additions: [...additions, {
+                id: additionId, productName, price, tax, quantity: -1,
+              }],
             },
-          ]
-
+          ];
         }
       }
-      return state
+      return state;
     }
     default:
-      return state
+      return state;
   }
-}
+};

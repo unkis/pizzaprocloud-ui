@@ -120,7 +120,8 @@ function Cart({
     const unsortedProducts = products.sort((a, b) => {
       if (a.article && b.article) {
         return naturalSort(a, b);
-      } if (!a.article && !b.article && a.productName && b.productName) {
+      }
+      if (!a.article && !b.article && a.productName && b.productName) {
         return a.productName.localeCompare(b.productName);
       }
       return 0;
@@ -128,35 +129,42 @@ function Cart({
     const formattedSearch = search.toLowerCase();
     let newSelection = -1;
     for (const product of unsortedProducts) {
+      console.log(product.article && product.article.toString().toLowerCase().includes(formattedSearch));
       if (
-        (product.article && product.article.toLowerCase().includes(formattedSearch))
+        (product.article && product.article.toString().toLowerCase().includes(formattedSearch))
         || product.productName.toLowerCase().includes(formattedSearch)
       ) {
         newSelection = product.id;
         break;
-      } else {
-        setAlertMessage({ message: 'Товар не найден', description: 'Нет товара с соответствующими параметрами' });
-        setIsAlert(true);
-        selectSearchInputText();
       }
+    }
+    if (newSelection === -1) {
+      setAlertMessage({
+        message: 'Товар не найден',
+        description: 'Нет товара с соответствующими параметрами',
+      });
+      setIsAlert(true);
+      selectSearchInputText();
     }
     setCurrentSelection(newSelection);
     return unsortedProducts;
   }, [products, search, setCurrentSelection, setAlertMessage, setIsAlert]);
 
-  const productsWithSelected = useMemo(() =>
-    // обновляем выбранный сейчас товар в таблице с товарами
-    sortedProducts.map((product, idx) => {
-      product.key = idx.toString();
-      if (product.id === currentSelection) {
-        product.selected = true;
-        setCurrentSelectionProduct(product);
-      } else if (product.selected) {
-        product.selected = undefined;
-      }
-      return product;
-    }),
-  [sortedProducts, currentSelection]);
+  const productsWithSelected = useMemo(
+    () =>
+      // обновляем выбранный сейчас товар в таблице с товарами
+      sortedProducts.map((product, idx) => {
+        product.key = idx.toString();
+        if (product.id === currentSelection) {
+          product.selected = true;
+          setCurrentSelectionProduct(product);
+        } else if (product.selected) {
+          product.selected = undefined;
+        }
+        return product;
+      }),
+    [sortedProducts, currentSelection],
+  );
 
   const filteredProducts = useMemo(
     () => [
@@ -234,16 +242,16 @@ function Cart({
       }
     }
   }, [
-    cartProducts,
-    currentSelection,
-    decrementAddition,
-    decrementProduct,
-    setIsAlert,
-    setAlertMessage,
-    currentSelectedProductInCart,
-    sortedProducts,
-    setSignChooseQuantity,
-  ]);
+      cartProducts,
+      currentSelection,
+      decrementAddition,
+      decrementProduct,
+      setIsAlert,
+      setAlertMessage,
+      currentSelectedProductInCart,
+      sortedProducts,
+      setSignChooseQuantity,
+    ]);
 
   const onPlusOrEnterKeyDown = useCallback(() => {
     // слушаем нажатия '+' и 'enter' и изменяем товары в корзине на основе этого
@@ -251,7 +259,7 @@ function Cart({
       setIsAlert(false);
       return;
     }
-   /* if (currentSelection !== -1) {
+    /* if (currentSelection !== -1) {
       if (!signChooseQuantity) {
         return setSignChooseQuantity('+');
       }
@@ -265,33 +273,38 @@ function Cart({
     */
     const currentProduct = sortedProducts.find(({ id }) => id === currentSelection);
     if (currentProduct) {
-      const { id, article, productName, price, tax, type } = currentProduct;
+      const {
+        id, article, productName, price, tax, type,
+      } = currentProduct;
       if (type === 'addition') {
         const lastAddedProduct = cartProducts[currentSelectedProductInCart];
         if (lastAddedProduct) {
           setSignChooseQuantity('+');
           // addAddition(currentSelectedProductInCart, id, productName, price, tax);
         } else {
-          setAlertMessage({ message: 'Не удалось выбрать добавку', description: 'Товаров нет в корзине' });
+          setAlertMessage({
+            message: 'Не удалось выбрать добавку',
+            description: 'Товаров нет в корзине',
+          });
           setIsAlert(true);
         }
       } else if (type === 'product') {
-        setSignChooseQuantity('+')
+        setSignChooseQuantity('+');
         // addProduct(id, article, productName, price, tax);// FIXME: Проверка на то, есть ли товар в корзине
       }
     }
     selectSearchInputText();
   }, [
-    sortedProducts,
-    isAlert,
-    cartProducts,
-    currentSelection,
-    addAddition,
-    addProduct,
-    currentSelectedProductInCart,
-    signChooseQuantity,
-    setSignChooseQuantity,
-  ]);
+      sortedProducts,
+      isAlert,
+      cartProducts,
+      currentSelection,
+      addAddition,
+      addProduct,
+      currentSelectedProductInCart,
+      signChooseQuantity,
+      setSignChooseQuantity,
+    ]);
 
   const onSearchChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -313,27 +326,35 @@ function Cart({
       // функция добавления товара или добавки в корзину
       () => {
         setCurrentSelection(id);
-      const currentProduct = sortedProducts.find(({ id: productId }) => productId === id);
-      if (!currentProduct) {
-        setAlertMessage({ message: 'Не удалось ничего добавить', description: 'Не выбран продукт/добавка' })
-        setIsAlert(true);
-        return;
-      }
-      const typeOfCurrentProduct = currentProduct.type;
-      const { article, productName, price, tax } = currentProduct;
-      if (typeOfCurrentProduct === 'addition') {
-        const lastAddedProduct = cartProducts[currentSelectedProductInCart];
-        if (lastAddedProduct) {
-          setSignChooseQuantity('+');
-          // addAddition(currentSelectedProductInCart, id, productName, price, tax);
-        } else {
-          setAlertMessage({ message: 'Не удалось выбрать добавку', description: 'Товаров нет в корзине' });
+        const currentProduct = sortedProducts.find(({ id: productId }) => productId === id);
+        if (!currentProduct) {
+          setAlertMessage({
+            message: 'Не удалось ничего добавить',
+            description: 'Не выбран продукт/добавка',
+          });
           setIsAlert(true);
+          return;
         }
-      } else if (typeOfCurrentProduct === 'product') {
-        setSignChooseQuantity('+');
-        // addProduct(id, article, productName, price, tax);
-      }
+        const typeOfCurrentProduct = currentProduct.type;
+        const {
+          article, productName, price, tax,
+        } = currentProduct;
+        if (typeOfCurrentProduct === 'addition') {
+          const lastAddedProduct = cartProducts[currentSelectedProductInCart];
+          if (lastAddedProduct) {
+            setSignChooseQuantity('+');
+            // addAddition(currentSelectedProductInCart, id, productName, price, tax);
+          } else {
+            setAlertMessage({
+              message: 'Не удалось выбрать добавку',
+              description: 'Товаров нет в корзине',
+            });
+            setIsAlert(true);
+          }
+        } else if (typeOfCurrentProduct === 'product') {
+          setSignChooseQuantity('+');
+          // addProduct(id, article, productName, price, tax);
+        }
       },
     [
       sortedProducts,
@@ -594,7 +615,7 @@ function Cart({
           }
           className={`${props.className} ${isHeader ? 'cart__table-header' : ''} ${
             isSelected ? 'cart__products-table_selected' : ''
-          }`}
+            }`}
         >
           {isHeader ? props.children[0].props.record.header : props.children}
         </tr>
@@ -776,7 +797,7 @@ function Cart({
     const newTotalPrice = (
       deliveryCost
       + ((100 - (discount > 100 ? 0 : discount)) / 100)
-        * (cartProductsProductsSum + cartProductsAdditionsSum)
+      * (cartProductsProductsSum + cartProductsAdditionsSum)
     ).toString();
     if (newTotalPrice !== formDataState.total_price) {
       addDataToFormData('total_price', newTotalPrice);
@@ -852,33 +873,33 @@ function Cart({
     [DecrementInProductsIcon, AddInProductsIcon, language],
   );
 
-  const cartProductsWithKeys = useMemo(() =>
-    // проставляем ключи продуктам с бека
-    cartProducts.map((item, idx) => {
-      const additions = Array.isArray(item.additions)
-        ? item.additions.map((child, childIdx) => ({
-
-          ...child,
-          viewName: `${child.quantity > 0 ? '+' : ''}${child.quantity} ${child.productName}`,
-          key: `${item.id}:${child.id}${idx}`,
-          quantity: undefined,
-          parentIdx: idx,
-          parentId: item.id,
-          idx: childIdx,
+  const cartProductsWithKeys = useMemo(
+    () =>
+      // проставляем ключи продуктам с бека
+      cartProducts.map((item, idx) => {
+        const additions = Array.isArray(item.additions)
+          ? item.additions.map((child, childIdx) => ({
+            ...child,
+            viewName: `${child.quantity > 0 ? '+' : ''}${child.quantity} ${child.productName}`,
+            key: `${item.id}:${child.id}${idx}`,
+            quantity: undefined,
+            parentIdx: idx,
+            parentId: item.id,
+            idx: childIdx,
+            cart: true,
+          }))
+          : undefined;
+        return {
+          ...item,
+          key: (item.id && item.id.toString() + idx.toString()) || '0',
+          viewName: item.productName,
+          children: additions,
+          idx,
           cart: true,
-        }))
-        : undefined;
-      return {
-
-        ...item,
-        key: (item.id && item.id.toString() + idx.toString()) || '0',
-        viewName: item.productName,
-        children: additions,
-        idx,
-        cart: true,
-      };
-    }),
-  [cartProducts]);
+        };
+      }),
+    [cartProducts],
+  );
 
   const productsExpandedRowKeys = useMemo(
     () => sortedProducts.map(({ article }) => {
@@ -955,8 +976,10 @@ function Cart({
         <ChooseQuantity
           product={currentSelectionProduct}
           onClose={onChooseQuantityClose}
-          defaultValue={(signChooseQuantity === '-' ? -1 : 1) * currentSelectionProductQuantityInCart}
-          min={(-1) * currentSelectionProductQuantityInCart}
+          defaultValue={
+            (signChooseQuantity === '-' ? -1 : 1) * currentSelectionProductQuantityInCart
+          }
+          min={-1 * currentSelectionProductQuantityInCart}
         />
       )}
       <div className="cart__tables">
@@ -1001,17 +1024,17 @@ function Cart({
         <Button type="danger" size="large" onClick={onBackButtonClick}>
           {language.back}
           {' '}
-/ F4
+          / F4
         </Button>
         <Button type="dashed" size="large" onClick={onFreeDeliveryClick}>
           {language.freeDelivery}
           {' '}
-/ F5
+          / F5
         </Button>
         <Button type="primary" size="large">
           {language.print}
           {' '}
-/ F2
+          / F2
         </Button>
       </div>
     </div>

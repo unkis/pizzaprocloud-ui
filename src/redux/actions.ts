@@ -49,7 +49,12 @@ export const addProductToCart = (
   price: number,
   tax: '7' | '19',
 ) => ({
-  type: cartProductsActions.ADD_PRODUCT_TO_CART, id, article, productName, price, tax,
+  type: cartProductsActions.ADD_PRODUCT_TO_CART,
+  id,
+  article,
+  productName,
+  price,
+  tax,
 });
 
 export const addManyProductToCart = (

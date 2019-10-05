@@ -45,13 +45,7 @@ export const mapDispatchToProps: MapDispatchToPropsFunction<CartDispatchProps, C
     additionTax: '7' | '19',
   ) {
     dispatch(
-      addAdditionToProductInCart(
-        productIdx,
-        additionId,
-        additionName,
-        additionPrice,
-        additionTax,
-      ),
+      addAdditionToProductInCart(productIdx, additionId, additionName, additionPrice, additionTax),
     );
   },
   addManyAddition(
@@ -95,9 +89,7 @@ export const mapDispatchToProps: MapDispatchToPropsFunction<CartDispatchProps, C
     price: number,
     tax: '7' | '19',
   ) {
-    dispatch(
-      decrementQuantityOfAdditionOfProduct(productIdx, additionId, productName, price, tax),
-    );
+    dispatch(decrementQuantityOfAdditionOfProduct(productIdx, additionId, productName, price, tax));
   },
   addDataToFormData(id: string, value: string) {
     dispatch(addToFormData(id, value));

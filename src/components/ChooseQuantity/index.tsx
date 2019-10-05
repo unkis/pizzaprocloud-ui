@@ -16,14 +16,14 @@ interface Product {
 interface ChooseQuantityProps {
   onClose: (quantity: number) => any
   product: Product
-  defaultValue?: number;
-  min?: number;
+  defaultValue?: number
+  min?: number
 }
 interface BodyOfChooseQuantityProps {
   onCloseAlert: () => void
   quantity: number | '-'
   productName: string
-  onNumberChange: (value: React.ChangeEvent<HTMLInputElement>) => void;
+  onNumberChange: (value: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 function BodyOfChooseQuantity({
@@ -45,20 +45,25 @@ function BodyOfChooseQuantity({
   );
 }
 
-const ChooseQuantity = ({ onClose, defaultValue = 1, product, min }: ChooseQuantityProps) => {
-  const [quantity, setQuantity] = useState<number | '-'>((min === undefined || defaultValue > min) ? defaultValue : min);
+const ChooseQuantity = ({
+  onClose, defaultValue = 1, product, min,
+}: ChooseQuantityProps) => {
+  const [quantity, setQuantity] = useState<number | '-'>(
+    min === undefined || defaultValue > min ? defaultValue : min,
+  );
 
-  const onNumberChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.value === '-') return setQuantity('-');
-    const parsedValue = parseInt(event.target.value);
-    if (isNaN(parsedValue) || (min !== undefined && min > parsedValue)) {
-      return setQuantity(0);
-    }
-    setQuantity(parsedValue);
-    // setTimeout(selectSearchInputText, 10);
-  }, [
-      setQuantity,
-    ]);
+  const onNumberChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (event.target.value === '-') return setQuantity('-');
+      const parsedValue = parseInt(event.target.value);
+      if (isNaN(parsedValue) || (min !== undefined && min > parsedValue)) {
+        return setQuantity(0);
+      }
+      setQuantity(parsedValue);
+      // setTimeout(selectSearchInputText, 10);
+    },
+    [setQuantity],
+  );
 
   const onCloseAlert = useCallback(() => {
     onClose(quantity === '-' ? 0 : quantity);
@@ -71,15 +76,15 @@ const ChooseQuantity = ({ onClose, defaultValue = 1, product, min }: ChooseQuant
       if (event.key === 'Enter' || event.key === '+') {
         onCloseAlert();
       } else if (!activeElement && event.key === 'ArrowUp') {
-        setQuantity((prev: number | '-') => prev === '-' ? 0 : prev + 1);
+        setQuantity((prev: number | '-') => (prev === '-' ? 0 : prev + 1));
         setTimeout(selectSearchInputText, 10);
       } else if (!activeElement && event.key === 'ArrowDown') {
         setQuantity((prev) => {
-          if (prev === '-') return (0);
+          if (prev === '-') return 0;
           if (min !== undefined && min > prev - 1) {
             return min;
           }
-          return (prev - 1);
+          return prev - 1;
         });
         setTimeout(selectSearchInputText, 10);
       }
@@ -93,6 +98,10 @@ const ChooseQuantity = ({ onClose, defaultValue = 1, product, min }: ChooseQuant
       window.removeEventListener('keydown', onKeyDown);
     };
   }, [onKeyDown]);
+
+  useEffect(() => {
+    setTimeout(selectSearchInputText, 10);
+  }, []);
 
   const Body = useCallback(
     () => (
