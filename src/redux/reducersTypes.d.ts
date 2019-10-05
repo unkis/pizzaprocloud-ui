@@ -7,66 +7,69 @@ import {
   ADD_USER,
   LOGOUT_USER,
   formDataActions,
-  cartProductsActions
+  cartProductsActions,
 } from './actions';
 
 import { SearchItem } from '../components/Cart/CartTypes';
 
 export type LanguagesState = {
-  lang: langType;
-};
+  lang: langType
+}
 
-type LanguagesActionsTypes = typeof CHANGE_LANGUAGE;
+type LanguagesActionsTypes = typeof CHANGE_LANGUAGE
 
 export interface LanguageAction extends Action<LanguagesActionsTypes> {
-  lang?: langType;
+  lang?: langType
 }
 
 type UserState = {
-  role: string;//FIXME
-  code: string;
-};
-
-type UserActionsTypes = typeof ADD_USER | typeof LOGOUT_USER;
-
-interface UserAction extends Action<UserActionsTypes> {
-  role: string;//FIXME
-  code: string;
+  role: string // FIXME
+  code: string
 }
 
-type FormDataStateType = any;//FIXME
+type UserActionsTypes = typeof ADD_USER | typeof LOGOUT_USER
 
-type FormDataStateActionsTypes = typeof formDataActions.ADD_TO_FORM_DATA | typeof formDataActions.UPDATE_ALL_FIELDS | typeof formDataActions.CLEAR_ALL_FIELDS;
+interface UserAction extends Action<UserActionsTypes> {
+  role: string // FIXME
+  code: string
+}
+
+type FormDataStateType = any // FIXME
+
+type FormDataStateActionsTypes =
+  | typeof formDataActions.ADD_TO_FORM_DATA
+  | typeof formDataActions.UPDATE_ALL_FIELDS
+  | typeof formDataActions.CLEAR_ALL_FIELDS
 
 interface FormDataStateAction extends Action<FormDataStateActionsTypes> {
-  fieldName: string;//FIXME
-  fieldValue: string;
-  newState?: FormDataStateType //FIXME
+  fieldName: string // FIXME
+  fieldValue: string
+  newState?: FormDataStateType // FIXME
 }
 
 interface CartAddition extends SearchItem {
-  quantity: number;
+  quantity: number
 }
 
 export interface CartProduct extends Exclude<SearchItem, 'type'> {
-  quantity: number;
-  additions?: CartAddition[];
+  quantity: number
+  additions?: CartAddition[]
 }
 
-export type CartProductsState = Exclude<CartProduct[], null>;
+export type CartProductsState = Exclude<CartProduct[], null>
 
 export interface CartProductsAction extends Action<cartProductsActions> {
-  id: number;
-  article: number;
-  productName: string;
-  price: number;
-  tax: '7' | '19';
-  productId: number;
-  productIdx: number;
-  additionId: number;
-  productArticle: string;
-  additionName: string;
-  additionPrice: number;
-  additionTax: '7' | '19';
-  quantity: number;
+  id: number
+  article: number
+  productName: string
+  price: number
+  tax: '7' | '19'
+  productId: number
+  productIdx: number
+  additionId: number
+  productArticle: string
+  additionName: string
+  additionPrice: number
+  additionTax: '7' | '19'
+  quantity: number
 }

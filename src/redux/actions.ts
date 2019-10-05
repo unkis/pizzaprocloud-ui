@@ -7,7 +7,7 @@ export const LOGOUT_USER = 'LOGOUT_USER';
 export const formDataActions = {
   ADD_TO_FORM_DATA: 'ADD_TO_FORM_DATA',
   UPDATE_ALL_FIELDS: 'UPDATE_ALL_FIELDS',
-  CLEAR_ALL_FIELDS: 'CLEAR_ALL_FIELDS'
+  CLEAR_ALL_FIELDS: 'CLEAR_ALL_FIELDS',
 };
 
 export enum cartProductsActions {
@@ -21,8 +21,7 @@ export enum cartProductsActions {
   DECREMENT_QUANTITY_OF_PRODUCT_IN_CART,
   INCREMENT_QUANTITY_OF_ADDITION_OF_PRODUCT,
   DECREMENT_QUANTITY_OF_ADDITION_OF_PRODUCT,
-};
-
+}
 
 export const changeLanguage: changeLanguageType = (lang) => ({ type: CHANGE_LANGUAGE, lang });
 
@@ -30,36 +29,116 @@ export const addUser: addUserType = (role, code) => ({ type: ADD_USER, role, cod
 
 export const logoutUser: logoutUserType = () => ({ type: LOGOUT_USER });
 
-export const addToFormData = (fieldName: string, fieldValue: string) => ({ type: formDataActions.ADD_TO_FORM_DATA, fieldName, fieldValue });
+export const addToFormData = (fieldName: string, fieldValue: string) => ({
+  type: formDataActions.ADD_TO_FORM_DATA,
+  fieldName,
+  fieldValue,
+});
 
-export const updateAllFieldsOfFormData = (newState: any) => ({ type: formDataActions.UPDATE_ALL_FIELDS, newState });
+export const updateAllFieldsOfFormData = (newState: any) => ({
+  type: formDataActions.UPDATE_ALL_FIELDS,
+  newState,
+});
 
 export const clearAllFields = () => ({ type: formDataActions.CLEAR_ALL_FIELDS });
 
-export const addProductToCart = (id: number, article: string, productName: string, price: number, tax: '7' | '19') =>
-  ({ type: cartProductsActions.ADD_PRODUCT_TO_CART, id, article, productName, price, tax });
+export const addProductToCart = (
+  id: number,
+  article: string,
+  productName: string,
+  price: number,
+  tax: '7' | '19',
+) => ({
+  type: cartProductsActions.ADD_PRODUCT_TO_CART, id, article, productName, price, tax,
+});
 
-export const addManyProductToCart = (id: number, article: string, productName: string, price: number, tax: '7' | '19', quantity: number) =>
-  ({ type: cartProductsActions.ADD_MANY_PRODUCT_TO_CART, id, article, productName, price, tax, quantity });
+export const addManyProductToCart = (
+  id: number,
+  article: string,
+  productName: string,
+  price: number,
+  tax: '7' | '19',
+  quantity: number,
+) => ({
+  type: cartProductsActions.ADD_MANY_PRODUCT_TO_CART,
+  id,
+  article,
+  productName,
+  price,
+  tax,
+  quantity,
+});
 
-export const addAdditionToProductInCart = (productIdx: number, additionId: number, additionName: string, additionPrice: number, additionTax: '7' | '19') =>
-  ({ type: cartProductsActions.ADD_ADDITION_TO_PRODUCT_IN_CART, productIdx, additionId, additionName, additionPrice, additionTax });
+export const addAdditionToProductInCart = (
+  productIdx: number,
+  additionId: number,
+  additionName: string,
+  additionPrice: number,
+  additionTax: '7' | '19',
+) => ({
+  type: cartProductsActions.ADD_ADDITION_TO_PRODUCT_IN_CART,
+  productIdx,
+  additionId,
+  additionName,
+  additionPrice,
+  additionTax,
+});
 
-export const addManyAdditionToProductInCart = (productIdx: number, additionId: number, additionName: string, additionPrice: number, additionTax: '7' | '19', quantity: number) =>
-  ({ type: cartProductsActions.ADD_MANY_ADDITION_TO_PRODUCT_IN_CART, productIdx, additionId, additionName, additionPrice, additionTax, quantity });
+export const addManyAdditionToProductInCart = (
+  productIdx: number,
+  additionId: number,
+  additionName: string,
+  additionPrice: number,
+  additionTax: '7' | '19',
+  quantity: number,
+) => ({
+  type: cartProductsActions.ADD_MANY_ADDITION_TO_PRODUCT_IN_CART,
+  productIdx,
+  additionId,
+  additionName,
+  additionPrice,
+  additionTax,
+  quantity,
+});
 
-export const deleteProductFromCart = (productIdx: number) =>
-  ({ type: cartProductsActions.DELETE_PRODUCT_FROM_CART, productIdx });
+export const deleteProductFromCart = (productIdx: number) => ({
+  type: cartProductsActions.DELETE_PRODUCT_FROM_CART,
+  productIdx,
+});
 
-export const deleteAdditionOfProductFromCart = (productIdx: number, additionId: number) =>
-  ({ type: cartProductsActions.DELETE_ADDITION_OF_PRODUCT_FROM_CART, productIdx, additionId });
+export const deleteAdditionOfProductFromCart = (productIdx: number, additionId: number) => ({
+  type: cartProductsActions.DELETE_ADDITION_OF_PRODUCT_FROM_CART,
+  productIdx,
+  additionId,
+});
 
-export const incrementQuantityOfProductInCart = (productIdx: number) => ({ type: cartProductsActions.INCREMENT_QUANTITY_OF_PRODUCT_IN_CART, productIdx });
+export const incrementQuantityOfProductInCart = (productIdx: number) => ({
+  type: cartProductsActions.INCREMENT_QUANTITY_OF_PRODUCT_IN_CART,
+  productIdx,
+});
 
-export const decrementQuantityOfProductInCart = (productIdx: number) => ({ type: cartProductsActions.DECREMENT_QUANTITY_OF_PRODUCT_IN_CART, productIdx });
+export const decrementQuantityOfProductInCart = (productIdx: number) => ({
+  type: cartProductsActions.DECREMENT_QUANTITY_OF_PRODUCT_IN_CART,
+  productIdx,
+});
 
-export const incrementQuantityOfAdditionOfProduct = (productIdx: number, additionId: number) =>
-  ({ type: cartProductsActions.INCREMENT_QUANTITY_OF_ADDITION_OF_PRODUCT, productIdx, additionId });
+export const incrementQuantityOfAdditionOfProduct = (productIdx: number, additionId: number) => ({
+  type: cartProductsActions.INCREMENT_QUANTITY_OF_ADDITION_OF_PRODUCT,
+  productIdx,
+  additionId,
+});
 
-export const decrementQuantityOfAdditionOfProduct =  (productIdx: number, additionId: number, productName: string, price: number, tax: '7' | '19') =>
-  ({ type: cartProductsActions.DECREMENT_QUANTITY_OF_ADDITION_OF_PRODUCT, productIdx, additionId, productName, price, tax });
+export const decrementQuantityOfAdditionOfProduct = (
+  productIdx: number,
+  additionId: number,
+  productName: string,
+  price: number,
+  tax: '7' | '19',
+) => ({
+  type: cartProductsActions.DECREMENT_QUANTITY_OF_ADDITION_OF_PRODUCT,
+  productIdx,
+  additionId,
+  productName,
+  price,
+  tax,
+});
