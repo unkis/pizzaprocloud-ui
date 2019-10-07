@@ -7,7 +7,7 @@ const de = {
     login: 'Login',
     tableOrders: 'Tischbestellungen',
     selfPickUp: 'Selbstabholer',
-    sales: 'Hausverkauf',
+    inner: 'Hausverkauf',
     phoneMonitor: 'Telefon monitor',
     customerNumber: 'Kundennummer',
     phoneNumber: 'Telefonnumer',

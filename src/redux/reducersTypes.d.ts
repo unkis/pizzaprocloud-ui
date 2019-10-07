@@ -73,3 +73,18 @@ export interface CartProductsAction extends Action<cartProductsActions> {
   additionTax: '7' | '19'
   quantity: number
 }
+
+interface ShopAddress {
+  city: string;
+  street: string;
+  house: number;
+  postIndex: number;
+};
+
+export interface SettingsState {
+  shopAddress: ShopAddress;
+};
+
+export interface SettingsAction extends Action {
+
+};

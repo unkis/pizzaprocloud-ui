@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { mapStateToProps, mapDispatchToProps } from './reduxProvider';
 import { SumFormProps } from './SumFormTypes';
 import { langMap } from '../../../lang';
-
+import { selectSearchInputText } from '../index';
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
@@ -39,6 +39,13 @@ const SumForm = Form.create({ name: 'cart' })(connect(mapStateToProps, mapDispat
   const onDiscountChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     addDataToFormData('discount', event.target.value)
   }, [addDataToFormData]);
+
+  const onRabattEnter = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      selectSearchInputText();
+      event.stopPropagation();
+    }
+  }, []);
 
   useEffect(() => {//синхронизируем redux-store и форму
     setFieldsValue({
@@ -83,7 +90,7 @@ const SumForm = Form.create({ name: 'cart' })(connect(mapStateToProps, mapDispat
             )}
           </Form.Item>
           <Form.Item label={language.deliveryCost}>{getFieldDecorator('deliveryCost')(<Input onChange={onDeliveryCostChange} placeholder={language.deliveryCost} suffix="€" />)}</Form.Item>
-          <Form.Item label={`F11 / ${language.discount}`}>{getFieldDecorator('discount')(<Input onChange={onDiscountChange} placeholder={`F11 / ${language.discount}`} suffix="%" />)}</Form.Item>
+          <Form.Item label={`F11 / ${language.discount}`}>{getFieldDecorator('discount')(<Input onChange={onDiscountChange} onKeyDown={onRabattEnter} placeholder={`F11 / ${language.discount}`} suffix="%" />)}</Form.Item>
           <Form.Item label={language.totalPrice}>{getFieldDecorator('total_price')(<Input id="total_price" placeholder={language.totalPrice} disabled suffix="€" />)}</Form.Item>
         </div>
       </div>

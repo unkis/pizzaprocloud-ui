@@ -18,12 +18,21 @@ import {
   FormDataStateAction,
   CartProductsState,
   CartProductsAction,
+  SettingsAction,
+  SettingsState,
 } from './reducersTypes';
 
 export const languages = (state: LanguagesState = { lang: 'ru' }, action: LanguageAction) => {
   switch (action.type) {
     case CHANGE_LANGUAGE:
       return { lang: action.lang };
+    default:
+      return state;
+  }
+};
+
+export const settings = (state: SettingsState = { shopAddress: { city: 'Москва', street: 'Льва Толстого', house: 10, postIndex: 777777 } }, action: SettingsAction) => {
+  switch(action.type) {
     default:
       return state;
   }
@@ -59,6 +68,7 @@ export const initialFormDataState: any = {
   [fieldNames.city]: '',
   [fieldNames.clientComment]: '',
   [fieldNames.deliveryCost]: selectValues[0],
+  isTaxSecondOnAll: false,
 };
 
 export const formDataState = (

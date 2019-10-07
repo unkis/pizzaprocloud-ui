@@ -38,7 +38,7 @@ const proudctsTableScrollParams = { y: 'calc(100vh - 40px - 32px - 75px - 60px -
 const cartTableScrollParams = { y: 'calc(100vh - 40px - 32px - 75px - 60px - 160px - 1px - 20px)' };
 const IconStyle = { fontSize: '16px' };
 
-const selectSearchInputText = (targetElem?: any) => {
+export const selectSearchInputText = (targetElem?: any) => {
   // функция для выделения текста в поле поиска
   const target = targetElem || (document.querySelector('.cart__products-table .ant-input') as HTMLInputElement);
   target.focus();
@@ -81,7 +81,7 @@ const scrollToLastItemOfCart = () => {
 function Cart({
   cartProducts,
   addDataToFormData,
-  formDataState: { discount = 0 },
+  formDataState: { discount = 0, isTaxSecondOnAll },
   formDataState,
   lang,
   addProduct,
@@ -117,9 +117,9 @@ function Cart({
 
   const sortedProducts = useMemo(() => {
     // сортируем продукты с бека
-    const unsortedProducts = products.sort((a, b) => {
+    const unsortedProducts = ([...products.filter(({ type }) => type === 'product'), ...products.filter(({ type }) => type === 'addition')] as typeof products).sort((a, b) => {
       if (a.article && b.article) {
-        return naturalSort(a, b);
+        return naturalSort(a.article, b.article);
       }
       if (!a.article && !b.article && a.productName && b.productName) {
         return a.productName.localeCompare(b.productName);
@@ -129,7 +129,6 @@ function Cart({
     const formattedSearch = search.toLowerCase();
     let newSelection = -1;
     for (const product of unsortedProducts) {
-      console.log(product.article && product.article.toString().toLowerCase().includes(formattedSearch));
       if (
         (product.article && product.article.toString().toLowerCase().includes(formattedSearch))
         || product.productName.toLowerCase().includes(formattedSearch)
@@ -704,7 +703,7 @@ function Cart({
 
   const allKeyDown = useCallback(
     (event: KeyboardEvent) => {
-      event.stopPropagation();
+      // event.stopPropagation();
       // функция-слушатель нажатия на кнопки
       if (event.code === 'F4') {
         onBackButtonClick();
@@ -718,6 +717,9 @@ function Cart({
         onPlusOrEnterKeyDown();
       } else if (event.key === '-') {
         onMinusKeyDown();
+      } else if (event.code === 'F7' || event.key === 'F11') {
+        const RabattInput = document.querySelector('#cart_discount') as HTMLInputElement;
+        RabattInput && RabattInput.focus();
       }
     },
     [
@@ -768,26 +770,53 @@ function Cart({
     };
   }, [cartProducts]);
 
-  useEffect(() => {
-    // обновляем значения вычисляемых полей
-    const { cartProductsProductsSum, cartProductsAdditionsSum } = cartProductsSum;
-    addDataToFormData('greichten', cartProductsProductsSum.toString());
-
-    addDataToFormData('zutaten', cartProductsAdditionsSum.toString());
+  useEffect(() => {//считаем налоги
 
     addDataToFormData(
       'mwst_7',
       (
-        Math.round((cartProductsProductsSum + cartProductsAdditionsSum) * 0.07 * 100) / 100
+        isTaxSecondOnAll ? 0 : Math.round((cartProducts.reduce((sum, product) => {
+          const { additions } = product;
+          let additionsPrice = 0, productPrice = 0;
+          if (additions) {
+            additionsPrice = additions.reduce((sum, addition) => {
+              return (sum + (addition.tax === '7' ? addition.quantity * addition.price : 0));
+            }, 0)
+          }
+          if (product.tax == '7') {
+            productPrice = product.quantity * product.price;
+          }
+          return (sum + productPrice + additionsPrice);
+        }, 0)) * 0.07 * 100) / 100
       ).toString(),
     );
 
     addDataToFormData(
       'mwst_19',
       (
-        Math.round((cartProductsProductsSum + cartProductsAdditionsSum) * 0.19 * 100) / 100
+        Math.round((cartProducts.reduce((sum, product) => {
+          const { additions } = product;
+          let additionsPrice = 0, productPrice = 0;
+          if (additions) {
+            additionsPrice = additions.reduce((sum, addition) => {
+              return (sum + (addition.tax === '19' || isTaxSecondOnAll ? addition.quantity * addition.price : 0));
+            }, 0)
+          }
+          if (product.tax === '19' || isTaxSecondOnAll) {
+            productPrice = product.quantity * product.price;
+          }
+          return (sum + productPrice + additionsPrice);
+        }, 0)) * 0.19 * 100) / 100
       ).toString(),
     );
+  }, [cartProducts]);
+
+  useEffect(() => {
+    // обновляем значения вычисляемых полей
+    const { cartProductsProductsSum, cartProductsAdditionsSum } = cartProductsSum;
+    addDataToFormData('greichten', cartProductsProductsSum.toString());
+
+    addDataToFormData('zutaten', cartProductsAdditionsSum.toString());
   }, [cartProductsSum, addDataToFormData]);
 
   useEffect(() => {

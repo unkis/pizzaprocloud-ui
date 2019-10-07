@@ -104,12 +104,12 @@ const mapDispatchToProps: MapDispatchToPropsNonObject<any, any> = (dispatch) => 
   }
 });
 
-const mapStateToProps: MapStateToPropsParam<any, any, any> = (state) => ({ formDataState: state.formDataState, lang: state.languages.lang });
+const mapStateToProps: MapStateToPropsParam<any, any, any> = (state) => ({ formDataState: state.formDataState, lang: state.languages.lang, shopAddress: state.settings.shopAddress });
 
 const DeliveryForm = Form.create<DeliveryFormProps>(
   { name: 'delivery_form' }
 )(connect(mapStateToProps, mapDispatchToProps)(withRouter((
-  { lang, formDataState, addDataToFormData, clearFields, updateFieldsOfFormData, form: { getFieldDecorator, setFieldsValue, getFieldsValue }, form, history }: any) => {
+  { lang, formDataState, addDataToFormData, clearFields, updateFieldsOfFormData, form: { getFieldDecorator, setFieldsValue, getFieldsValue }, form, history, shopAddress }: any) => {
 
   const [dataSourceState, dispatchToDataSource] = useReducer(dataSourceReducer, initialDataSourceState);
   const [dataSourceLiveState, dispatchToDataSourceLive] = useReducer(dataSourceReducer, initialDataSourceState);
@@ -164,6 +164,29 @@ const DeliveryForm = Form.create<DeliveryFormProps>(
     }
   }, [setFieldsValue, updateFieldsOfFormData]);
 
+  const onSelfPickUpClick = useCallback((event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    const { city, street, house, postIndex } = shopAddress;
+    updateFieldsOfFormData({
+      [fieldNames.city]: city,
+      [fieldNames.street]: street,
+      [fieldNames.houseNumber]: house,
+      [fieldNames.plz]: postIndex,
+    });
+    nextPage();
+  }, [nextPage, updateFieldsOfFormData, shopAddress]);
+
+  const onInnerClick = useCallback((event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    const { city, street, house, postIndex } = shopAddress;
+    updateFieldsOfFormData({
+      [fieldNames.city]: city,
+      [fieldNames.street]: street,
+      [fieldNames.houseNumber]: house,
+      [fieldNames.plz]: postIndex,
+      isTaxSecondOnAll: true,
+    });
+    nextPage();
+  }, [nextPage, updateFieldsOfFormData, shopAddress]);
+
   useEffect(() => {
     setLanguage(langMap[lang as langType]);
   }, [lang]);
@@ -179,12 +202,13 @@ const DeliveryForm = Form.create<DeliveryFormProps>(
     setFieldsValue(formDataState);
   }, [formDataState, setFieldsValue, getFieldsValue]);
 
+  console.log('shopAddress', shopAddress);
   return (
     <Layout>
       <Header style={{ background: '#fff', marginTop: '24px', height: 'auto', display: 'flex', flexFlow: 'row nowrap', justifyContent: 'space-around' }}>
         <Button type="dashed" size="large">{language.tableOrders}</Button>
-        <Button type="dashed" size="large">{language.selfPickUp}</Button>
-        <Button type="dashed" size="large">{language.sales}</Button>
+        <Button type="dashed" size="large" onClick={onSelfPickUpClick}>{language.selfPickUp}</Button>
+        <Button type="dashed" size="large" onClick={onInnerClick}>{language.inner}</Button>
         <Button type="dashed" size="large">{language.phoneMonitor}</Button>
       </Header>
       <Divider />

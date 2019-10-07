@@ -6,8 +6,8 @@ const ru = {
     autoLogin: 'Запомнить меня',
     login: 'Войти',
     tableOrders: 'Tischbestellungen', //TODO: Перевод
-    selfPickUp: 'Selbstabholer', //TODO: Перевод
-    sales: 'Hausverkauf', //TODO: Перевод
+    selfPickUp: 'С собой', //TODO: Перевод
+    inner: 'Hausverkauf', //TODO: Перевод
     phoneMonitor: 'Telefon monitor', //TODO: Перевод
     customerNumber: 'Номер клиента',
     phoneNumber: 'Номер телефона',
