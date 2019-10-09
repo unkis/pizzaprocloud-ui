@@ -90,7 +90,7 @@ const SumForm = Form.create({ name: 'cart' })(connect(mapStateToProps, mapDispat
             )}
           </Form.Item>
           <Form.Item label={language.deliveryCost}>{getFieldDecorator('deliveryCost')(<Input onChange={onDeliveryCostChange} placeholder={language.deliveryCost} suffix="€" />)}</Form.Item>
-          <Form.Item label={`F11 / ${language.discount}`}>{getFieldDecorator('discount')(<Input onChange={onDiscountChange} onKeyDown={onRabattEnter} placeholder={`F11 / ${language.discount}`} suffix="%" />)}</Form.Item>
+          <Form.Item label={`F7 / ${language.discount}`}>{getFieldDecorator('discount')(<Input onChange={onDiscountChange} onKeyDown={onRabattEnter} placeholder={`F11 / ${language.discount}`} suffix="%" />)}</Form.Item>
           <Form.Item label={language.totalPrice}>{getFieldDecorator('total_price')(<Input id="total_price" placeholder={language.totalPrice} disabled suffix="€" />)}</Form.Item>
         </div>
       </div>

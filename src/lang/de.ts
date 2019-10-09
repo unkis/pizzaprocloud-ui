@@ -42,7 +42,8 @@ const de = {
     totalPrice: 'Gesamt preis',
     tax_7: 'MWST 7%',
     tax_19: 'MWST 19%',
-    articlePrices: 'Artikel'
+    articlePrices: 'Artikel',
+    additionalRequests: 'Extra Wünsch',
 };
 
 export default de;

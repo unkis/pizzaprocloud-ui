@@ -93,7 +93,7 @@
   position: fixed;
   left: 30vw;
   top: 40vh;
-  z-index: 3000;
+  z-index: 2;
   width: 40vw;
   height: 20vh;
 }
@@ -213,4 +213,40 @@
   flex-flow: column nowrap;
   justify-content: space-between;
   height: 100px;
+}
+
+.AdditionalRequest {
+  height: 170px;
+}
+
+.AdditionalRequestBody {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-around;
+  height: 110px;
+}
+.AdditionalRequestBody-Content {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  height: 100px;
+}
+
+.AdditionalRequestBody-ProductName,
+.AdditionalRequestBody-Price,
+.AdditionalRequestBody-Tax {
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.AdditionalRequestBody-ProductName {
+  width: 40%;
+}
+
+.AdditionalRequestBody-Tax {
+  width: 20%;
+}
+
+.AdditionalRequestBody-Price {
+  width: 20%;
 }

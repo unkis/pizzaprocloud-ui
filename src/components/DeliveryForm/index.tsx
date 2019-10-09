@@ -148,23 +148,7 @@ const DeliveryForm = Form.create<DeliveryFormProps>(
     nextPage();
   }, [nextPage]);
 
-  const handleEscDown = useCallback((e: any) => {
-    if (e.key === 'Escape') {
-      handleClearClick();
-    } else if (e.key === 'F2') {
-      nextPage();
-    }
-  }, [handleClearClick, nextPage]);
-
-  const handleEnterDown = useCallback((id: string, value: string) => {
-    const customer = tryToFetchUser(id, value);
-    if (customer) {
-      setFieldsValue(customer);
-      updateFieldsOfFormData(customer);
-    }
-  }, [setFieldsValue, updateFieldsOfFormData]);
-
-  const onSelfPickUpClick = useCallback((event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+  const onSelfPickUpClick = useCallback(() => {
     const { city, street, house, postIndex } = shopAddress;
     updateFieldsOfFormData({
       [fieldNames.city]: city,
@@ -175,7 +159,7 @@ const DeliveryForm = Form.create<DeliveryFormProps>(
     nextPage();
   }, [nextPage, updateFieldsOfFormData, shopAddress]);
 
-  const onInnerClick = useCallback((event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+  const onInnerClick = useCallback(() => {
     const { city, street, house, postIndex } = shopAddress;
     updateFieldsOfFormData({
       [fieldNames.city]: city,
@@ -186,6 +170,26 @@ const DeliveryForm = Form.create<DeliveryFormProps>(
     });
     nextPage();
   }, [nextPage, updateFieldsOfFormData, shopAddress]);
+
+  const handleEscDown = useCallback((e: any) => {
+    if (e.key === 'Escape') {
+      handleClearClick();
+    } else if (e.key === 'F2') {
+      nextPage();
+    } else if (e.key == 'F5') {
+      onSelfPickUpClick();
+    } else if (e.key === 'F6') {
+      onInnerClick();
+    }
+  }, [handleClearClick, nextPage]);
+
+  const handleEnterDown = useCallback((id: string, value: string) => {
+    const customer = tryToFetchUser(id, value);
+    if (customer) {
+      setFieldsValue(customer);
+      updateFieldsOfFormData(customer);
+    }
+  }, [setFieldsValue, updateFieldsOfFormData]);
 
   useEffect(() => {
     setLanguage(langMap[lang as langType]);
@@ -206,10 +210,10 @@ const DeliveryForm = Form.create<DeliveryFormProps>(
   return (
     <Layout>
       <Header style={{ background: '#fff', marginTop: '24px', height: 'auto', display: 'flex', flexFlow: 'row nowrap', justifyContent: 'space-around' }}>
-        <Button type="dashed" size="large">{language.tableOrders}</Button>
-        <Button type="dashed" size="large" onClick={onSelfPickUpClick}>{language.selfPickUp}</Button>
-        <Button type="dashed" size="large" onClick={onInnerClick}>{language.inner}</Button>
-        <Button type="dashed" size="large">{language.phoneMonitor}</Button>
+        <Button type="dashed" size="large">{language.tableOrders} / F4</Button>
+        <Button type="dashed" size="large" onClick={onSelfPickUpClick}>{language.selfPickUp} / F5</Button>
+        <Button type="dashed" size="large" onClick={onInnerClick}>{language.inner} / F6</Button>
+        <Button type="dashed" size="large">{language.phoneMonitor} / F3</Button>
       </Header>
       <Divider />
       <Content style={{ margin: '0 16px', background: 'inherit' }}>

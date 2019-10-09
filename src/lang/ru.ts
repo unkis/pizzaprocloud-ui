@@ -42,7 +42,8 @@ const ru = {
     totalPrice: 'Общая цена',
     tax_7: 'Налог 7%',
     tax_19: 'Налог 19%',
-    articlePrices: 'Номенклатура'
+    articlePrices: 'Номенклатура',
+    additionalRequests: 'Доп. пожелания',
 };
 
 export default ru;

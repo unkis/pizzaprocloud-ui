@@ -1,6 +1,7 @@
 import { MapDispatchToPropsFunction, MapStateToProps } from 'react-redux';
 import {
   addProductToCart,
+  addCustomProductToCart,
   addManyProductToCart,
   addAdditionToProductInCart,
   addManyAdditionToProductInCart,
@@ -27,6 +28,10 @@ export const mapDispatchToProps: MapDispatchToPropsFunction<CartDispatchProps, C
   addProduct(id: number, article: string, productName: string, price: number, tax: '7' | '19') {
     dispatch(addProductToCart(id, article, productName, price, tax));
   },
+  addCustomProduct(productName: string, price: number, tax: '7' | '19') {
+    dispatch(addCustomProductToCart(productName, price, tax));
+  },
+
   addManyProduct(
     id: number,
     article: string,

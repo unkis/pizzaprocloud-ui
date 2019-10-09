@@ -116,6 +116,16 @@ export const cartProducts = (
       }];
     }
 
+    case cartProductsActions.ADD_CUSTOM_PRODUCT_TO_CART: {
+      const {
+        productName, price, tax,
+      } = action;
+
+      return [...state, {
+        productName, price, tax, quantity: 1,
+      }];
+    }
+
     case cartProductsActions.ADD_MANY_PRODUCT_TO_CART: {
       const {
         id, article, productName, price, tax, quantity,

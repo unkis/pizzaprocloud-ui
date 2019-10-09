@@ -5,8 +5,9 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
 import {
-  Table, Icon, Input, Button, Alert,
+  Table, Icon, Input, Button, Alert, Select, Form,
 } from 'antd';
+import { FormComponentProps } from 'antd/lib/form';
 import { RouteComponentProps } from 'react-router';
 import SumForm from './subcomponents/SumForm';
 import ChooseQuantity from '../ChooseQuantity';
@@ -62,6 +63,123 @@ const ProductNameRenderer = (name: string) => {
 
 const NullComponent = () => null; // вспомогательный компонент, который ничего не рендерит
 
+interface AdditionalRequestBodyProps extends FormComponentProps {
+  onProductNameChange?: (productName: string) => void
+  onTaxChange?: (tax: '7' | '19') => void
+  onPriceChange?: (price: number) => void
+  onClose?: () => void
+}
+
+const AdditionalRequestBody = Form.create<FormComponentProps<AdditionalRequestBodyProps> & AdditionalRequestBodyProps>({ name: 'additional_request' })(({ onProductNameChange, onTaxChange, onPriceChange, onClose, form: { getFieldDecorator, validateFields, getFieldsValue } }: AdditionalRequestBodyProps) => {
+  const { productName, price, tax } = getFieldsValue();
+
+  useEffect(() => {
+    const currentValue = parseFloat(price);
+    !isNaN(currentValue) && onPriceChange && onPriceChange(currentValue);
+  }, [onPriceChange, price]);
+
+  useEffect(() => {
+    onProductNameChange && onProductNameChange(productName);
+  }, [onProductNameChange, productName]);
+
+  useEffect(() => {
+    onTaxChange && onTaxChange(tax);
+  }, [onTaxChange, tax]);
+
+  const onCloseButton = useCallback(() => {
+    let anyErrors = 0;
+    validateFields((errors) => {
+      if (errors) {
+        anyErrors = 1;
+      };
+    })
+    if (productName !== '' && price !== 0 && anyErrors === 0) {
+      onClose && onClose();
+    }
+  }, [onClose]);
+
+  return (
+    <Form>
+      <div className="AdditionalRequestBody">
+        <div className="AdditionalRequestBody-Content">
+          <div className="AdditionalRequestBody-ProductName">
+            <div>Product name</div>
+            <Form.Item>{getFieldDecorator('productName', { rules: [{ required: true, message: 'Обязательное поле' }] })(
+              <Input autoFocus/>)}
+            </Form.Item>
+          </div>
+          <div className="AdditionalRequestBody-Tax" onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.stopPropagation();
+                }
+                }}>
+            <div>Tax</div>
+            <Form.Item >{getFieldDecorator('tax', { initialValue: '7' })(
+              <Select>
+                <Select.Option value="7" >7</Select.Option>
+                <Select.Option value="19">19</Select.Option>
+              </Select>)}
+            </Form.Item>
+          </div>
+          <div className="AdditionalRequestBody-Price"><div>Price</div>
+            <Form.Item>{getFieldDecorator('price', {
+              rules: [{ required: true, message: 'Обязательное поле' }, {
+                validator: (_rule, value, cb) => {
+                  const parsedValue = parseFloat(value);
+                  if (parsedValue <= 0 || isNaN(parsedValue)) {
+                    cb('');
+                  }
+                }
+              }]
+            })(<Input />)}
+            </Form.Item>
+          </div>
+        </div>
+        <Button type="primary" onClick={onCloseButton}>Добавить</Button>
+      </div>
+    </Form>
+  )
+});
+
+interface AdditionalRequestProps {
+  message: string
+  onClose: (productName?: string, tax?: '7' | '19', price?: number) => void
+}
+
+const AdditionalRequest = ({ message, onClose }: AdditionalRequestProps) => {
+  const [productName, setProductName] = useState('');
+  const [tax, setTax] = useState<'7' | '19'>('7');
+  const [price, setPrice] = useState(0);
+
+  const onAlertClose = useCallback(() => {
+    console.log('onAlertClose: ', productName, tax, price);
+    onClose(productName, tax, price);
+  }, [productName, tax, price]);
+
+  const onEnterKeyDown = useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Enter') {
+      event.stopPropagation();
+      onAlertClose();
+    }
+  }, [onAlertClose]);
+
+  return (
+    <div onKeyDown={onEnterKeyDown}>
+      <Alert
+        className="warning AdditionalRequest"
+        message={message}
+        description={<AdditionalRequestBody
+          onPriceChange={setPrice}
+          onProductNameChange={setProductName}
+          onTaxChange={setTax}
+          onClose={() => onAlertClose()} />}
+        type="info"
+        onClose={() => onClose()}
+        closable />
+    </div>
+  )
+};
+
 const scrollToCurrentSelectedItem = () => {
   // функция, которая скроллит до текущего выбранного товара/добавки
   const curItem = document.querySelector('.cart__products-table_selected');
@@ -85,6 +203,7 @@ function Cart({
   formDataState,
   lang,
   addProduct,
+  addCustomProduct,
   addManyProduct,
   addAddition,
   addManyAddition,
@@ -101,6 +220,7 @@ function Cart({
   const [products] = useState(searchProducts('') as TableProduct[]);
   const [search, setSearch] = useState('');
   const [isAlert, setIsAlert] = useState(false);
+  const [isAdditionalRequest, setAdditionalRequest] = useState(false);
   const [alertMessage, setAlertMessage] = useState({ message: '', description: '' });
   const [currentSelection, setCurrentSelection] = useState(0);
   const [currentSelectionProduct, setCurrentSelectionProduct] = useState(products[0]);
@@ -720,6 +840,8 @@ function Cart({
       } else if (event.code === 'F7' || event.key === 'F11') {
         const RabattInput = document.querySelector('#cart_discount') as HTMLInputElement;
         RabattInput && RabattInput.focus();
+      } else if (event.code === 'F9') {
+        onAdditionalRequest();
       }
     },
     [
@@ -731,6 +853,19 @@ function Cart({
       signChooseQuantity,
     ],
   );
+
+  const onAdditionalRequest = useCallback(() => {
+    setAdditionalRequest(true);
+  }, [setAdditionalRequest]);
+
+  const onAdditionalRequestClose = useCallback((productName?: string, tax?: '7' | '19', price?: number) => {
+    console.log('onAdditionalRequestClose: ', productName, price, tax);
+    if (productName && tax && price) {
+      addCustomProduct(productName, price, tax);
+    }
+    setAdditionalRequest(false);
+    selectSearchInputText();
+  }, [addCustomProduct, setAdditionalRequest]);
 
   useEffect(() => {
     // слушаем события нажатия кнопок
@@ -806,10 +941,10 @@ function Cart({
             productPrice = product.quantity * product.price;
           }
           return (sum + productPrice + additionsPrice);
-        }, 0)) * 0.19 * 100) / 100
+        }, 0) + parseFloat(formDataState.deliveryCost.replace(',', '.'))) * 0.19 * 100) / 100
       ).toString(),
     );
-  }, [cartProducts]);
+  }, [cartProducts, formDataState.deliveryCost]);
 
   useEffect(() => {
     // обновляем значения вычисляемых полей
@@ -1011,6 +1146,10 @@ function Cart({
           min={-1 * currentSelectionProductQuantityInCart}
         />
       )}
+      {isAdditionalRequest && <AdditionalRequest
+        message={language.additionalRequests}
+        onClose={onAdditionalRequestClose}
+      />}
       <div className="cart__tables">
         <div className="cart__order-table">
           <div className="cart__order">
@@ -1054,6 +1193,11 @@ function Cart({
           {language.back}
           {' '}
           / F4
+        </Button>
+        <Button type="dashed" size="large" onClick={onAdditionalRequest}>
+          {language.additionalRequests}
+          {' '}
+          / F9
         </Button>
         <Button type="dashed" size="large" onClick={onFreeDeliveryClick}>
           {language.freeDelivery}

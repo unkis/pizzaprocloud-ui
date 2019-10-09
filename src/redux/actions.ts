@@ -12,6 +12,7 @@ export const formDataActions = {
 
 export enum cartProductsActions {
   ADD_PRODUCT_TO_CART,
+  ADD_CUSTOM_PRODUCT_TO_CART,
   ADD_ADDITION_TO_PRODUCT_IN_CART,
   ADD_MANY_PRODUCT_TO_CART,
   ADD_MANY_ADDITION_TO_PRODUCT_IN_CART,
@@ -52,6 +53,17 @@ export const addProductToCart = (
   type: cartProductsActions.ADD_PRODUCT_TO_CART,
   id,
   article,
+  productName,
+  price,
+  tax,
+});
+
+export const addCustomProductToCart = (
+  productName: string,
+  price: number,
+  tax: '7' | '19',
+) => ({
+  type: cartProductsActions.ADD_CUSTOM_PRODUCT_TO_CART,
   productName,
   price,
   tax,
