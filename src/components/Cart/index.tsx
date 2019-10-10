@@ -70,76 +70,100 @@ interface AdditionalRequestBodyProps extends FormComponentProps {
   onClose?: () => void
 }
 
-const AdditionalRequestBody = Form.create<FormComponentProps<AdditionalRequestBodyProps> & AdditionalRequestBodyProps>({ name: 'additional_request' })(({ onProductNameChange, onTaxChange, onPriceChange, onClose, form: { getFieldDecorator, validateFields, getFieldsValue } }: AdditionalRequestBodyProps) => {
-  const { productName, price, tax } = getFieldsValue();
+const AdditionalRequestBody = Form.create<
+  FormComponentProps<AdditionalRequestBodyProps> & AdditionalRequestBodyProps
+>({ name: 'additional_request' })(
+  ({
+    onProductNameChange,
+    onTaxChange,
+    onPriceChange,
+    onClose,
+    form: { getFieldDecorator, validateFields, getFieldsValue },
+  }: AdditionalRequestBodyProps) => {
+    const { productName, price, tax } = getFieldsValue();
 
-  useEffect(() => {
-    const currentValue = parseFloat(price);
-    !isNaN(currentValue) && onPriceChange && onPriceChange(currentValue);
-  }, [onPriceChange, price]);
+    useEffect(() => {
+      const currentValue = parseFloat(price);
+      !isNaN(currentValue) && onPriceChange && onPriceChange(currentValue);
+    }, [onPriceChange, price]);
 
-  useEffect(() => {
-    onProductNameChange && onProductNameChange(productName);
-  }, [onProductNameChange, productName]);
+    useEffect(() => {
+      onProductNameChange && onProductNameChange(productName);
+    }, [onProductNameChange, productName]);
 
-  useEffect(() => {
-    onTaxChange && onTaxChange(tax);
-  }, [onTaxChange, tax]);
+    useEffect(() => {
+      onTaxChange && onTaxChange(tax);
+    }, [onTaxChange, tax]);
 
-  const onCloseButton = useCallback(() => {
-    let anyErrors = 0;
-    validateFields((errors) => {
-      if (errors) {
-        anyErrors = 1;
-      };
-    })
-    if (productName !== '' && price !== 0 && anyErrors === 0) {
-      onClose && onClose();
-    }
-  }, [onClose]);
+    const onCloseButton = useCallback(() => {
+      let anyErrors = 0;
+      validateFields((errors) => {
+        if (errors) {
+          anyErrors = 1;
+        }
+      });
+      if (productName !== '' && price !== 0 && anyErrors === 0) {
+        onClose && onClose();
+      }
+    }, [onClose]);
 
-  return (
-    <Form>
-      <div className="AdditionalRequestBody">
-        <div className="AdditionalRequestBody-Content">
-          <div className="AdditionalRequestBody-ProductName">
-            <div>Product name</div>
-            <Form.Item>{getFieldDecorator('productName', { rules: [{ required: true, message: 'Обязательное поле' }] })(
-              <Input autoFocus/>)}
-            </Form.Item>
-          </div>
-          <div className="AdditionalRequestBody-Tax" onKeyDown={(e) => {
+    return (
+      <Form>
+        <div className="AdditionalRequestBody">
+          <div className="AdditionalRequestBody-Content">
+            <div className="AdditionalRequestBody-ProductName">
+              <div>Product name</div>
+              <Form.Item>
+                {getFieldDecorator('productName', {
+                  rules: [{ required: true, message: 'Обязательное поле' }],
+                })(<Input autoFocus />)}
+              </Form.Item>
+            </div>
+            <div
+              className="AdditionalRequestBody-Tax"
+              onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   e.stopPropagation();
                 }
-                }}>
-            <div>Tax</div>
-            <Form.Item >{getFieldDecorator('tax', { initialValue: '7' })(
-              <Select>
-                <Select.Option value="7" >7</Select.Option>
-                <Select.Option value="19">19</Select.Option>
-              </Select>)}
-            </Form.Item>
+              }}
+            >
+              <div>Tax</div>
+              <Form.Item>
+                {getFieldDecorator('tax', { initialValue: '7' })(
+                  <Select>
+                    <Select.Option value="7">7</Select.Option>
+                    <Select.Option value="19">19</Select.Option>
+                  </Select>,
+                )}
+              </Form.Item>
+            </div>
+            <div className="AdditionalRequestBody-Price">
+              <div>Price</div>
+              <Form.Item>
+                {getFieldDecorator('price', {
+                  rules: [
+                    { required: true, message: 'Обязательное поле' },
+                    {
+                      validator: (_rule, value, cb) => {
+                        const parsedValue = parseFloat(value);
+                        if (parsedValue <= 0 || isNaN(parsedValue)) {
+                          cb('');
+                        }
+                      },
+                    },
+                  ],
+                })(<Input />)}
+              </Form.Item>
+            </div>
           </div>
-          <div className="AdditionalRequestBody-Price"><div>Price</div>
-            <Form.Item>{getFieldDecorator('price', {
-              rules: [{ required: true, message: 'Обязательное поле' }, {
-                validator: (_rule, value, cb) => {
-                  const parsedValue = parseFloat(value);
-                  if (parsedValue <= 0 || isNaN(parsedValue)) {
-                    cb('');
-                  }
-                }
-              }]
-            })(<Input />)}
-            </Form.Item>
-          </div>
+          <Button type="primary" onClick={onCloseButton}>
+            Добавить
+          </Button>
         </div>
-        <Button type="primary" onClick={onCloseButton}>Добавить</Button>
-      </div>
-    </Form>
-  )
-});
+      </Form>
+    );
+  },
+);
 
 interface AdditionalRequestProps {
   message: string
@@ -156,28 +180,35 @@ const AdditionalRequest = ({ message, onClose }: AdditionalRequestProps) => {
     onClose(productName, tax, price);
   }, [productName, tax, price]);
 
-  const onEnterKeyDown = useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === 'Enter') {
-      event.stopPropagation();
-      onAlertClose();
-    }
-  }, [onAlertClose]);
+  const onEnterKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (event.key === 'Enter') {
+        event.stopPropagation();
+        onAlertClose();
+      }
+    },
+    [onAlertClose],
+  );
 
   return (
     <div onKeyDown={onEnterKeyDown}>
       <Alert
         className="warning AdditionalRequest"
         message={message}
-        description={<AdditionalRequestBody
-          onPriceChange={setPrice}
-          onProductNameChange={setProductName}
-          onTaxChange={setTax}
-          onClose={() => onAlertClose()} />}
+        description={(
+          <AdditionalRequestBody
+            onPriceChange={setPrice}
+            onProductNameChange={setProductName}
+            onTaxChange={setTax}
+            onClose={() => onAlertClose()}
+          />
+)}
         type="info"
         onClose={() => onClose()}
-        closable />
+        closable
+      />
     </div>
-  )
+  );
 };
 
 const scrollToCurrentSelectedItem = () => {
@@ -237,7 +268,10 @@ function Cart({
 
   const sortedProducts = useMemo(() => {
     // сортируем продукты с бека
-    const unsortedProducts = ([...products.filter(({ type }) => type === 'product'), ...products.filter(({ type }) => type === 'addition')] as typeof products).sort((a, b) => {
+    const unsortedProducts = ([
+      ...products.filter(({ type }) => type === 'product'),
+      ...products.filter(({ type }) => type === 'addition'),
+    ] as typeof products).sort((a, b) => {
       if (a.article && b.article) {
         return naturalSort(a.article, b.article);
       }
@@ -250,7 +284,11 @@ function Cart({
     let newSelection = -1;
     for (const product of unsortedProducts) {
       if (
-        (product.article && product.article.toString().toLowerCase().includes(formattedSearch))
+        (product.article
+          && product.article
+            .toString()
+            .toLowerCase()
+            .includes(formattedSearch))
         || product.productName.toLowerCase().includes(formattedSearch)
       ) {
         newSelection = product.id;
@@ -361,16 +399,16 @@ function Cart({
       }
     }
   }, [
-      cartProducts,
-      currentSelection,
-      decrementAddition,
-      decrementProduct,
-      setIsAlert,
-      setAlertMessage,
-      currentSelectedProductInCart,
-      sortedProducts,
-      setSignChooseQuantity,
-    ]);
+    cartProducts,
+    currentSelection,
+    decrementAddition,
+    decrementProduct,
+    setIsAlert,
+    setAlertMessage,
+    currentSelectedProductInCart,
+    sortedProducts,
+    setSignChooseQuantity,
+  ]);
 
   const onPlusOrEnterKeyDown = useCallback(() => {
     // слушаем нажатия '+' и 'enter' и изменяем товары в корзине на основе этого
@@ -414,16 +452,16 @@ function Cart({
     }
     selectSearchInputText();
   }, [
-      sortedProducts,
-      isAlert,
-      cartProducts,
-      currentSelection,
-      addAddition,
-      addProduct,
-      currentSelectedProductInCart,
-      signChooseQuantity,
-      setSignChooseQuantity,
-    ]);
+    sortedProducts,
+    isAlert,
+    cartProducts,
+    currentSelection,
+    addAddition,
+    addProduct,
+    currentSelectedProductInCart,
+    signChooseQuantity,
+    setSignChooseQuantity,
+  ]);
 
   const onSearchChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -734,7 +772,7 @@ function Cart({
           }
           className={`${props.className} ${isHeader ? 'cart__table-header' : ''} ${
             isSelected ? 'cart__products-table_selected' : ''
-            }`}
+          }`}
         >
           {isHeader ? props.children[0].props.record.header : props.children}
         </tr>
@@ -858,14 +896,17 @@ function Cart({
     setAdditionalRequest(true);
   }, [setAdditionalRequest]);
 
-  const onAdditionalRequestClose = useCallback((productName?: string, tax?: '7' | '19', price?: number) => {
-    console.log('onAdditionalRequestClose: ', productName, price, tax);
-    if (productName && tax && price) {
-      addCustomProduct(productName, price, tax);
-    }
-    setAdditionalRequest(false);
-    selectSearchInputText();
-  }, [addCustomProduct, setAdditionalRequest]);
+  const onAdditionalRequestClose = useCallback(
+    (productName?: string, tax?: '7' | '19', price?: number) => {
+      console.log('onAdditionalRequestClose: ', productName, price, tax);
+      if (productName && tax && price) {
+        addCustomProduct(productName, price, tax);
+      }
+      setAdditionalRequest(false);
+      selectSearchInputText();
+    },
+    [addCustomProduct, setAdditionalRequest],
+  );
 
   useEffect(() => {
     // слушаем события нажатия кнопок
@@ -905,46 +946,66 @@ function Cart({
     };
   }, [cartProducts]);
 
-  useEffect(() => {//считаем налоги
+  useEffect(() => {
+    // считаем налоги
 
     addDataToFormData(
       'mwst_7',
-      (
-        isTaxSecondOnAll ? 0 : Math.round((cartProducts.reduce((sum, product) => {
-          const { additions } = product;
-          let additionsPrice = 0, productPrice = 0;
-          if (additions) {
-            additionsPrice = additions.reduce((sum, addition) => {
-              return (sum + (addition.tax === '7' ? addition.quantity * addition.price : 0));
-            }, 0)
-          }
-          if (product.tax == '7') {
-            productPrice = product.quantity * product.price;
-          }
-          return (sum + productPrice + additionsPrice);
-        }, 0)) * 0.07 * 100) / 100
+      (isTaxSecondOnAll
+        ? 0
+        : Math.round(
+          cartProducts.reduce((sum, product) => {
+            const { additions } = product;
+            let additionsPrice = 0;
+            let productPrice = 0;
+            if (additions) {
+              additionsPrice = additions.reduce(
+                (sum, addition) => sum + (addition.tax === '7' ? addition.quantity * addition.price : 0),
+                0,
+              );
+            }
+            if (product.tax == '7') {
+              productPrice = product.quantity * product.price;
+            }
+            return sum + productPrice + additionsPrice;
+          }, 0)
+              * 0.07
+              * (1 - (isNaN(discount) ? 0 : discount) / 100)
+              * 100,
+        ) / 100
       ).toString(),
     );
 
     addDataToFormData(
       'mwst_19',
       (
-        Math.round((cartProducts.reduce((sum, product) => {
-          const { additions } = product;
-          let additionsPrice = 0, productPrice = 0;
-          if (additions) {
-            additionsPrice = additions.reduce((sum, addition) => {
-              return (sum + (addition.tax === '19' || isTaxSecondOnAll ? addition.quantity * addition.price : 0));
-            }, 0)
-          }
-          if (product.tax === '19' || isTaxSecondOnAll) {
-            productPrice = product.quantity * product.price;
-          }
-          return (sum + productPrice + additionsPrice);
-        }, 0) + parseFloat(formDataState.deliveryCost.replace(',', '.'))) * 0.19 * 100) / 100
+        Math.round(
+          (cartProducts.reduce((sum, product) => {
+            const { additions } = product;
+            let additionsPrice = 0;
+            let productPrice = 0;
+            if (additions) {
+              additionsPrice = additions.reduce(
+                (sum, addition) => sum
+                  + (addition.tax === '19' || isTaxSecondOnAll
+                    ? addition.quantity * addition.price
+                    : 0),
+                0,
+              );
+            }
+            if (product.tax === '19' || isTaxSecondOnAll) {
+              productPrice = product.quantity * product.price;
+            }
+            return sum + productPrice + additionsPrice;
+          }, 0)
+            + parseFloat(formDataState.deliveryCost.replace(',', '.')))
+            * 0.19
+            * (1 - (isNaN(discount) ? 0 : discount) / 100)
+            * 100,
+        ) / 100
       ).toString(),
     );
-  }, [cartProducts, formDataState.deliveryCost]);
+  }, [cartProducts, formDataState.deliveryCost, discount]);
 
   useEffect(() => {
     // обновляем значения вычисляемых полей
@@ -961,7 +1022,7 @@ function Cart({
     const newTotalPrice = (
       deliveryCost
       + ((100 - (discount > 100 ? 0 : discount)) / 100)
-      * (cartProductsProductsSum + cartProductsAdditionsSum)
+        * (cartProductsProductsSum + cartProductsAdditionsSum)
     ).toString();
     if (newTotalPrice !== formDataState.total_price) {
       addDataToFormData('total_price', newTotalPrice);
@@ -1146,10 +1207,12 @@ function Cart({
           min={-1 * currentSelectionProductQuantityInCart}
         />
       )}
-      {isAdditionalRequest && <AdditionalRequest
-        message={language.additionalRequests}
-        onClose={onAdditionalRequestClose}
-      />}
+      {isAdditionalRequest && (
+        <AdditionalRequest
+          message={language.additionalRequests}
+          onClose={onAdditionalRequestClose}
+        />
+      )}
       <div className="cart__tables">
         <div className="cart__order-table">
           <div className="cart__order">
@@ -1192,22 +1255,22 @@ function Cart({
         <Button type="danger" size="large" onClick={onBackButtonClick}>
           {language.back}
           {' '}
-          / F4
+/ F4
         </Button>
         <Button type="dashed" size="large" onClick={onAdditionalRequest}>
           {language.additionalRequests}
           {' '}
-          / F9
+/ F9
         </Button>
         <Button type="dashed" size="large" onClick={onFreeDeliveryClick}>
           {language.freeDelivery}
           {' '}
-          / F5
+/ F5
         </Button>
         <Button type="primary" size="large">
           {language.print}
           {' '}
-          / F2
+/ F2
         </Button>
       </div>
     </div>

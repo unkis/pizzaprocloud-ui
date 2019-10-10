@@ -55,11 +55,7 @@ export interface CartDispatchProps {
     price: number,
     mwst: '7' | '19',
   ) => void
-  addCustomProduct: (
-    productName: string,
-    price: number,
-    mwst: '7' | '19',
-  ) => void
+  addCustomProduct: (productName: string, price: number, mwst: '7' | '19') => void
   addManyProduct: (
     id: number,
     article: string,

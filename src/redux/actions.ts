@@ -58,11 +58,7 @@ export const addProductToCart = (
   tax,
 });
 
-export const addCustomProductToCart = (
-  productName: string,
-  price: number,
-  tax: '7' | '19',
-) => ({
+export const addCustomProductToCart = (productName: string, price: number, tax: '7' | '19') => ({
   type: cartProductsActions.ADD_CUSTOM_PRODUCT_TO_CART,
   productName,
   price,

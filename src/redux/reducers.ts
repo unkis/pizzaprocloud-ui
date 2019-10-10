@@ -31,8 +31,18 @@ export const languages = (state: LanguagesState = { lang: 'ru' }, action: Langua
   }
 };
 
-export const settings = (state: SettingsState = { shopAddress: { city: 'Москва', street: 'Льва Толстого', house: 10, postIndex: 777777 } }, action: SettingsAction) => {
-  switch(action.type) {
+export const settings = (
+  state: SettingsState = {
+    shopAddress: {
+      city: 'Москва',
+      street: 'Льва Толстого',
+      house: 10,
+      postIndex: 777777,
+    },
+  },
+  action: SettingsAction,
+) => {
+  switch (action.type) {
     default:
       return state;
   }
@@ -111,19 +121,31 @@ export const cartProducts = (
         const prevQuantity = state[state.length - 1].quantity;
         return [...state.slice(0, -1), { ...state[state.length - 1], quantity: prevQuantity + 1 }];
       }
-      return [...state, {
-        id, article, productName, price, tax, quantity: 1,
-      }];
+      return [
+        ...state,
+        {
+          id,
+          article,
+          productName,
+          price,
+          tax,
+          quantity: 1,
+        },
+      ];
     }
 
     case cartProductsActions.ADD_CUSTOM_PRODUCT_TO_CART: {
-      const {
-        productName, price, tax,
-      } = action;
+      const { productName, price, tax } = action;
 
-      return [...state, {
-        productName, price, tax, quantity: 1,
-      }];
+      return [
+        ...state,
+        {
+          productName,
+          price,
+          tax,
+          quantity: 1,
+        },
+      ];
     }
 
     case cartProductsActions.ADD_MANY_PRODUCT_TO_CART: {
@@ -143,9 +165,17 @@ export const cartProducts = (
         }
         return state;
       }
-      return [...state, {
-        id, article, productName, price, tax, quantity,
-      }];
+      return [
+        ...state,
+        {
+          id,
+          article,
+          productName,
+          price,
+          tax,
+          quantity,
+        },
+      ];
     }
 
     case cartProductsActions.ADD_ADDITION_TO_PRODUCT_IN_CART: {
@@ -486,9 +516,16 @@ export const cartProducts = (
             ...state.slice(0, productIndex),
             {
               ...state[productIndex],
-              additions: [...additions, {
-                id: additionId, productName, price, tax, quantity: -1,
-              }],
+              additions: [
+                ...additions,
+                {
+                  id: additionId,
+                  productName,
+                  price,
+                  tax,
+                  quantity: -1,
+                },
+              ],
             },
           ];
         }
