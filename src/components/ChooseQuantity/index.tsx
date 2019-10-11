@@ -60,7 +60,6 @@ const ChooseQuantity = ({
         return setQuantity(0);
       }
       setQuantity(parsedValue);
-      // setTimeout(selectSearchInputText, 10);
     },
     [setQuantity],
   );

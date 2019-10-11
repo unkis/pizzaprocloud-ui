@@ -250,3 +250,15 @@
 .AdditionalRequestBody-Price {
   width: 20%;
 }
+
+.AntButton_green {
+  background-color: #009900;
+  border-color: #009900;
+  color: #fff;
+}
+
+.AntButton_green:hover {
+  background-color: #00AA00;
+  border-color: #00AA00;
+  color: #fff;
+}

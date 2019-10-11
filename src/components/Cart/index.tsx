@@ -63,11 +63,13 @@ const ProductNameRenderer = (name: string) => {
 
 const NullComponent = () => null; // вспомогательный компонент, который ничего не рендерит
 
+interface AdditionalRequestTranslations { tax: string, productName: string, add: string, price: string, };
 interface AdditionalRequestBodyProps extends FormComponentProps {
   onProductNameChange?: (productName: string) => void
   onTaxChange?: (tax: '7' | '19') => void
   onPriceChange?: (price: number) => void
   onClose?: () => void
+  language: AdditionalRequestTranslations
 }
 
 const AdditionalRequestBody = Form.create<
@@ -79,6 +81,8 @@ const AdditionalRequestBody = Form.create<
     onPriceChange,
     onClose,
     form: { getFieldDecorator, validateFields, getFieldsValue },
+    language,
+
   }: AdditionalRequestBodyProps) => {
     const { productName, price, tax } = getFieldsValue();
 
@@ -112,7 +116,7 @@ const AdditionalRequestBody = Form.create<
         <div className="AdditionalRequestBody">
           <div className="AdditionalRequestBody-Content">
             <div className="AdditionalRequestBody-ProductName">
-              <div>Product name</div>
+              <div>{language.productName}</div>
               <Form.Item>
                 {getFieldDecorator('productName', {
                   rules: [{ required: true, message: 'Обязательное поле' }],
@@ -127,7 +131,7 @@ const AdditionalRequestBody = Form.create<
                 }
               }}
             >
-              <div>Tax</div>
+              <div>{language.tax}</div>
               <Form.Item>
                 {getFieldDecorator('tax', { initialValue: '7' })(
                   <Select>
@@ -138,7 +142,7 @@ const AdditionalRequestBody = Form.create<
               </Form.Item>
             </div>
             <div className="AdditionalRequestBody-Price">
-              <div>Price</div>
+              <div>{language.price}</div>
               <Form.Item>
                 {getFieldDecorator('price', {
                   rules: [
@@ -157,7 +161,7 @@ const AdditionalRequestBody = Form.create<
             </div>
           </div>
           <Button type="primary" onClick={onCloseButton}>
-            Добавить
+            {language.add}
           </Button>
         </div>
       </Form>
@@ -168,15 +172,15 @@ const AdditionalRequestBody = Form.create<
 interface AdditionalRequestProps {
   message: string
   onClose: (productName?: string, tax?: '7' | '19', price?: number) => void
+  language: AdditionalRequestTranslations
 }
 
-const AdditionalRequest = ({ message, onClose }: AdditionalRequestProps) => {
+const AdditionalRequest = ({ message, onClose, language }: AdditionalRequestProps) => {
   const [productName, setProductName] = useState('');
   const [tax, setTax] = useState<'7' | '19'>('7');
   const [price, setPrice] = useState(0);
 
   const onAlertClose = useCallback(() => {
-    console.log('onAlertClose: ', productName, tax, price);
     onClose(productName, tax, price);
   }, [productName, tax, price]);
 
@@ -201,6 +205,7 @@ const AdditionalRequest = ({ message, onClose }: AdditionalRequestProps) => {
             onProductNameChange={setProductName}
             onTaxChange={setTax}
             onClose={() => onAlertClose()}
+            language={language}
           />
 )}
         type="info"
@@ -815,7 +820,10 @@ function Cart({
     [addInProducts],
   );
 
-  const onFreeDeliveryClick = useCallback(() => addDataToFormData('deliveryCost', '0'), [
+  const onFreeDeliveryClick = useCallback(() => {
+    addDataToFormData('deliveryCost', '0');
+    selectSearchInputText();
+  }, [
     addDataToFormData,
   ]);
 
@@ -878,6 +886,9 @@ function Cart({
       } else if (event.code === 'F7' || event.key === 'F11') {
         const RabattInput = document.querySelector('#cart_discount') as HTMLInputElement;
         RabattInput && RabattInput.focus();
+      } else if (event.code === 'F10') {
+        const DeliveryCostInput = document.querySelector('#cart_deliveryCost') as HTMLInputElement;
+        DeliveryCostInput && DeliveryCostInput.focus();
       } else if (event.code === 'F9') {
         onAdditionalRequest();
       }
@@ -1018,12 +1029,14 @@ function Cart({
   useEffect(() => {
     // вычисляем общую цену
     const { cartProductsProductsSum, cartProductsAdditionsSum } = cartProductsSum;
-    const deliveryCost = parseFloat(formDataState.deliveryCost) | 0;
+
+    const deliveryCost = parseFloat(formDataState.deliveryCost.replace(',', '.')) || 0;
+
     const newTotalPrice = (
       deliveryCost
       + ((100 - (discount > 100 ? 0 : discount)) / 100)
         * (cartProductsProductsSum + cartProductsAdditionsSum)
-    ).toString();
+    ).toFixed(2);
     if (newTotalPrice !== formDataState.total_price) {
       addDataToFormData('total_price', newTotalPrice);
     }
@@ -1211,6 +1224,7 @@ function Cart({
         <AdditionalRequest
           message={language.additionalRequests}
           onClose={onAdditionalRequestClose}
+          language={language}
         />
       )}
       <div className="cart__tables">
@@ -1257,12 +1271,12 @@ function Cart({
           {' '}
 / F4
         </Button>
-        <Button type="dashed" size="large" onClick={onAdditionalRequest}>
+        <Button type="dashed" size="large" className="AntButton_green" onClick={onAdditionalRequest}>
           {language.additionalRequests}
           {' '}
 / F9
         </Button>
-        <Button type="dashed" size="large" onClick={onFreeDeliveryClick}>
+        <Button type="dashed" size="large" className="AntButton_green" onClick={onFreeDeliveryClick}>
           {language.freeDelivery}
           {' '}
 / F5

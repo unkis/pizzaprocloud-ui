@@ -50,7 +50,7 @@ const SumForm = Form.create({ name: 'cart' })(
         [addDataToFormData],
       );
 
-      const onRabattEnter = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
+      const onEnter = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') {
           selectSearchInputText();
           event.stopPropagation();
@@ -100,10 +100,11 @@ const SumForm = Form.create({ name: 'cart' })(
                   <Input placeholder={language.additions} id="zutaten" disabled suffix="€" />,
                 )}
               </Form.Item>
-              <Form.Item label={language.deliveryCost}>
+              <Form.Item label={`F10 / ${language.deliveryCost}`}>
                 {getFieldDecorator('deliveryCost')(
                   <Input
                     onChange={onDeliveryCostChange}
+                    onKeyDown={onEnter}
                     placeholder={language.deliveryCost}
                     suffix="€"
                   />,
@@ -113,7 +114,7 @@ const SumForm = Form.create({ name: 'cart' })(
                 {getFieldDecorator('discount')(
                   <Input
                     onChange={onDiscountChange}
-                    onKeyDown={onRabattEnter}
+                    onKeyDown={onEnter}
                     placeholder={`F11 / ${language.discount}`}
                     suffix="%"
                   />,
