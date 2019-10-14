@@ -46,9 +46,9 @@ export const selectSearchInputText = (targetElem?: any) => {
   target.setRangeText(target.value, 0, target.value.length, 'select');
 };
 
-const ProductNameRenderer = (name: string) => {
+const ProductNameRenderer = (name: string, { quantity }: { quantity: number | undefined }) => {
   // компонент корзины с названием товара/добавки
-  const testStr = name && name.match(/^([+-]{0,1}[0-9]*)(.*)/);
+  const testStr = name && quantity === undefined && name.match(/^([+-]{0,1}[0-9]*)(.*)/);
   if (testStr) {
     const [, quantity, additionName] = testStr;
     return (
@@ -61,9 +61,29 @@ const ProductNameRenderer = (name: string) => {
   return name;
 };
 
+const ProductPriceRenderer = (price: number, { additionsNull }: { additionsNull?: boolean }) =>
+  // компонент корзины с названием товара/добавки
+  // const testStr = name && name.match(/^([+-]{0,1}[0-9]*)(.*)/);
+  // if (testStr) {
+  // const [, quantity, additionName] = testStr;
+  // return (
+  // <div className="addition">
+  // <span className="addition__quantity">{quantity}</span>
+  // {additionName}
+  // </div>
+  // );
+  // }
+  (additionsNull ? 0 : price);
+
+
 const NullComponent = () => null; // вспомогательный компонент, который ничего не рендерит
 
-interface AdditionalRequestTranslations { tax: string, productName: string, add: string, price: string, };
+interface AdditionalRequestTranslations {
+  tax: string
+  productName: string
+  add: string
+  price: string
+}
 interface AdditionalRequestBodyProps extends FormComponentProps {
   onProductNameChange?: (productName: string) => void
   onTaxChange?: (tax: '7' | '19') => void
@@ -82,7 +102,6 @@ const AdditionalRequestBody = Form.create<
     onClose,
     form: { getFieldDecorator, validateFields, getFieldsValue },
     language,
-
   }: AdditionalRequestBodyProps) => {
     const { productName, price, tax } = getFieldsValue();
 
@@ -300,13 +319,13 @@ function Cart({
         break;
       }
     }
+    const SearchInput = document.querySelector(
+      '.cart__products-table .ant-input',
+    ) as HTMLInputElement;
     if (newSelection === -1) {
-      setAlertMessage({
-        message: 'Товар не найден',
-        description: 'Нет товара с соответствующими параметрами',
-      });
-      setIsAlert(true);
-      selectSearchInputText();
+      SearchInput && SearchInput.classList.add('RedBorder');
+    } else {
+      SearchInput && SearchInput.classList.remove('RedBorder');
     }
     setCurrentSelection(newSelection);
     return unsortedProducts;
@@ -389,6 +408,7 @@ function Cart({
       }
       const { productName, price, tax } = currentProduct;
       setSignChooseQuantity('-');
+      console.log('HI');
       // decrementAddition(currentSelectedProductInCart, currentProduct.id, productName, price, tax);
     } else if (typeOfCurrentProduct === 'product') {
       const isProductInCart = findLastIndexOf(cartProducts, ({ id }) => id === currentProduct.id);
@@ -823,9 +843,7 @@ function Cart({
   const onFreeDeliveryClick = useCallback(() => {
     addDataToFormData('deliveryCost', '0');
     selectSearchInputText();
-  }, [
-    addDataToFormData,
-  ]);
+  }, [addDataToFormData]);
 
   const onAlertClose = useCallback(() => setIsAlert(false), [setIsAlert]); // функция на закрытие предупреждения по крестику
   const onChooseQuantityClose = useCallback(
@@ -883,14 +901,22 @@ function Cart({
         onPlusOrEnterKeyDown();
       } else if (event.key === '-') {
         onMinusKeyDown();
-      } else if (event.code === 'F7' || event.key === 'F11') {
+      } else if (event.code === 'F7') {
         const RabattInput = document.querySelector('#cart_discount') as HTMLInputElement;
         RabattInput && RabattInput.focus();
+        RabattInput
+          && RabattInput.setRangeText(RabattInput.value, 0, RabattInput.value.length, 'select');
+        event.preventDefault();
       } else if (event.code === 'F10') {
         const DeliveryCostInput = document.querySelector('#cart_deliveryCost') as HTMLInputElement;
         DeliveryCostInput && DeliveryCostInput.focus();
       } else if (event.code === 'F9') {
         onAdditionalRequest();
+      } else if (event.code === 'F1') {
+        const CommentInput = document.querySelector('#comment-field') as HTMLInputElement;
+        CommentInput && CommentInput.focus();
+        CommentInput
+          && CommentInput.setRangeText(CommentInput.value, 0, CommentInput.value.length, 'select');
       }
     },
     [
@@ -971,16 +997,19 @@ function Cart({
             let productPrice = 0;
             if (additions) {
               additionsPrice = additions.reduce(
-                (sum, addition) => sum + (addition.tax === '7' ? addition.quantity * addition.price : 0),
+                (sum, addition) => sum
+                    + (addition.tax === '7'
+                      ? addition.quantity * addition.price
+                        - (addition.quantity * addition.price) / 1.07
+                      : 0),
                 0,
               );
             }
             if (product.tax == '7') {
-              productPrice = product.quantity * product.price;
+              productPrice = product.quantity * product.price - (product.quantity * product.price) / 1.07;
             }
             return sum + productPrice + additionsPrice;
           }, 0)
-              * 0.07
               * (1 - (isNaN(discount) ? 0 : discount) / 100)
               * 100,
         ) / 100
@@ -1000,17 +1029,18 @@ function Cart({
                 (sum, addition) => sum
                   + (addition.tax === '19' || isTaxSecondOnAll
                     ? addition.quantity * addition.price
+                      - (addition.quantity * addition.price) / 1.19
                     : 0),
                 0,
               );
             }
             if (product.tax === '19' || isTaxSecondOnAll) {
-              productPrice = product.quantity * product.price;
+              productPrice = product.quantity * product.price - (product.quantity * product.price) / 1.19;
             }
             return sum + productPrice + additionsPrice;
           }, 0)
-            + parseFloat(formDataState.deliveryCost.replace(',', '.')))
-            * 0.19
+            + parseFloat(formDataState.deliveryCost.replace(',', '.'))
+            - parseFloat(formDataState.deliveryCost.replace(',', '.')) / 1.19)
             * (1 - (isNaN(discount) ? 0 : discount) / 100)
             * 100,
         ) / 100
@@ -1065,6 +1095,7 @@ function Cart({
         title: language.price,
         dataIndex: 'price',
         key: 'price',
+        render: ProductPriceRenderer,
       },
       {
         key: 'deleteFromCart',
@@ -1115,6 +1146,9 @@ function Cart({
     () =>
       // проставляем ключи продуктам с бека
       cartProducts.map((item, idx) => {
+        const sumAdditions = Array.isArray(item.additions)
+          ? item.additions.reduce((sum, addition) => sum + addition.price * addition.quantity, 0)
+          : 0;
         const additions = Array.isArray(item.additions)
           ? item.additions.map((child, childIdx) => ({
             ...child,
@@ -1125,6 +1159,7 @@ function Cart({
             parentId: item.id,
             idx: childIdx,
             cart: true,
+            additionsNull: sumAdditions < 0,
           }))
           : undefined;
         return {
@@ -1217,7 +1252,12 @@ function Cart({
           defaultValue={
             (signChooseQuantity === '-' ? -1 : 1) * currentSelectionProductQuantityInCart
           }
-          min={-1 * currentSelectionProductQuantityInCart}
+          min={
+            cartProducts[currentSelectedProductInCart]
+            && cartProducts[currentSelectedProductInCart].type === 'product'
+              ? -1 * currentSelectionProductQuantityInCart
+              : undefined
+          }
         />
       )}
       {isAdditionalRequest && (
@@ -1230,7 +1270,7 @@ function Cart({
       <div className="cart__tables">
         <div className="cart__order-table">
           <div className="cart__order">
-            <Input placeholder={language.comment} />
+            <Input id="comment-field" placeholder={`F1 / ${language.comment}`} />
             <Table
               components={customTableComponents}
               expandIcon={NullComponent}
@@ -1239,8 +1279,8 @@ function Cart({
               bordered
               expandedRowKeys={cartProductsExpandedRowKeys}
               defaultExpandAllRows
-              columns={columns1}
-              dataSource={cartProductsWithKeys}
+              columns={columns1 as any}
+              dataSource={cartProductsWithKeys as any}
             />
           </div>
           <SumForm />
@@ -1271,12 +1311,22 @@ function Cart({
           {' '}
 / F4
         </Button>
-        <Button type="dashed" size="large" className="AntButton_green" onClick={onAdditionalRequest}>
+        <Button
+          type="dashed"
+          size="large"
+          className="AntButton_green"
+          onClick={onAdditionalRequest}
+        >
           {language.additionalRequests}
           {' '}
 / F9
         </Button>
-        <Button type="dashed" size="large" className="AntButton_green" onClick={onFreeDeliveryClick}>
+        <Button
+          type="dashed"
+          size="large"
+          className="AntButton_green"
+          onClick={onFreeDeliveryClick}
+        >
           {language.freeDelivery}
           {' '}
 / F5
