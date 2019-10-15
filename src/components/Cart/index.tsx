@@ -75,7 +75,6 @@ const ProductPriceRenderer = (price: number, { additionsNull }: { additionsNull?
   // }
   (additionsNull ? 0 : price);
 
-
 const NullComponent = () => null; // вспомогательный компонент, который ничего не рендерит
 
 interface AdditionalRequestTranslations {
@@ -897,19 +896,33 @@ function Cart({
         // потому что открыто окно выбора количества
         keyDownListener(event);
       } else if (!signChooseQuantity && (event.key === '+' || event.key === 'Enter')) {
+        const { activeElement } = document;
+        if (activeElement && activeElement.id === 'comment-field') {
+          event.stopPropagation();
+          selectSearchInputText();
+          return;
+        }
         // потому что открыто окно выбора количества
         onPlusOrEnterKeyDown();
       } else if (event.key === '-') {
         onMinusKeyDown();
-      } else if (event.code === 'F7') {
+      } else if (event.code === 'F8' || event.code === 'F7') {
         const RabattInput = document.querySelector('#cart_discount') as HTMLInputElement;
         RabattInput && RabattInput.focus();
         RabattInput
           && RabattInput.setRangeText(RabattInput.value, 0, RabattInput.value.length, 'select');
         event.preventDefault();
+        event.stopPropagation();
       } else if (event.code === 'F10') {
         const DeliveryCostInput = document.querySelector('#cart_deliveryCost') as HTMLInputElement;
         DeliveryCostInput && DeliveryCostInput.focus();
+        DeliveryCostInput
+          && DeliveryCostInput.setRangeText(
+            DeliveryCostInput.value,
+            0,
+            DeliveryCostInput.value.length,
+            'select',
+          );
       } else if (event.code === 'F9') {
         onAdditionalRequest();
       } else if (event.code === 'F1') {
@@ -995,7 +1008,10 @@ function Cart({
             const { additions } = product;
             let additionsPrice = 0;
             let productPrice = 0;
-            if (additions) {
+            if (
+              additions
+                && additions.reduce((sum, { price, quantity }) => sum + price * quantity, 0) > 0
+            ) {
               additionsPrice = additions.reduce(
                 (sum, addition) => sum
                     + (addition.tax === '7'
@@ -1024,7 +1040,10 @@ function Cart({
             const { additions } = product;
             let additionsPrice = 0;
             let productPrice = 0;
-            if (additions) {
+            if (
+              additions
+              && additions.reduce((sum, { price, quantity }) => sum + price * quantity, 0) > 0
+            ) {
               additionsPrice = additions.reduce(
                 (sum, addition) => sum
                   + (addition.tax === '19' || isTaxSecondOnAll

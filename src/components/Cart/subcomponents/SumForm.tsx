@@ -110,7 +110,7 @@ const SumForm = Form.create({ name: 'cart' })(
                   />,
                 )}
               </Form.Item>
-              <Form.Item label={`F7 / ${language.discount}`}>
+              <Form.Item label={`F8 / ${language.discount}`}>
                 {getFieldDecorator('discount')(
                   <Input
                     onChange={onDiscountChange}
