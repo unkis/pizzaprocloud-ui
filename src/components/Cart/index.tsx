@@ -914,6 +914,8 @@ function Cart({
         event.preventDefault();
         event.stopPropagation();
       } else if (event.code === 'F10') {
+        event.preventDefault();
+        event.stopPropagation();
         const DeliveryCostInput = document.querySelector('#cart_deliveryCost') as HTMLInputElement;
         DeliveryCostInput && DeliveryCostInput.focus();
         DeliveryCostInput
