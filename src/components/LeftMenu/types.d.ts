@@ -4,18 +4,22 @@ import { langType } from '../../lang';
 import { UserState } from '../../redux/reducersTypes';
 
 interface MenuPageOwnProps {
-  collapsed: boolean;
+  collapsed: boolean
+  onLangChange: (lang: 'ru' | 'de') => void
 }
 
-interface MenuPageProps extends MenuPageDispatchProps, MenuPageOwnProps, MenuPageStateProps, RouterProps {}
+interface MenuPageProps
+  extends MenuPageDispatchProps,
+    MenuPageOwnProps,
+    MenuPageStateProps,
+    RouterProps {}
 
 interface MenuPageStateProps {
-  lang: langType;
-  userRole: UserState['role'];//FIXME
+  lang: langType
+  userRole: UserState['role'] // FIXME
 }
 
-
 interface MenuPageDispatchProps {
-  logoutFromUser: () => void;
-  changeLang: (lang: langType) => void;
+  logoutFromUser: () => void
+  changeLang: (lang: langType) => void
 }

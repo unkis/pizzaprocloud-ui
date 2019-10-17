@@ -46,6 +46,19 @@ const ru = {
   add: 'Добавить',
   articlePrices: 'Номенклатура',
   additionalRequests: 'Доп. пожелания',
+  online: 'Оплачено онлайн',
+  EC: 'Карточкой',
+  bar: 'Наличными',
+  progSettings: 'Настройки Программы',
+  printSettings: 'Принтеры',
+  userSettings: 'Настройки пользователей',
+  voipSettings: 'Телефон',
+  menuSettings: 'Меню',
+  deliverySettings: 'Доставка',
+  categorySettings: 'Категории',
+  articleSettings: 'Артикли / Добавки',
+  saleCategorySettings: 'Скидки для Категорий',
+  setMenu: 'Меню',
 };
 
 export default ru;

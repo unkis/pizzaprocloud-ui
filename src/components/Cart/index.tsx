@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
 import {
-  Table, Icon, Input, Button, Alert, Select, Form,
+  Table, Icon, Input, Button, Alert, Select, Form, Modal,
 } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import { RouteComponentProps } from 'react-router';
@@ -75,6 +75,111 @@ const ProductPriceRenderer = (price: number, { additionsNull }: { additionsNull?
   // }
   (additionsNull ? 0 : price);
 
+interface ChooseTypeOfPaymentProps {
+  visible: boolean
+  language: any
+  onChoose?: (chosenValue: string) => void
+  onClose?: () => void
+}
+const ChooseTypeOfPayment = ({
+  visible,
+  language,
+  onChoose,
+  onClose,
+}: ChooseTypeOfPaymentProps) => {
+  const [currentSelection, setCurrentSelection] = useState(0);
+
+  const values = useMemo(() => [language.bar, language.online, language.EC, language.back], [
+    language,
+  ]);
+
+  const onKeyDownHandler = useCallback(
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (event.key === 'ArrowUp') {
+        setCurrentSelection((prev) => {
+          if (prev === 0) {
+            return 3;
+          }
+          return prev - 1;
+        });
+      } else if (event.key === 'ArrowDown') {
+        setCurrentSelection((prev) => (prev + 1) % 4);
+      } else if (event.key === 'Enter') {
+        if (currentSelection !== 3) {
+          onChoose && onChoose(values[currentSelection]);
+        }
+        onClose && onClose();
+        setCurrentSelection(0);
+      }
+      console.log(event.key);
+      event.preventDefault();
+      event.stopPropagation();
+    },
+    [setCurrentSelection, values, currentSelection, onChoose, onClose],
+  );
+
+  const buttonClickHandler = useCallback(
+    (valueIdx) => () => {
+      if (valueIdx !== 3) {
+        onChoose && onChoose(values[valueIdx]);
+      }
+      onClose && onClose();
+      setCurrentSelection(0);
+    },
+    [onChoose, onClose, values],
+  );
+
+  const onCancelClick = useCallback(() => {
+    onClose && onClose();
+    setCurrentSelection(0);
+  }, [onClose, setCurrentSelection]);
+
+  return (
+    <div onKeyDown={onKeyDownHandler}>
+      <Modal
+        visible={visible}
+        footer={null}
+        className="ChooseTypeOfPayment"
+        onCancel={onCancelClick}
+        destroyOnClose
+      >
+        <Button
+          onClick={buttonClickHandler(0)}
+          className={`ChooseTypeOfPayment-Button ${
+            currentSelection === 0 ? 'ChooseTypeOfPayment-Button_selected' : ''
+          }`}
+        >
+          {values[0]}
+        </Button>
+        <Button
+          onClick={buttonClickHandler(1)}
+          className={`ChooseTypeOfPayment-Button ${
+            currentSelection === 1 ? 'ChooseTypeOfPayment-Button_selected' : ''
+          }`}
+        >
+          {values[1]}
+        </Button>
+        <Button
+          onClick={buttonClickHandler(2)}
+          className={`ChooseTypeOfPayment-Button ${
+            currentSelection === 2 ? 'ChooseTypeOfPayment-Button_selected' : ''
+          }`}
+        >
+          {values[2]}
+        </Button>
+        <Button
+          onClick={buttonClickHandler(3)}
+          className={`ChooseTypeOfPayment-Button ${
+            currentSelection === 3 ? 'ChooseTypeOfPayment-Button_selected' : ''
+          }`}
+          type="danger"
+        >
+          {values[3]}
+        </Button>
+      </Modal>
+    </div>
+  );
+};
 const NullComponent = () => null; // вспомогательный компонент, который ничего не рендерит
 
 interface AdditionalRequestTranslations {
@@ -179,6 +284,8 @@ const AdditionalRequestBody = Form.create<
             </div>
           </div>
           <Button type="primary" onClick={onCloseButton}>
+            ENTER /
+            {' '}
             {language.add}
           </Button>
         </div>
@@ -281,6 +388,11 @@ function Cart({
   const [currentSelectedProductInCart, setProductInCart] = useState(-1);
   const [wasImplisitySetted, setWasImplicitySetted] = useState(false);
   const [signChooseQuantity, setSignChooseQuantity] = useState<boolean | '+' | '-'>(false);
+  const [isChoosePaymentTypeVisible, setChoosePaymentTypeVisible] = useState(false);
+
+  const onCloseChoosePayment = useCallback(() => {
+    setChoosePaymentTypeVisible(false);
+  }, [setChoosePaymentTypeVisible]);
 
   useEffect(() => {
     // если не был установлен руками текущий товар в корзине - ставим последний
@@ -323,6 +435,7 @@ function Cart({
     ) as HTMLInputElement;
     if (newSelection === -1) {
       SearchInput && SearchInput.classList.add('RedBorder');
+      selectSearchInputText();
     } else {
       SearchInput && SearchInput.classList.remove('RedBorder');
     }
@@ -932,6 +1045,8 @@ function Cart({
         CommentInput && CommentInput.focus();
         CommentInput
           && CommentInput.setRangeText(CommentInput.value, 0, CommentInput.value.length, 'select');
+      } else if (event.code === 'F2') {
+        setChoosePaymentTypeVisible(true);
       }
     },
     [
@@ -1254,8 +1369,17 @@ function Cart({
     return 1;
   }, [cartProducts, currentSelectionProduct, currentSelectedProductInCart, signChooseQuantity]);
 
+  const onPrintClick = useCallback(() => {
+    setChoosePaymentTypeVisible(true);
+  }, [setChoosePaymentTypeVisible]);
+
   return (
     <div className="cart">
+      <ChooseTypeOfPayment
+        visible={isChoosePaymentTypeVisible}
+        onClose={onCloseChoosePayment}
+        language={language}
+      />
       {isAlert && (
         <Alert
           className="warning"
@@ -1352,7 +1476,7 @@ function Cart({
           {' '}
 / F5
         </Button>
-        <Button type="primary" size="large">
+        <Button onClick={onPrintClick} type="primary" size="large">
           {language.print}
           {' '}
 / F2

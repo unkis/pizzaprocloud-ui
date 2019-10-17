@@ -46,6 +46,19 @@ const de = {
   add: 'Hinzufügen',
   articlePrices: 'Artikel',
   additionalRequests: 'Extra Wünsch',
+  online: 'Online Bezahlt',
+  EC: 'Gerät',
+  bar: 'BAR',
+  progSettings: 'Programmeinstellungen',
+  printSettings: 'Drucker',
+  usetSettings: 'Benutzer Verwalten',
+  voipSettings: 'Telephone',
+  menuSettings: 'Speisekarte',
+  deliverySettings: 'Anfahrt Kosten',
+  categorySettings: 'Kategorie Anlegen / Ändern',
+  articleSettings: 'Artikel- Zutaten Anlegen / Ändern',
+  saleCategorySettings: 'Rabatt für Kategorie / %',
+  setMenu: 'Menü',
 };
 
 export default de;

@@ -266,3 +266,25 @@
 .RedBorder {
   border-color: red !important;
 }
+
+.ChooseTypeOfPayment .ant-modal-body {
+  display: flex;
+  flex-flow: column nowrap;
+  padding: 40px 24px 24px 24px;
+}
+
+.ChooseTypeOfPayment-Button {
+  margin-bottom: 8px;
+}
+
+.ChooseTypeOfPayment-Button_selected {
+  color: #40a9ff;
+  background-color: #fff;
+  border-color: #40a9ff;
+}
+
+.ChooseTypeOfPayment-Button_selected.ant-btn-danger {
+  color: #fff;
+  background-color: #ff7875;
+  border-color: #ff7875;
+}
