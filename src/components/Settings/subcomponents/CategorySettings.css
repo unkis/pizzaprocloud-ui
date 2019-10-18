@@ -1,0 +1,27 @@
+.CategorySettingsPage {
+  padding: 20px;
+}
+
+.CategorySettings {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+}
+
+.CategorySettings-LeftForm {
+  width: 58%;
+}
+
+.CategorySettings-RightForm {
+  width: 38%;
+}
+
+.CategorySettings .ant-form-item-label {
+  text-align: left;
+}
+
+.CategorySettingsPage-Buttons {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 0px;
+}

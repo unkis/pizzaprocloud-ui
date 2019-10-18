@@ -1,14 +1,12 @@
 import React from 'react';
 import { Divider, Layout, Button } from 'antd';
 
-
 import './index.css';
 import { Route } from 'react-router';
 import { Link } from 'react-router-dom';
 import useLanguage from '../../helpers/useLanguage';
 import { ROOT_URL } from '../../constants/rootUrl';
-
-const CategorySettings = () => <div>TEST</div>;
+import CategorySettings from './subcomponents/CategorySettings';
 
 const MainMenu = () => {
   const [categorySettings, articleSettings, saleCategorySettings, setMenu] = useLanguage(
