@@ -24,6 +24,11 @@ export enum cartProductsActions {
   DECREMENT_QUANTITY_OF_ADDITION_OF_PRODUCT,
 }
 
+export enum categoriesActionsTypes {
+  ADD_CATEGORY,
+  DELETE_CATEGORY,
+}
+
 export const changeLanguage: changeLanguageType = (lang) => ({ type: CHANGE_LANGUAGE, lang });
 
 export const addUser: addUserType = (role, code) => ({ type: ADD_USER, role, code });
@@ -155,3 +160,14 @@ export const decrementQuantityOfAdditionOfProduct = (
   price,
   tax,
 });
+
+export const addCategory = (
+  name: string,
+  subcategories: string[],
+  printer: string,
+  sizes: ({ num: number; name: string })[],
+) => ({
+  type: categoriesActionsTypes.ADD_CATEGORY, name, subcategories, printer, sizes,
+});
+
+export const deleteCategory = (name: string) => ({ type: categoriesActionsTypes.DELETE_CATEGORY, name });

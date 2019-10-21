@@ -25,3 +25,24 @@
   justify-content: space-between;
   padding: 20px 0px;
 }
+
+.Modal-Buttons {
+  display: flex;
+  justify-content: center;
+}
+
+.Modal-Buttons > button:first-child {
+  margin-right: 20px;
+}
+.CategorySettingsPage-Confirm {
+  max-width: 300px;
+}
+
+.CategorySettings-ActionsIcons {
+  display: flex;
+  justify-content: space-around;
+}
+.CategorySettings-ActionsIcons svg {
+  width: 20px;
+  height: 20px;
+}

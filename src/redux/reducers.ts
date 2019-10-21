@@ -1,10 +1,13 @@
+import { Action } from 'redux';
 import {
   CHANGE_LANGUAGE,
   ADD_USER,
   LOGOUT_USER,
   formDataActions,
   cartProductsActions,
+  categoriesActionsTypes,
 } from './actions';
+
 
 import fieldNames from '../constants/fieldNames';
 import { selectValues } from '../constants/selectValues';
@@ -531,6 +534,44 @@ export const cartProducts = (
         }
       }
       return state;
+    }
+    default:
+      return state;
+  }
+};
+
+export interface categoriesState {
+  name: string
+  subcategories: string[]
+  printer: string
+  sizes: ({ num: number; name: string })[]
+}
+
+interface categoriesActions extends Action<categoriesActionsTypes> {
+  name: string
+  subcategories: string[]
+  printer: string
+  sizes: ({ num: number; name: string })[]
+}
+
+export const categories = (state: categoriesState[] = [], action: categoriesActions) => {
+  switch (action.type) {
+    case categoriesActionsTypes.ADD_CATEGORY: {
+      const {
+        name, printer, sizes, subcategories,
+      } = action;
+      return [...state, {
+        name, printer, sizes, subcategories,
+      }];
+    }
+    case categoriesActionsTypes.DELETE_CATEGORY: {
+      console.log('DELETE');
+      const { name: deletedName } = action;
+      const catIdx = state.findIndex(({ name }) => name === deletedName);
+      if (catIdx === -1) {
+        return state;
+      }
+      return [...state.slice(0, catIdx), ...state.slice(catIdx + 1)];
     }
     default:
       return state;
