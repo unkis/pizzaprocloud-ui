@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
   Typography, Form, Input, Select, Upload, Button, Icon, Table, Modal,
 } from 'antd';
@@ -88,7 +88,46 @@ const CategorySettings = Form.create({ name: 'categorySettings' })(
       categories,
       deleteCategory,
     }: any) => {
+      const [selectVal, setSelectVal] = useState(sizesQuantities[0]);
+      const [isModalVisible, setModalVisible] = useState(false);
       const onUploadHandle = useCallback(() => {}, []);
+      const initialForm = {
+        name: cats[0],
+        printer: printers[0],
+        sizesFields: [0],
+        sizesFieldsFormItems: [''],
+        subcategoryFields: [],
+      };
+      const resetForm = useCallback(() => {
+        setFieldsValue(initialForm);
+        setSelectVal(1);
+      }, [setFieldsValue]);
+
+      const handleEditClick = useCallback(
+        (nameEdit: string) => {
+          const category = categories.find(
+            ({ name: categoryName }: any) => categoryName === nameEdit,
+          );
+          const {
+            name, subcategories, printer, sizes,
+          } = category;
+          console.log('>>> sizes:', sizes);
+          setSelectVal(sizes.length);
+          setTimeout(() => {
+            setFieldsValue({
+              sizesFields: createRange(0, sizes.length - 1),
+            });
+            setFieldsValue({
+              name,
+              printer,
+              sizesFieldsFormItems: sizes.map(({ num, name }: any) => name || ''),
+              subcategoryFields: subcategories,
+            });
+          }, 100);
+          console.log('>> cat: ', category);
+        },
+        [setFieldsValue, setSelectVal, categories],
+      );
       const columns = [
         { title: 'categoryName', dataIndex: 'categoryName', key: 'categoryName' },
         { title: 'quantityOfSizes', dataIndex: 'quantityOfSizes', key: 'quantityOfSizes' },
@@ -99,7 +138,11 @@ const CategorySettings = Form.create({ name: 'categorySettings' })(
           key: 'action',
           render: (name: string) => (
             <div className="CategorySettings-ActionsIcons">
-              <Icon type="edit" style={{ width: '20px', height: '20px' }} />
+              <Icon
+                type="edit"
+                onClick={() => handleEditClick(name)}
+                style={{ width: '20px', height: '20px' }}
+              />
               <Icon type="delete" onClick={() => deleteCategory(name)} />
             </div>
           ),
@@ -140,11 +183,13 @@ const CategorySettings = Form.create({ name: 'categorySettings' })(
         },
         [getFieldValue, setFieldsValue],
       );
+
       const onQuantityOfSizesChange = useCallback(
         (value: any) => {
           if (Number.isNaN(Number(value))) {
             return;
           }
+          console.log('>>> ITS ME');
           setFieldsValue({
             sizesFields: createRange(0, Number(value) - 1),
             sizesFieldsFormItems: getFieldValue('sizesFieldsFormItems').slice(0, Number(value) - 1),
@@ -166,41 +211,161 @@ const CategorySettings = Form.create({ name: 'categorySettings' })(
       const sizesFields = getFieldValue('sizesFields');
       const sizesFieldsFormItems = sizesFields.map((k: any) => (
         <Form.Item label={`size name ${k + 1}`}>
-          {getFieldDecorator(`sizesFieldsFormItems[${k}]`, { rules: [{ required: true }] })(
-            <Input />,
-          )}
+          {getFieldDecorator(`sizesFieldsFormItems[${k}]`, { initialValue: '' })(<Input />)}
         </Form.Item>
       ));
+      const [openModal, setOpenModal] = useState({
+        onSave: () => {},
+        onCancel: () => {},
+        title: '',
+        leftText: '',
+        rightText: '',
+      });
       const handleSubmit = useCallback(
-        (e: React.FormEvent<HTMLFormElement>) => {
+        (
+          e:
+            | React.FormEvent<HTMLFormElement>
+            | React.MouseEvent<HTMLDivElement, MouseEvent>
+            | React.MouseEvent<HTMLElement, MouseEvent>,
+        ) => {
           e.preventDefault();
           validateFields((err: any) => {
             if (!err) {
               const {
                 name, printer, sizesFieldsFormItems, subcategoryFields,
               } = getFieldsValue();
-              addCategory(
-                name,
-                subcategoryFields,
-                printer,
-                sizesFieldsFormItems.map((name: string, idx: number) => ({ num: idx + 1, name })),
-              );
+              const catIdx = categories.findIndex(({ name: catName }: any) => catName === name);
+              if (catIdx === -1) {
+                addCategory(
+                  name,
+                  subcategoryFields,
+                  printer,
+                  sizesFieldsFormItems.map((name: string, idx: number) => ({ num: idx + 1, name })),
+                );
+                resetForm();
+              } else {
+                setModalVisible(true);
+                setOpenModal({
+                  title: 'Category already exists. Do you want to rewrite it?',
+                  leftText: 'Rewrite',
+                  rightText: 'Cancel',
+                  onSave: () => {
+                    addCategory(
+                      name,
+                      subcategoryFields,
+                      printer,
+                      sizesFieldsFormItems.map((name: string, idx: number) => ({
+                        num: idx + 1,
+                        name,
+                      })),
+                    );
+                    resetForm();
+                    setModalVisible(false);
+                  },
+                  onCancel: () => {
+                    resetForm();
+                    setModalVisible(false);
+                  },
+                });
+              }
+            }
+          });
+        },
+        [validateFields],
+      );
+
+      const handleOutClick = useCallback(
+        (
+          e:
+            | React.FormEvent<HTMLFormElement>
+            | React.MouseEvent<HTMLDivElement, MouseEvent>
+            | React.MouseEvent<HTMLElement, MouseEvent>,
+        ) => {
+          e.preventDefault();
+          validateFields((err: any) => {
+            if (!err) {
+              const {
+                name, printer, sizesFieldsFormItems, subcategoryFields,
+              } = getFieldsValue();
+              if (
+                name === initialForm.name
+                && printer === initialForm.printer
+                && sizesFieldsFormItems.length === initialForm.sizesFieldsFormItems.length
+                && sizesFieldsFormItems[0] === initialForm.sizesFieldsFormItems[0]
+                && subcategoryFields.length === initialForm.subcategoryFields.length
+              ) {
+                return;
+              }
+              setModalVisible(true);
+              setOpenModal({
+                title: 'You have unsaved changes. Do you want to save it?',
+                leftText: 'Save',
+                rightText: "Don't save",
+                onSave: () => {
+                  const catIdx = categories.findIndex(({ name: catName }: any) => catName === name);
+                  if (catIdx === -1) {
+                    addCategory(
+                      name,
+                      subcategoryFields,
+                      printer,
+                      sizesFieldsFormItems.map((name: string, idx: number) => ({
+                        num: idx + 1,
+                        name,
+                      })),
+                    );
+                    resetForm();
+                    setModalVisible(false);
+                  } else {
+                    setOpenModal({
+                      title: 'Category already exists. Do you want to rewrite it?',
+                      leftText: 'Rewrite',
+                      rightText: 'Cancel',
+                      onSave: () => {
+                        addCategory(
+                          name,
+                          subcategoryFields,
+                          printer,
+                          sizesFieldsFormItems.map((name: string, idx: number) => ({
+                            num: idx + 1,
+                            name,
+                          })),
+                        );
+                        resetForm();
+                        setModalVisible(false);
+                      },
+                      onCancel: () => {
+                        resetForm();
+                        setModalVisible(false);
+                      },
+                    });
+                  }
+                },
+                onCancel: () => {
+                  resetForm();
+                  setModalVisible(false);
+                },
+              });
             }
           });
         },
         [validateFields],
       );
       return (
-        <div className="CategorySettingsPage">
+        <div className="CategorySettingsPage" onMouseLeave={handleOutClick}>
           <Modal
-            title="Do you want to save changes"
+            title={openModal.title}
             footer={null}
-            visible={false}
+            visible={isModalVisible}
             className="CategorySettingsPage-Confirm"
+            onCancel={() => setModalVisible(false)}
           >
             <div className="Modal-Buttons">
-              <Button size="large">Save</Button>
-              <Button size="large">Do not save</Button>
+              <Button onClick={openModal.onSave} size="large">
+                {openModal.leftText}
+              </Button>
+              <Button onClick={openModal.onCancel} size="large">
+                {openModal.rightText}
+              </Button>
             </div>
           </Modal>
           <Typography.Title level={2}>Add category from menu</Typography.Title>
@@ -211,7 +376,7 @@ const CategorySettings = Form.create({ name: 'categorySettings' })(
                 <Form.Item label="category name">
                   {getFieldDecorator('name', {
                     initialValue: cats[0],
-                    rules: [{ required: true }],
+                    rules: [{ required: true, message: "can't be empty" }],
                   })(
                     <Select>
                       {cats.map((name) => (
@@ -231,7 +396,7 @@ Add subcategory
                 <Form.Item label="printer">
                   {getFieldDecorator('printer', {
                     initialValue: printers[0],
-                    rules: [{ required: true }],
+                    rules: [{ required: true, message: "can't be empty" }],
                   })(
                     <Select>
                       {printers.map((name) => (
@@ -271,7 +436,11 @@ Click to upload
               </div>
               <div className="CategorySettings-RightForm">
                 <Form.Item label="sizes">
-                  <Select defaultValue={sizesQuantities[0]} onSelect={onQuantityOfSizesChange}>
+                  <Select
+                    value={selectVal}
+                    onChange={(num: any) => setSelectVal(num)}
+                    onSelect={onQuantityOfSizesChange}
+                  >
                     {sizesQuantities.map((sizes) => (
                       <Select.Option key={sizes}>{sizes}</Select.Option>
                     ))}
@@ -281,7 +450,7 @@ Click to upload
               </div>
             </div>
             <div className="CategorySettingsPage-Buttons">
-              <Button type="danger" size="large">
+              <Button type="danger" size="large" onClick={handleOutClick}>
                 ESC / BACK
               </Button>
               <Form.Item>

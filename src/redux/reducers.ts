@@ -8,7 +8,6 @@ import {
   categoriesActionsTypes,
 } from './actions';
 
-
 import fieldNames from '../constants/fieldNames';
 import { selectValues } from '../constants/selectValues';
 
@@ -560,9 +559,25 @@ export const categories = (state: categoriesState[] = [], action: categoriesActi
       const {
         name, printer, sizes, subcategories,
       } = action;
-      return [...state, {
-        name, printer, sizes, subcategories,
-      }];
+      const catIdx = state.findIndex(({ name: catName }) => name === catName);
+      if (catIdx === -1) {
+        return [
+          ...state,
+          {
+            name,
+            printer,
+            sizes,
+            subcategories,
+          },
+        ];
+      }
+      return [
+        ...state.slice(0, catIdx),
+        {
+          name, printer, sizes, subcategories,
+        },
+        ...state.slice(catIdx + 1),
+      ];
     }
     case categoriesActionsTypes.DELETE_CATEGORY: {
       console.log('DELETE');
