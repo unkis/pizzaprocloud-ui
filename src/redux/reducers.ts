@@ -551,13 +551,15 @@ interface categoriesActions extends Action<categoriesActionsTypes> {
   subcategories: string[]
   printer: string
   sizes: ({ num: number; name: string })[]
+  iconUrl?: string
+  imageUrl?: string
 }
 
 export const categories = (state: categoriesState[] = [], action: categoriesActions) => {
   switch (action.type) {
     case categoriesActionsTypes.ADD_CATEGORY: {
       const {
-        name, printer, sizes, subcategories,
+        name, printer, sizes, subcategories, iconUrl, imageUrl,
       } = action;
       const catIdx = state.findIndex(({ name: catName }) => name === catName);
       if (catIdx === -1) {
@@ -568,13 +570,20 @@ export const categories = (state: categoriesState[] = [], action: categoriesActi
             printer,
             sizes,
             subcategories,
+            iconUrl,
+            imageUrl,
           },
         ];
       }
       return [
         ...state.slice(0, catIdx),
         {
-          name, printer, sizes, subcategories,
+          name,
+          printer,
+          sizes,
+          subcategories,
+          iconUrl,
+          imageUrl,
         },
         ...state.slice(catIdx + 1),
       ];

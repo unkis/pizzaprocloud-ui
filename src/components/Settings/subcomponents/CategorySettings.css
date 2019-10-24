@@ -9,11 +9,11 @@
 }
 
 .CategorySettings-LeftForm {
-  width: 58%;
+  width: 45%;
 }
 
 .CategorySettings-RightForm {
-  width: 38%;
+  width: 45%;
 }
 
 .CategorySettings .ant-form-item-label {
@@ -45,4 +45,15 @@
 .CategorySettings-ActionsIcons svg {
   width: 20px;
   height: 20px;
+}
+
+.ImagePreview {
+  max-width: 40vw;
+  padding: 20px 0px;
+  max-height: 200px;
+}
+.CategorySettings-RightForm .ant-col,
+.CategorySettings-LeftForm .ant-col {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

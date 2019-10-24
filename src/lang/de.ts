@@ -51,7 +51,7 @@ const de = {
   bar: 'BAR',
   progSettings: 'Programmeinstellungen',
   printSettings: 'Drucker',
-  usetSettings: 'Benutzer Verwalten',
+  userSettings: 'Benutzer Verwalten',
   voipSettings: 'Telephone',
   menuSettings: 'Speisekarte',
   deliverySettings: 'Anfahrt Kosten',
@@ -59,6 +59,23 @@ const de = {
   articleSettings: 'Artikel- Zutaten Anlegen / Ändern',
   saleCategorySettings: 'Rabatt für Kategorie / %',
   setMenu: 'Menü',
+  categoryName: 'Name von Kategorie',
+  subcategoryName: 'Neme von Unterkategorie',
+  printer: 'Anf welche Drucker senden',
+  programIcon: 'icon für Program',
+  onlineShopIcon: 'Bild für Online Shop',
+  sizesInCategory: 'Anzahl von Großen in Kategorie',
+  nameOfSize: 'Name von Großer',
+  save: 'Speichern',
+  dontSave: 'Nicht speichern',
+  doYouWantToSaveChanges: 'Möchten Sie Ihre Änderungen speichern?',
+  categoryAlreadyExistsDoYouWantToRewriteIt:
+    'Kategorie existiert bereits. Willst du es neu schreiben?',
+  rewrite: 'Umschreiben',
+  cancel: 'Stornieren',
+  addSubcategory: 'Unterkategorie hinzufügen',
+  upload: 'Laden',
+  addYourCategory: 'Bitte legen sie hie ihre kategorie ein',
 };
 
 export default de;

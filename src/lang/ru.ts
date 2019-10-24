@@ -59,6 +59,22 @@ const ru = {
   articleSettings: 'Артикли / Добавки',
   saleCategorySettings: 'Скидки для Категорий',
   setMenu: 'Меню',
+  categoryName: 'Название Категории',
+  subcategoryName: 'Название Подкатегории',
+  printer: 'На какой принтер печатать',
+  programIcon: 'иконка для программы',
+  onlineShopIcon: 'Фото для онлайн шопа',
+  sizesInCategory: 'Количество размеров в категории',
+  nameOfSize: 'Название Размера',
+  save: 'Сохранить',
+  dontSave: 'Не сохранять',
+  doYouWantToSaveChanges: 'Вы хотите сохранить изменения?',
+  categoryAlreadyExistsDoYouWantToRewriteIt: 'Категория уже существует. Вы хотите перезаписать ее?',
+  rewrite: 'Перезаписать',
+  cancel: 'Сбросить',
+  addSubcategory: 'Добавить подкатегорию',
+  upload: 'Загрузить',
+  addYourCategory: 'Добавление новой категории',
 };
 
 export default ru;

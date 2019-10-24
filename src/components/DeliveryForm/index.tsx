@@ -371,6 +371,7 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
                     </Form.Item>
                     <Form.Item label={language.houseNumber}>
                       {getFieldDecorator(fieldNames.houseNumber, {
+                        normalize: (value: string = '', prevValue: string = '') => (value.match(/$[0-9]*^/) ? value : prevValue),
                         rules: [
                           { required: true, message: 'Введите номер дома' },
                           { pattern: /[0-9]+/, message: 'Разрешены только цифры' },

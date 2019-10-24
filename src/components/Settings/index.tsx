@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Divider, Layout, Button } from 'antd';
 
 import './index.css';
@@ -53,6 +53,12 @@ const Settings = () => {
     'menuSettings',
     'deliverySettings',
   );
+  const onAnyButtonClick = useCallback((event: any) => {
+    if ((window as any).PPC && (window as any).PPC.onClick) {
+      (window as any).PPC.onClick(event);
+      event.preventDefault();
+    }
+  }, []);
   return (
     <Layout>
       <Header
@@ -65,28 +71,28 @@ const Settings = () => {
           justifyContent: 'space-around',
         }}
       >
-        <Button size="large">
-F1 /
+        <Button size="large" onClick={onAnyButtonClick}>
+          F1 /
           {progSettings}
         </Button>
-        <Button size="large">
-F2 /
+        <Button size="large" onClick={onAnyButtonClick}>
+          F2 /
           {printSettings}
         </Button>
-        <Button size="large">
-F3 /
+        <Button size="large" onClick={onAnyButtonClick}>
+          F3 /
           {userSettings}
         </Button>
-        <Button size="large">
-F4 /
+        <Button size="large" onClick={onAnyButtonClick}>
+          F4 /
           {voipSettings}
         </Button>
-        <Button size="large">
-F5 /
+        <Button size="large" onClick={onAnyButtonClick}>
+          F5 /
           {menuSettings}
         </Button>
-        <Button size="large">
-F6 /
+        <Button size="large" onClick={onAnyButtonClick}>
+          F6 /
           {deliverySettings}
         </Button>
       </Header>

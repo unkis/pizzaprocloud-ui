@@ -166,8 +166,19 @@ export const addCategory = (
   subcategories: string[],
   printer: string,
   sizes: ({ num: number; name: string })[],
+  iconUrl?: string,
+  imageUrl?: string,
 ) => ({
-  type: categoriesActionsTypes.ADD_CATEGORY, name, subcategories, printer, sizes,
+  type: categoriesActionsTypes.ADD_CATEGORY,
+  name,
+  subcategories,
+  printer,
+  sizes,
+  iconUrl,
+  imageUrl,
 });
 
-export const deleteCategory = (name: string) => ({ type: categoriesActionsTypes.DELETE_CATEGORY, name });
+export const deleteCategory = (name: string) => ({
+  type: categoriesActionsTypes.DELETE_CATEGORY,
+  name,
+});

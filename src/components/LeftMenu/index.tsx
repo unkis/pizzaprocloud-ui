@@ -62,6 +62,17 @@ const MenuPage = ({
     },
     [changeLang],
   );
+  const onAnyButtonClick = useCallback(
+    (fn?: any) => (event: any) => {
+      if ((window as any).PPC && (window as any).PPC.onClick) {
+        (window as any).PPC.onClick(event);
+        event && event.preventDefault && event.preventDefault();
+      } else {
+        fn && fn(event);
+      }
+    },
+    [],
+  );
 
   return (
     <div className="menu">
@@ -75,35 +86,35 @@ const MenuPage = ({
             </Radio.Group>
           )}
         </Menu.Item>
-        <Menu.Item key="1" onClick={logout} className="logout-button">
+        <Menu.Item key="1" onClick={onAnyButtonClick(logout)} className="logout-button">
           <Icon type="logout" />
           <span>{language.logout}</span>
         </Menu.Item>
-        <Menu.Item key="2">
+        <Menu.Item key="2" onClick={onAnyButtonClick()}>
           <Icon type="phone" />
           <span>{language.callForm}</span>
         </Menu.Item>
-        <Menu.Item key="3">
+        <Menu.Item key="3" onClick={onAnyButtonClick()}>
           <Icon type="shopping-cart" />
           <span>{language.allOrders}</span>
         </Menu.Item>
-        <Menu.Item key="4">
+        <Menu.Item key="4" onClick={onAnyButtonClick()}>
           <Icon type="dashboard" />
           <span>{language.cookingMonitor}</span>
         </Menu.Item>
-        <Menu.Item key="5">
+        <Menu.Item key="5" onClick={onAnyButtonClick()}>
           <Icon type="car" />
           <span>{language.carMonitor}</span>
         </Menu.Item>
-        <Menu.Item key="6">
+        <Menu.Item key="6" onClick={onAnyButtonClick()}>
           <Icon type="bar-chart" />
           <span>{language.report}</span>
         </Menu.Item>
-        <Menu.Item key="7" onClick={onSettingsClick}>
+        <Menu.Item key="7" onClick={onAnyButtonClick(onSettingsClick)}>
           <Icon type="setting" />
           <span>{language.settings}</span>
         </Menu.Item>
-        <Menu.Item key="8">
+        <Menu.Item key="8" onClick={onAnyButtonClick()}>
           <Icon type="question-circle" />
           <span>{language.help}</span>
         </Menu.Item>

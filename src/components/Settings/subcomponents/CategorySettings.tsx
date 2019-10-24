@@ -1,4 +1,6 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, {
+  useCallback, useMemo, useState, useEffect,
+} from 'react';
 import {
   Typography, Form, Input, Select, Upload, Button, Icon, Table, Modal,
 } from 'antd';
@@ -8,6 +10,7 @@ import { connect, MapDispatchToPropsFunction, MapStateToProps } from 'react-redu
 import { addCategory, deleteCategory } from '../../../redux/actions';
 import { categoriesState } from '../../../redux/reducers';
 import { State } from '../../../redux/types';
+import useLanguage from '../../../helpers/useLanguage';
 
 const formItemLayout = {
   labelCol: {
@@ -52,6 +55,8 @@ interface CategorySettingsDispatchProps {
     subcategories: string[],
     printer: string,
     sizes: ({ num: number; name: string })[],
+    iconUrl?: string,
+    imageUrl?: string,
   ) => void
 }
 const mapDispatchToProps: MapDispatchToPropsFunction<
@@ -63,8 +68,10 @@ const mapDispatchToProps: MapDispatchToPropsFunction<
     subcategories: string[],
     printer: string,
     sizes: ({ num: number; name: string })[],
+    iconUrl?: string,
+    imageUrl?: string,
   ) {
-    dispatch(addCategory(name, subcategories, printer, sizes));
+    dispatch(addCategory(name, subcategories, printer, sizes, iconUrl, imageUrl));
   },
   deleteCategory(name: string) {
     dispatch(deleteCategory(name));
@@ -88,16 +95,111 @@ const CategorySettings = Form.create({ name: 'categorySettings' })(
       categories,
       deleteCategory,
     }: any) => {
+      const [
+        categoryName,
+        subcategoryName,
+        printer,
+        programIcon,
+        onlineShopIcon,
+        sizesInCategory,
+        nameOfSize,
+        save,
+        dontSave,
+        doYouWantToSaveChanges,
+        categoryAlreadyExistsDoYouWantToRewriteIt,
+        rewrite,
+        cancel,
+        back,
+        addSubcategory,
+        upload,
+        addYourCategory,
+      ] = useLanguage(
+        'categoryName',
+        'subcategoryName',
+        'printer',
+        'programIcon',
+        'onlineShopIcon',
+        'sizesInCategory',
+        'nameOfSize',
+        'save',
+        'dontSave',
+        'doYouWantToSaveChanges',
+        'categoryAlreadyExistsDoYouWantToRewriteIt',
+        'rewrite',
+        'cancel',
+        'back',
+        'addSubcategory',
+        'upload',
+        'addYourCategory',
+      );
       const [selectVal, setSelectVal] = useState(sizesQuantities[0]);
       const [isModalVisible, setModalVisible] = useState(false);
-      const onUploadHandle = useCallback(() => {}, []);
-      const initialForm = {
-        name: cats[0],
-        printer: printers[0],
-        sizesFields: [0],
-        sizesFieldsFormItems: [''],
-        subcategoryFields: [],
-      };
+      getFieldDecorator('imageUrlItem', { initialValue: '' });
+      getFieldDecorator('iconUrlItem', { initialValue: '' });
+      const onUploadIconHandle = useCallback(
+        ({ file: { originFileObj } }) => {
+          const fileReader = new FileReader();
+          fileReader.onload = function (e: any) {
+            setFieldsValue({ iconUrlItem: e.target.result });
+          };
+          fileReader.readAsDataURL(originFileObj);
+        },
+        [setFieldsValue],
+      );
+      const onUploadImageHandle = useCallback(
+        ({ file: { originFileObj } }) => {
+          const fileReader = new FileReader();
+          fileReader.onload = function (e: any) {
+            setFieldsValue({ imageUrlItem: e.target.result });
+          };
+          fileReader.readAsDataURL(originFileObj);
+        },
+        [setFieldsValue],
+      );
+      const initialForm = useMemo(
+        () => ({
+          name: cats[0],
+          printer: printers[0],
+          sizesFields: [0],
+          sizesFieldsFormItems: [''],
+          subcategoryFields: [],
+          imageUrlItem: '',
+          iconUrlItem: '',
+        }),
+        [],
+      );
+      useEffect(() => {
+        (window as any).PPC = (window as any).PPC || {};
+        const {
+          name, printer, sizesFieldsFormItems, subcategoryFields,
+        } = getFieldsValue();
+        if (
+          name === initialForm.name
+          && printer === initialForm.printer
+          && sizesFieldsFormItems.length === initialForm.sizesFieldsFormItems.length
+          && sizesFieldsFormItems[0] === initialForm.sizesFieldsFormItems[0]
+          && subcategoryFields.length === initialForm.subcategoryFields.length
+        ) {
+          (window as any).PPC.onClick = null;
+        } else {
+          (window as any).PPC.onClick = handleOutClick;
+        }
+      });
+      const onKeyDown = useCallback((event: KeyboardEvent) => {
+        if (event.key === 'Escape') {
+          handleOutClick(event);
+        } else if (event.key === 'F7') {
+          handleSubmit(event);
+        }
+      }, []);
+
+      useEffect(() => {
+        window.addEventListener('keydown', onKeyDown);
+        return () => {
+          window.removeEventListener('keydown', onKeyDown);
+        };
+      }, [onKeyDown]);
+
       const resetForm = useCallback(() => {
         setFieldsValue(initialForm);
         setSelectVal(1);
@@ -109,10 +211,13 @@ const CategorySettings = Form.create({ name: 'categorySettings' })(
             ({ name: categoryName }: any) => categoryName === nameEdit,
           );
           const {
-            name, subcategories, printer, sizes,
+            name, subcategories, printer, sizes, imageUrl, iconUrl,
           } = category;
-          console.log('>>> sizes:', sizes);
           setSelectVal(sizes.length);
+          Array.isArray(subcategories)
+            && setFieldsValue({
+              subcategoryFields: createRange(0, subcategories.length - 1),
+            });
           setTimeout(() => {
             setFieldsValue({
               sizesFields: createRange(0, sizes.length - 1),
@@ -120,20 +225,21 @@ const CategorySettings = Form.create({ name: 'categorySettings' })(
             setFieldsValue({
               name,
               printer,
-              sizesFieldsFormItems: sizes.map(({ num, name }: any) => name || ''),
-              subcategoryFields: subcategories,
+              sizesFieldsFormItems: sizes.map(({ name }: any) => name || ''),
+              subcategoryFieldsFormItems: subcategories,
+              imageUrlItem: imageUrl,
+              iconUrlItem: iconUrl,
             });
           }, 100);
-          console.log('>> cat: ', category);
         },
         [setFieldsValue, setSelectVal, categories],
       );
       const columns = [
-        { title: 'categoryName', dataIndex: 'categoryName', key: 'categoryName' },
-        { title: 'quantityOfSizes', dataIndex: 'quantityOfSizes', key: 'quantityOfSizes' },
-        { title: 'namesOfSizes', dataIndex: 'namesOfSizes', key: 'namesOfSizes' },
+        { title: categoryName, dataIndex: 'categoryName', key: 'categoryName' },
+        { title: sizesInCategory, dataIndex: 'quantityOfSizes', key: 'quantityOfSizes' },
+        { title: nameOfSize, dataIndex: 'namesOfSizes', key: 'namesOfSizes' },
         {
-          title: 'Actions',
+          title: '',
           dataIndex: 'action',
           key: 'action',
           render: (name: string) => (
@@ -189,7 +295,6 @@ const CategorySettings = Form.create({ name: 'categorySettings' })(
           if (Number.isNaN(Number(value))) {
             return;
           }
-          console.log('>>> ITS ME');
           setFieldsValue({
             sizesFields: createRange(0, Number(value) - 1),
             sizesFieldsFormItems: getFieldValue('sizesFieldsFormItems').slice(0, Number(value) - 1),
@@ -201,7 +306,7 @@ const CategorySettings = Form.create({ name: 'categorySettings' })(
       getFieldDecorator('subcategoryFields', { initialValue: [] });
       const subcategoryFields = getFieldValue('subcategoryFields');
       const subcategoryFieldformItems = subcategoryFields.map((k: any) => (
-        <Form.Item label="subcategory" required={false} key={k}>
+        <Form.Item label={subcategoryName} required={false} key={k}>
           {getFieldDecorator(`subcategoryFieldsFormItems[${k}]`)(
             <Input suffix={<Icon type="close" onClick={removeSubcategoryField(k)} />} />,
           )}
@@ -210,7 +315,7 @@ const CategorySettings = Form.create({ name: 'categorySettings' })(
       getFieldDecorator('sizesFields', { initialValue: [0] });
       const sizesFields = getFieldValue('sizesFields');
       const sizesFieldsFormItems = sizesFields.map((k: any) => (
-        <Form.Item label={`size name ${k + 1}`}>
+        <Form.Item label={`${nameOfSize} ${k + 1}`}>
           {getFieldDecorator(`sizesFieldsFormItems[${k}]`, { initialValue: '' })(<Input />)}
         </Form.Item>
       ));
@@ -226,38 +331,48 @@ const CategorySettings = Form.create({ name: 'categorySettings' })(
           e:
             | React.FormEvent<HTMLFormElement>
             | React.MouseEvent<HTMLDivElement, MouseEvent>
-            | React.MouseEvent<HTMLElement, MouseEvent>,
+            | React.MouseEvent<HTMLElement, MouseEvent>
+            | KeyboardEvent,
         ) => {
           e.preventDefault();
           validateFields((err: any) => {
             if (!err) {
               const {
-                name, printer, sizesFieldsFormItems, subcategoryFields,
+                name,
+                printer,
+                sizesFieldsFormItems,
+                subcategoryFieldsFormItems,
+                imageUrlItem,
+                iconUrlItem,
               } = getFieldsValue();
               const catIdx = categories.findIndex(({ name: catName }: any) => catName === name);
               if (catIdx === -1) {
                 addCategory(
                   name,
-                  subcategoryFields,
+                  subcategoryFieldsFormItems,
                   printer,
                   sizesFieldsFormItems.map((name: string, idx: number) => ({ num: idx + 1, name })),
+                  iconUrlItem,
+                  imageUrlItem,
                 );
                 resetForm();
               } else {
                 setModalVisible(true);
                 setOpenModal({
-                  title: 'Category already exists. Do you want to rewrite it?',
-                  leftText: 'Rewrite',
-                  rightText: 'Cancel',
+                  title: categoryAlreadyExistsDoYouWantToRewriteIt,
+                  leftText: rewrite,
+                  rightText: cancel,
                   onSave: () => {
                     addCategory(
                       name,
-                      subcategoryFields,
+                      subcategoryFieldsFormItems,
                       printer,
                       sizesFieldsFormItems.map((name: string, idx: number) => ({
                         num: idx + 1,
                         name,
                       })),
+                      iconUrlItem,
+                      imageUrlItem,
                     );
                     resetForm();
                     setModalVisible(false);
@@ -279,13 +394,19 @@ const CategorySettings = Form.create({ name: 'categorySettings' })(
           e:
             | React.FormEvent<HTMLFormElement>
             | React.MouseEvent<HTMLDivElement, MouseEvent>
-            | React.MouseEvent<HTMLElement, MouseEvent>,
+            | React.MouseEvent<HTMLElement, MouseEvent>
+            | KeyboardEvent,
         ) => {
-          e.preventDefault();
+          e && e.preventDefault && e.preventDefault();
           validateFields((err: any) => {
             if (!err) {
               const {
-                name, printer, sizesFieldsFormItems, subcategoryFields,
+                name,
+                printer,
+                sizesFieldsFormItems,
+                subcategoryFields,
+                iconUrlItem,
+                imageUrlItem,
               } = getFieldsValue();
               if (
                 name === initialForm.name
@@ -298,9 +419,9 @@ const CategorySettings = Form.create({ name: 'categorySettings' })(
               }
               setModalVisible(true);
               setOpenModal({
-                title: 'You have unsaved changes. Do you want to save it?',
-                leftText: 'Save',
-                rightText: "Don't save",
+                title: doYouWantToSaveChanges,
+                leftText: save,
+                rightText: dontSave,
                 onSave: () => {
                   const catIdx = categories.findIndex(({ name: catName }: any) => catName === name);
                   if (catIdx === -1) {
@@ -312,14 +433,16 @@ const CategorySettings = Form.create({ name: 'categorySettings' })(
                         num: idx + 1,
                         name,
                       })),
+                      iconUrlItem,
+                      imageUrlItem,
                     );
                     resetForm();
                     setModalVisible(false);
                   } else {
                     setOpenModal({
-                      title: 'Category already exists. Do you want to rewrite it?',
-                      leftText: 'Rewrite',
-                      rightText: 'Cancel',
+                      title: categoryAlreadyExistsDoYouWantToRewriteIt,
+                      leftText: rewrite,
+                      rightText: cancel,
                       onSave: () => {
                         addCategory(
                           name,
@@ -329,6 +452,8 @@ const CategorySettings = Form.create({ name: 'categorySettings' })(
                             num: idx + 1,
                             name,
                           })),
+                          iconUrlItem,
+                          imageUrlItem,
                         );
                         resetForm();
                         setModalVisible(false);
@@ -350,8 +475,9 @@ const CategorySettings = Form.create({ name: 'categorySettings' })(
         },
         [validateFields],
       );
+      const { iconUrlItem, imageUrlItem } = getFieldsValue();
       return (
-        <div className="CategorySettingsPage" onMouseLeave={handleOutClick}>
+        <div className="CategorySettingsPage">
           <Modal
             title={openModal.title}
             footer={null}
@@ -368,12 +494,12 @@ const CategorySettings = Form.create({ name: 'categorySettings' })(
               </Button>
             </div>
           </Modal>
-          <Typography.Title level={2}>Add category from menu</Typography.Title>
+          <Typography.Title level={2}>{addYourCategory}</Typography.Title>
           {/* eslint-disable-next-line react/jsx-props-no-spreading */}
           <Form {...formItemLayout} onSubmit={handleSubmit}>
             <div className="CategorySettings">
               <div className="CategorySettings-LeftForm">
-                <Form.Item label="category name">
+                <Form.Item label={categoryName}>
                   {getFieldDecorator('name', {
                     initialValue: cats[0],
                     rules: [{ required: true, message: "can't be empty" }],
@@ -390,10 +516,10 @@ const CategorySettings = Form.create({ name: 'categorySettings' })(
                   <Button type="dashed" onClick={addSubcategoryField}>
                     <Icon type="plus" />
                     {' '}
-Add subcategory
+                    {addSubcategory}
                   </Button>
                 </Form.Item>
-                <Form.Item label="printer">
+                <Form.Item label={printer}>
                   {getFieldDecorator('printer', {
                     initialValue: printers[0],
                     rules: [{ required: true, message: "can't be empty" }],
@@ -405,37 +531,43 @@ Add subcategory
                     </Select>,
                   )}
                 </Form.Item>
-                <Form.Item label="program icon">
-                  {getFieldDecorator('upload', {
+                <Form.Item label={programIcon}>
+                  {getFieldDecorator('iconUrl', {
                     valuePropName: 'fileList',
-                    getValueFromEvent: onUploadHandle,
+                    getValueFromEvent: onUploadIconHandle,
                   })(
                     <Upload name="logo" action="/upload.do" listType="picture">
                       <Button>
                         <Icon type="upload" />
                         {' '}
-Click to upload
+                        {upload}
                       </Button>
                     </Upload>,
                   )}
                 </Form.Item>
-                <Form.Item label="online shop icon">
-                  {getFieldDecorator('upload', {
+                <Form.Item>
+                  {iconUrlItem && <img className="ImagePreview" src={iconUrlItem} />}
+                </Form.Item>
+                <Form.Item label={onlineShopIcon}>
+                  {getFieldDecorator('imageUrl', {
                     valuePropName: 'fileList',
-                    getValueFromEvent: onUploadHandle,
+                    getValueFromEvent: onUploadImageHandle,
                   })(
                     <Upload name="logo" action="/upload.do" listType="picture">
                       <Button>
                         <Icon type="upload" />
                         {' '}
-Click to upload
+                        {upload}
                       </Button>
                     </Upload>,
                   )}
+                </Form.Item>
+                <Form.Item>
+                  {imageUrlItem && <img className="ImagePreview" src={imageUrlItem} />}
                 </Form.Item>
               </div>
               <div className="CategorySettings-RightForm">
-                <Form.Item label="sizes">
+                <Form.Item label={sizesInCategory}>
                   <Select
                     value={selectVal}
                     onChange={(num: any) => setSelectVal(num)}
@@ -451,11 +583,15 @@ Click to upload
             </div>
             <div className="CategorySettingsPage-Buttons">
               <Button type="danger" size="large" onClick={handleOutClick}>
-                ESC / BACK
+                ESC /
+                {' '}
+                {back}
               </Button>
               <Form.Item>
                 <Button size="large" htmlType="submit">
-                  F2 / Save
+                  F7 /
+                  {' '}
+                  {save}
                 </Button>
               </Form.Item>
             </div>

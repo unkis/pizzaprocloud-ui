@@ -210,6 +210,10 @@ const AdditionalRequestBody = Form.create<
     const { productName, price, tax } = getFieldsValue();
 
     useEffect(() => {
+      if (price === '') {
+        onPriceChange && onPriceChange(0);
+        return;
+      }
       const currentValue = parseFloat(price);
       !isNaN(currentValue) && onPriceChange && onPriceChange(currentValue);
     }, [onPriceChange, price]);
@@ -229,7 +233,7 @@ const AdditionalRequestBody = Form.create<
           anyErrors = 1;
         }
       });
-      if (productName !== '' && price !== 0 && anyErrors === 0) {
+      if (productName !== '' && anyErrors === 0) {
         onClose && onClose();
       }
     }, [onClose]);
@@ -268,12 +272,16 @@ const AdditionalRequestBody = Form.create<
               <div>{language.price}</div>
               <Form.Item>
                 {getFieldDecorator('price', {
+                  initialValue: 0,
                   rules: [
                     { required: true, message: 'Обязательное поле' },
                     {
                       validator: (_rule, value, cb) => {
+                        if (value === '') {
+                          return;
+                        }
                         const parsedValue = parseFloat(value);
-                        if (parsedValue <= 0 || isNaN(parsedValue)) {
+                        if (parsedValue < 0 || isNaN(parsedValue)) {
                           cb('');
                         }
                       },
@@ -1066,7 +1074,7 @@ function Cart({
   const onAdditionalRequestClose = useCallback(
     (productName?: string, tax?: '7' | '19', price?: number) => {
       console.log('onAdditionalRequestClose: ', productName, price, tax);
-      if (productName && tax && price) {
+      if (productName && tax && price !== undefined && Number.isFinite(price)) {
         addCustomProduct(productName, price, tax);
       }
       setAdditionalRequest(false);
