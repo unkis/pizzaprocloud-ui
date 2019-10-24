@@ -136,21 +136,31 @@ const CategorySettings = Form.create({ name: 'categorySettings' })(
       const [isModalVisible, setModalVisible] = useState(false);
       getFieldDecorator('imageUrlItem', { initialValue: '' });
       getFieldDecorator('iconUrlItem', { initialValue: '' });
+      getFieldDecorator('iconFileList', { initialValue: [] });
+      getFieldDecorator('imageFileList', { initialValue: [] });
+
       const onUploadIconHandle = useCallback(
-        ({ file: { originFileObj } }) => {
+        ({ file: { originFileObj }, fileList }) => {
           const fileReader = new FileReader();
+          console.log(fileList);
           fileReader.onload = function (e: any) {
-            setFieldsValue({ iconUrlItem: e.target.result });
+            setFieldsValue({
+              iconUrlItem: e.target.result,
+              iconUrl: fileList.slice(-1).map((file: any) => ({ ...file, status: 'done' })),
+            });
           };
           fileReader.readAsDataURL(originFileObj);
         },
         [setFieldsValue],
       );
       const onUploadImageHandle = useCallback(
-        ({ file: { originFileObj } }) => {
+        ({ file: { originFileObj }, fileList }) => {
           const fileReader = new FileReader();
           fileReader.onload = function (e: any) {
-            setFieldsValue({ imageUrlItem: e.target.result });
+            setFieldsValue({
+              imageUrlItem: e.target.result,
+              imageUrl: fileList.slice(-1).map((file: any) => ({ ...file, status: 'done' })),
+            });
           };
           fileReader.readAsDataURL(originFileObj);
         },
@@ -163,8 +173,8 @@ const CategorySettings = Form.create({ name: 'categorySettings' })(
           sizesFields: [0],
           sizesFieldsFormItems: [''],
           subcategoryFields: [],
-          imageUrlItem: '',
-          iconUrlItem: '',
+          imageUrl: [],
+          iconUrl: [],
         }),
         [],
       );
@@ -227,8 +237,8 @@ const CategorySettings = Form.create({ name: 'categorySettings' })(
               printer,
               sizesFieldsFormItems: sizes.map(({ name }: any) => name || ''),
               subcategoryFieldsFormItems: subcategories,
-              imageUrlItem: imageUrl,
-              iconUrlItem: iconUrl,
+              imageUrl,
+              iconUrl,
             });
           }, 100);
         },
@@ -342,8 +352,8 @@ const CategorySettings = Form.create({ name: 'categorySettings' })(
                 printer,
                 sizesFieldsFormItems,
                 subcategoryFieldsFormItems,
-                imageUrlItem,
-                iconUrlItem,
+                imageUrl,
+                iconUrl,
               } = getFieldsValue();
               const catIdx = categories.findIndex(({ name: catName }: any) => catName === name);
               if (catIdx === -1) {
@@ -352,8 +362,8 @@ const CategorySettings = Form.create({ name: 'categorySettings' })(
                   subcategoryFieldsFormItems,
                   printer,
                   sizesFieldsFormItems.map((name: string, idx: number) => ({ num: idx + 1, name })),
-                  iconUrlItem,
-                  imageUrlItem,
+                  iconUrl,
+                  imageUrl,
                 );
                 resetForm();
               } else {
@@ -475,7 +485,9 @@ const CategorySettings = Form.create({ name: 'categorySettings' })(
         },
         [validateFields],
       );
-      const { iconUrlItem, imageUrlItem } = getFieldsValue();
+      const {
+        iconUrlItem, imageUrlItem, iconFileList, imageFileList,
+      } = getFieldsValue();
       return (
         <div className="CategorySettingsPage">
           <Modal
@@ -536,7 +548,7 @@ const CategorySettings = Form.create({ name: 'categorySettings' })(
                     valuePropName: 'fileList',
                     getValueFromEvent: onUploadIconHandle,
                   })(
-                    <Upload name="logo" action="/upload.do" listType="picture">
+                    <Upload name="logo" listType="picture" multiple={false}>
                       <Button>
                         <Icon type="upload" />
                         {' '}
@@ -545,15 +557,14 @@ const CategorySettings = Form.create({ name: 'categorySettings' })(
                     </Upload>,
                   )}
                 </Form.Item>
-                <Form.Item>
-                  {iconUrlItem && <img className="ImagePreview" src={iconUrlItem} />}
-                </Form.Item>
+                {/* <Form.Item>
+                </Form.Item> */}
                 <Form.Item label={onlineShopIcon}>
                   {getFieldDecorator('imageUrl', {
                     valuePropName: 'fileList',
                     getValueFromEvent: onUploadImageHandle,
                   })(
-                    <Upload name="logo" action="/upload.do" listType="picture">
+                    <Upload name="logo" listType="picture" multiple={false}>
                       <Button>
                         <Icon type="upload" />
                         {' '}
@@ -561,10 +572,10 @@ const CategorySettings = Form.create({ name: 'categorySettings' })(
                       </Button>
                     </Upload>,
                   )}
+                  {/* {imageUrlItem && <img className="ImagePreview" src={imageUrlItem} />} */}
                 </Form.Item>
-                <Form.Item>
-                  {imageUrlItem && <img className="ImagePreview" src={imageUrlItem} />}
-                </Form.Item>
+                {/* <Form.Item>
+                </Form.Item> */}
               </div>
               <div className="CategorySettings-RightForm">
                 <Form.Item label={sizesInCategory}>

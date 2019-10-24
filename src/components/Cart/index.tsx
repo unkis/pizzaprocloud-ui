@@ -1285,7 +1285,7 @@ function Cart({
     ],
     [DecrementInProductsIcon, AddInProductsIcon, language],
   );
-
+  console.log('>>>>>> cartProducts: ', cartProducts);
   const cartProductsWithKeys = useMemo(
     () =>
       // проставляем ключи продуктам с бека

@@ -113,6 +113,7 @@ export const cartProducts = (
   state: CartProductsState = initialCartProductsState,
   action: CartProductsAction,
 ) => {
+  console.log('I AM HERE!', action);
   switch (action.type) {
     case cartProductsActions.ADD_PRODUCT_TO_CART: {
       const {

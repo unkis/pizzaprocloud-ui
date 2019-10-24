@@ -74,6 +74,10 @@ const MenuPage = ({
     [],
   );
 
+  const onDeliveryClick = useCallback(() => {
+    history.push(`${ROOT_URL}/menu`);
+  }, []);
+
   return (
     <div className="menu">
       <Menu style={{ height: '100vh' }} defaultSelectedKeys={['2']} mode="inline">
@@ -90,7 +94,7 @@ const MenuPage = ({
           <Icon type="logout" />
           <span>{language.logout}</span>
         </Menu.Item>
-        <Menu.Item key="2" onClick={onAnyButtonClick()}>
+        <Menu.Item key="2" onClick={onAnyButtonClick(onDeliveryClick)}>
           <Icon type="phone" />
           <span>{language.callForm}</span>
         </Menu.Item>

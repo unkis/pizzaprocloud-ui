@@ -115,6 +115,15 @@ const mapStateToProps: MapStateToPropsParam<any, any, any> = (state) => ({
   shopAddress: state.settings.shopAddress,
 });
 
+const onlyNumbersNormalize = (value: string | number = '', prevValue: string | number = '') => (/^[0-9]*$/.test(value.toString()) ? value : prevValue);
+
+const startsWithUpperCaseNormalizer = (value: string) => {
+  if (!value || !value[0]) {
+    return '';
+  }
+  return `${value[0].toLocaleUpperCase()}${value.slice(1)}`;
+};
+
 const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
   connect(
     mapStateToProps,
@@ -262,6 +271,7 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
         }, [handleEscDown]);
 
         useEffect(() => {
+          console.log('compare: ', getFieldsValue(), formDataState);
           if (compareTwoObjects(getFieldsValue(), formDataState)) return;
           setFieldsValue(formDataState);
         }, [formDataState, setFieldsValue, getFieldsValue]);
@@ -307,6 +317,7 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
                   <Card style={{ width: '60%', maxWidth: '500px' }}>
                     <Form.Item label={language.customerNumber}>
                       {getFieldDecorator(fieldNames.customerNumber, {
+                        normalize: onlyNumbersNormalize,
                         rules: [
                           { required: true, message: 'Введите номер клиента' },
                           { pattern: /[0-9]+/, message: 'Разрешены только цифры' },
@@ -327,6 +338,7 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
                     </Form.Item>
                     <Form.Item label={language.phoneNumber}>
                       {getFieldDecorator(fieldNames.phoneNumber, {
+                        normalize: onlyNumbersNormalize,
                         rules: [
                           { required: true, message: 'Введите номер телефона клиента' },
                           { pattern: /[0-9]+/, message: 'Разрешены только цифры' },
@@ -348,6 +360,7 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
                     </Form.Item>
                     <Form.Item label={language.name}>
                       {getFieldDecorator(fieldNames.name, {
+                        normalize: startsWithUpperCaseNormalizer,
                         rules: [{ required: true, message: 'Введите имя клиента' }],
                       })(
                         <AutoComplete
@@ -361,17 +374,19 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
                     </Form.Item>
                     <Form.Item label={language.city}>
                       {getFieldDecorator(fieldNames.city, {
+                        normalize: startsWithUpperCaseNormalizer,
                         rules: [{ required: true, message: 'Введите название города' }],
                       })(<Input onKeyDown={handleEscDown} maxLength={25} id={fieldNames.city} />)}
                     </Form.Item>
                     <Form.Item label={language.street}>
                       {getFieldDecorator(fieldNames.street, {
+                        normalize: startsWithUpperCaseNormalizer,
                         rules: [{ required: true, message: 'Введите название улицы' }],
                       })(<Input onKeyDown={handleEscDown} maxLength={30} id={fieldNames.street} />)}
                     </Form.Item>
                     <Form.Item label={language.houseNumber}>
                       {getFieldDecorator(fieldNames.houseNumber, {
-                        normalize: (value: string = '', prevValue: string = '') => (value.match(/$[0-9]*^/) ? value : prevValue),
+                        normalize: startsWithUpperCaseNormalizer,
                         rules: [
                           { required: true, message: 'Введите номер дома' },
                           { pattern: /[0-9]+/, message: 'Разрешены только цифры' },
@@ -386,6 +401,7 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
                     </Form.Item>
                     <Form.Item label={language.plz}>
                       {getFieldDecorator(fieldNames.plz, {
+                        normalize: onlyNumbersNormalize,
                         rules: [
                           { required: true, message: 'Введите почтовый индекс' },
                           { pattern: /[0-9]+/, message: 'Разрешены только цифры' },
@@ -393,7 +409,9 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
                       })(<Input onKeyDown={handleEscDown} maxLength={6} id={fieldNames.plz} />)}
                     </Form.Item>
                     <Form.Item label={language.clientComment}>
-                      {getFieldDecorator(fieldNames.clientComment)(
+                      {getFieldDecorator(fieldNames.clientComment, {
+                        normalize: startsWithUpperCaseNormalizer,
+                      })(
                         <Input
                           onKeyDown={handleEscDown}
                           maxLength={35}
