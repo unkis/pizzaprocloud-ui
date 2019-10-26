@@ -69,18 +69,18 @@ export const user = (state: UserState = { role: '', code: '' }, action: UserActi
 
 export const initialFormDataState: any = {
   // TODO: add types
-  [fieldNames.customerNumber]: '',
-  [fieldNames.phoneNumber]: '',
-  [fieldNames.customerNumber]: '',
-  [fieldNames.phoneNumber]: '',
-  [fieldNames.name]: '',
-  [fieldNames.street]: '',
-  [fieldNames.houseNumber]: '',
-  [fieldNames.plz]: '',
-  [fieldNames.city]: '',
-  [fieldNames.clientComment]: '',
-  [fieldNames.deliveryCost]: selectValues[0],
-  isTaxSecondOnAll: false,
+  [fieldNames.customerNumber]: undefined,
+  [fieldNames.phoneNumber]: undefined,
+  [fieldNames.customerNumber]: undefined,
+  [fieldNames.phoneNumber]: undefined,
+  [fieldNames.name]: undefined,
+  [fieldNames.street]: undefined,
+  [fieldNames.houseNumber]: undefined,
+  [fieldNames.plz]: undefined,
+  [fieldNames.city]: undefined,
+  [fieldNames.clientComment]: undefined,
+  [fieldNames.deliveryCost]: undefined,
+  isTaxSecondOnAll: undefined,
 };
 
 export const formDataState = (

@@ -90,7 +90,6 @@ const tryToFetchUser = (fieldId: string, fieldValue: string) => fakeBD.customers
 );
 
 const compareTwoObjects = (object1: any, object2: any) => {
-  if (Object.keys(object1).length !== Object.keys(object2).length) return false;
   for (const [key, value] of Object.entries(object1)) {
     if (object2[key] !== value) return false;
   }
@@ -160,7 +159,6 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
 
         const handleSearch = useCallback(
           (arg: string, id: string) => {
-            updateFieldsOfFormData(getFieldsValue());
             if (!dataSourceState[id].length) {
               const fetched = fakeBD.customers.map(
                 ({ [id]: value }: any) => value && value.toString(),
@@ -178,18 +176,13 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
               );
             }
           },
-          [
-            updateFieldsOfFormData,
-            getFieldsValue,
-            dataSourceState,
-            dispatchToDataSource,
-            dispatchToDataSourceLive,
-          ],
+          [getFieldsValue, dataSourceState, dispatchToDataSource, dispatchToDataSourceLive],
         );
 
         const nextPage = useCallback(() => {
           form.validateFields((err: any) => {
             if (!err) {
+              updateFieldsOfFormData(getFieldsValue());
               history.push(`${ROOT_URL}/finish`);
             }
           });
@@ -235,15 +228,23 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
           nextPage();
         }, [nextPage, updateFieldsOfFormData, shopAddress]);
 
-        const handleEscDown = useCallback(
+        const handleKeyDown = useCallback(
           (e: any) => {
             if (e.key === 'Escape') {
+              e.stopPropagation();
+              e.preventDefault();
               handleClearClick();
             } else if (e.key === 'F2') {
+              e.stopPropagation();
+              e.preventDefault();
               nextPage();
             } else if (e.key == 'F5') {
+              e.stopPropagation();
+              e.preventDefault();
               onSelfPickUpClick();
             } else if (e.key === 'F6') {
+              e.stopPropagation();
+              e.preventDefault();
               onInnerClick();
             }
           },
@@ -255,10 +256,9 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
             const customer = tryToFetchUser(id, value);
             if (customer) {
               setFieldsValue(customer);
-              updateFieldsOfFormData(customer);
             }
           },
-          [setFieldsValue, updateFieldsOfFormData],
+          [setFieldsValue],
         );
 
         useEffect(() => {
@@ -266,17 +266,20 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
         }, [lang]);
 
         useEffect(() => {
-          window.addEventListener('keydown', handleEscDown);
-          return () => window.removeEventListener('keydown', handleEscDown);
-        }, [handleEscDown]);
+          window.addEventListener('keydown', handleKeyDown);
+          return () => window.removeEventListener('keydown', handleKeyDown);
+        }, [handleKeyDown]);
 
         useEffect(() => {
-          console.log('compare: ', getFieldsValue(), formDataState);
-          if (compareTwoObjects(getFieldsValue(), formDataState)) return;
-          setFieldsValue(formDataState);
+          if (compareTwoObjects(getFieldsValue(), initialFormDataState)) {
+            setFieldsValue(formDataState);
+          }
         }, [formDataState, setFieldsValue, getFieldsValue]);
+        console.log('>>> compare: ', compareTwoObjects(getFieldsValue(), formDataState));
+        if (!compareTwoObjects(getFieldsValue(), formDataState)) {
+          updateFieldsOfFormData(getFieldsValue());
+        }
 
-        console.log('shopAddress', shopAddress);
         return (
           <Layout>
             <Header
@@ -313,7 +316,7 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
             <Divider />
             <Content style={{ margin: '0 16px', background: 'inherit' }}>
               <div>
-                <Form onSubmit={handleSubmit} onKeyDown={handleEscDown} {...formItemLayout}>
+                <Form onSubmit={handleSubmit} onKeyDown={handleKeyDown} {...formItemLayout}>
                   <Card style={{ width: '60%', maxWidth: '500px' }}>
                     <Form.Item label={language.customerNumber}>
                       {getFieldDecorator(fieldNames.customerNumber, {
@@ -329,7 +332,7 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
                           onSelect={(value) => handleEnterDown(fieldNames.customerNumber, value as string)}
                         >
                           <Input
-                            onKeyDown={handleEscDown}
+                            onKeyDown={handleKeyDown}
                             maxLength={6}
                             id={fieldNames.customerNumber}
                           />
@@ -350,7 +353,7 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
                           onSelect={(value) => handleEnterDown(fieldNames.phoneNumber, value as string)}
                         >
                           <Input
-                            onKeyDown={handleEscDown}
+                            onKeyDown={handleKeyDown}
                             autoFocus
                             maxLength={15}
                             id={fieldNames.phoneNumber}
@@ -368,7 +371,7 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
                           onSearch={(arg) => handleSearch(arg, fieldNames.name)}
                           onSelect={(value) => handleEnterDown(fieldNames.name, value as string)}
                         >
-                          <Input onKeyDown={handleEscDown} maxLength={30} id={fieldNames.name} />
+                          <Input onKeyDown={handleKeyDown} maxLength={30} id={fieldNames.name} />
                         </AutoComplete>,
                       )}
                     </Form.Item>
@@ -376,13 +379,13 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
                       {getFieldDecorator(fieldNames.city, {
                         normalize: startsWithUpperCaseNormalizer,
                         rules: [{ required: true, message: 'Введите название города' }],
-                      })(<Input onKeyDown={handleEscDown} maxLength={25} id={fieldNames.city} />)}
+                      })(<Input onKeyDown={handleKeyDown} maxLength={25} id={fieldNames.city} />)}
                     </Form.Item>
                     <Form.Item label={language.street}>
                       {getFieldDecorator(fieldNames.street, {
                         normalize: startsWithUpperCaseNormalizer,
                         rules: [{ required: true, message: 'Введите название улицы' }],
-                      })(<Input onKeyDown={handleEscDown} maxLength={30} id={fieldNames.street} />)}
+                      })(<Input onKeyDown={handleKeyDown} maxLength={30} id={fieldNames.street} />)}
                     </Form.Item>
                     <Form.Item label={language.houseNumber}>
                       {getFieldDecorator(fieldNames.houseNumber, {
@@ -393,7 +396,7 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
                         ],
                       })(
                         <Input
-                          onKeyDown={handleEscDown}
+                          onKeyDown={handleKeyDown}
                           maxLength={6}
                           id={fieldNames.houseNumber}
                         />,
@@ -406,14 +409,14 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
                           { required: true, message: 'Введите почтовый индекс' },
                           { pattern: /[0-9]+/, message: 'Разрешены только цифры' },
                         ],
-                      })(<Input onKeyDown={handleEscDown} maxLength={6} id={fieldNames.plz} />)}
+                      })(<Input onKeyDown={handleKeyDown} maxLength={6} id={fieldNames.plz} />)}
                     </Form.Item>
                     <Form.Item label={language.clientComment}>
                       {getFieldDecorator(fieldNames.clientComment, {
                         normalize: startsWithUpperCaseNormalizer,
                       })(
                         <Input
-                          onKeyDown={handleEscDown}
+                          onKeyDown={handleKeyDown}
                           maxLength={35}
                           id={fieldNames.clientComment}
                         />,
