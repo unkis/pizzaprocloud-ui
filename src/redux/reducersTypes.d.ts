@@ -75,16 +75,14 @@ export interface CartProductsAction extends Action<cartProductsActions> {
 }
 
 interface ShopAddress {
-  city: string;
-  street: string;
-  house: number;
-  postIndex: number;
-};
+  city: string
+  street: string
+  house: string
+  postIndex: number
+}
 
 export interface SettingsState {
-  shopAddress: ShopAddress;
-};
+  shopAddress: ShopAddress
+}
 
-export interface SettingsAction extends Action {
-
-};
+export interface SettingsAction extends Action {}

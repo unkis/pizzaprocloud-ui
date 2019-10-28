@@ -111,7 +111,6 @@ const ChooseTypeOfPayment = ({
         onClose && onClose();
         setCurrentSelection(0);
       }
-      console.log(event.key);
       event.preventDefault();
       event.stopPropagation();
     },
@@ -528,7 +527,6 @@ function Cart({
       }
       const { productName, price, tax } = currentProduct;
       setSignChooseQuantity('-');
-      console.log('HI');
       // decrementAddition(currentSelectedProductInCart, currentProduct.id, productName, price, tax);
     } else if (typeOfCurrentProduct === 'product') {
       const isProductInCart = findLastIndexOf(cartProducts, ({ id }) => id === currentProduct.id);
@@ -1073,7 +1071,6 @@ function Cart({
 
   const onAdditionalRequestClose = useCallback(
     (productName?: string, tax?: '7' | '19', price?: number) => {
-      console.log('onAdditionalRequestClose: ', productName, price, tax);
       if (productName && tax && price !== undefined && Number.isFinite(price)) {
         addCustomProduct(productName, price, tax);
       }
@@ -1285,7 +1282,6 @@ function Cart({
     ],
     [DecrementInProductsIcon, AddInProductsIcon, language],
   );
-  console.log('>>>>>> cartProducts: ', cartProducts);
   const cartProductsWithKeys = useMemo(
     () =>
       // проставляем ключи продуктам с бека

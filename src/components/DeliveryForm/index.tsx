@@ -150,6 +150,12 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
         );
         const [language, setLanguage] = useState(langMap[lang as langType]);
 
+        if (compareTwoObjects(getFieldsValue(), initialFormDataState)) {
+          setFieldsValue(formDataState);
+        } else if (!compareTwoObjects(getFieldsValue(), formDataState)) {
+          updateFieldsOfFormData(getFieldsValue());
+        }
+
         const onFieldChange = useCallback(
           (id: string, value: string) => {
             addDataToFormData(id, value);
@@ -208,10 +214,10 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
           updateFieldsOfFormData({
             [fieldNames.city]: city,
             [fieldNames.street]: street,
-            [fieldNames.houseNumber]: house,
+            [fieldNames.houseNumber]: house.toString(),
             [fieldNames.plz]: postIndex,
           });
-          nextPage();
+          history.push(`${ROOT_URL}/finish`);
         }, [nextPage, updateFieldsOfFormData, shopAddress]);
 
         const onInnerClick = useCallback(() => {
@@ -221,11 +227,11 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
           updateFieldsOfFormData({
             [fieldNames.city]: city,
             [fieldNames.street]: street,
-            [fieldNames.houseNumber]: house,
+            [fieldNames.houseNumber]: house.toString(),
             [fieldNames.plz]: postIndex,
             isTaxSecondOnAll: true,
           });
-          nextPage();
+          history.push(`${ROOT_URL}/finish`);
         }, [nextPage, updateFieldsOfFormData, shopAddress]);
 
         const handleKeyDown = useCallback(
@@ -269,17 +275,6 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
           window.addEventListener('keydown', handleKeyDown);
           return () => window.removeEventListener('keydown', handleKeyDown);
         }, [handleKeyDown]);
-
-        useEffect(() => {
-          if (compareTwoObjects(getFieldsValue(), initialFormDataState)) {
-            setFieldsValue(formDataState);
-          }
-        }, [formDataState, setFieldsValue, getFieldsValue]);
-        console.log('>>> compare: ', compareTwoObjects(getFieldsValue(), formDataState));
-        if (!compareTwoObjects(getFieldsValue(), formDataState)) {
-          updateFieldsOfFormData(getFieldsValue());
-        }
-
         return (
           <Layout>
             <Header
@@ -321,10 +316,7 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
                     <Form.Item label={language.customerNumber}>
                       {getFieldDecorator(fieldNames.customerNumber, {
                         normalize: onlyNumbersNormalize,
-                        rules: [
-                          { required: true, message: 'Введите номер клиента' },
-                          { pattern: /[0-9]+/, message: 'Разрешены только цифры' },
-                        ],
+                        rules: [{ pattern: /[0-9]+/, message: 'Разрешены только цифры' }],
                       })(
                         <AutoComplete
                           dataSource={dataSourceLiveState[fieldNames.customerNumber]}
@@ -332,6 +324,7 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
                           onSelect={(value) => handleEnterDown(fieldNames.customerNumber, value as string)}
                         >
                           <Input
+                            disabled
                             onKeyDown={handleKeyDown}
                             maxLength={6}
                             id={fieldNames.customerNumber}
@@ -423,7 +416,7 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
                       )}
                     </Form.Item>
                     <Form.Item label={language.deliveryCost}>
-                      {getFieldDecorator(fieldNames.deliveryCost)(
+                      {getFieldDecorator(fieldNames.deliveryCost, { initialValue: '0,00' })(
                         <Select
                           onChange={(value: string) => onFieldChange(fieldNames.deliveryCost, value)}
                           id={fieldNames.deliveryCost}

@@ -83,7 +83,6 @@ const ChooseQuantity = ({
           if (min !== undefined && min > prev - 1) {
             return min;
           }
-          console.log('prev: ', prev);
           return prev - 1;
         });
         setTimeout(selectSearchInputText, 10);

@@ -38,7 +38,7 @@ export const settings = (
     shopAddress: {
       city: 'Москва',
       street: 'Льва Толстого',
-      house: 10,
+      house: '10',
       postIndex: 777777,
     },
   },
@@ -79,7 +79,7 @@ export const initialFormDataState: any = {
   [fieldNames.plz]: undefined,
   [fieldNames.city]: undefined,
   [fieldNames.clientComment]: undefined,
-  [fieldNames.deliveryCost]: undefined,
+  [fieldNames.deliveryCost]: '0,00',
   isTaxSecondOnAll: undefined,
 };
 
@@ -113,7 +113,6 @@ export const cartProducts = (
   state: CartProductsState = initialCartProductsState,
   action: CartProductsAction,
 ) => {
-  console.log('I AM HERE!', action);
   switch (action.type) {
     case cartProductsActions.ADD_PRODUCT_TO_CART: {
       const {
@@ -393,7 +392,6 @@ export const cartProducts = (
     case cartProductsActions.DELETE_ADDITION_OF_PRODUCT_FROM_CART: {
       const { productIdx, additionId } = action;
       const productIndex = productIdx;
-      console.log(productIdx);
       if (productIndex !== -1) {
         const { additions } = state[productIndex];
         if (additions) {
@@ -590,7 +588,6 @@ export const categories = (state: categoriesState[] = [], action: categoriesActi
       ];
     }
     case categoriesActionsTypes.DELETE_CATEGORY: {
-      console.log('DELETE');
       const { name: deletedName } = action;
       const catIdx = state.findIndex(({ name }) => name === deletedName);
       if (catIdx === -1) {

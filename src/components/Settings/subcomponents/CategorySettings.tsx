@@ -142,7 +142,6 @@ const CategorySettings = Form.create({ name: 'categorySettings' })(
       const onUploadIconHandle = useCallback(
         ({ file: { originFileObj }, fileList }) => {
           const fileReader = new FileReader();
-          console.log(fileList);
           fileReader.onload = function (e: any) {
             setFieldsValue({
               iconUrlItem: e.target.result,
