@@ -75,6 +75,17 @@ const ru = {
   addSubcategory: 'Добавить подкатегорию',
   upload: 'Загрузить',
   addYourCategory: 'Добавление новой категории',
+  articleNumber: 'Номер артикля',
+  description: 'Описание',
+  type: 'Тип',
+  allergens: 'Аллергены',
+  additionalInfo: 'Добавки',
+  numOfFreeIngridients: 'Количество бесплатных ингридиентов',
+  deliveryCostArticle: 'Цена на дом',
+  restaurant: 'В ресторане',
+  inActions: 'Участвует в акциях',
+  outOfSale: 'Товар распродан',
+  articleAlreadyExistsDoYouWantToRewriteIt: 'Артикль существует, вы хотите перезаписать его?',
 };
 
 export default ru;

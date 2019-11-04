@@ -1,4 +1,5 @@
 import { changeLanguageType, addUserType, logoutUserType } from './actionsTypes';
+import { Article } from './reducers';
 
 export const CHANGE_LANGUAGE = 'CHANGE_LANGUAGE';
 export const ADD_USER = 'ADD_USER';
@@ -27,6 +28,11 @@ export enum cartProductsActions {
 export enum categoriesActionsTypes {
   ADD_CATEGORY = 'ADD_CATEGORY',
   DELETE_CATEGORY = 'DELETE_CATEGORY',
+}
+
+export enum articlesActionsTypes {
+  ADD_ARTICLE = 'ADD_ARTICLE',
+  DELETE_ARTICLE = 'DELETE_ARTICLE',
 }
 
 export const changeLanguage: changeLanguageType = (lang) => ({ type: CHANGE_LANGUAGE, lang });
@@ -181,4 +187,14 @@ export const addCategory = (
 export const deleteCategory = (name: string) => ({
   type: categoriesActionsTypes.DELETE_CATEGORY,
   name,
+});
+
+export const addArticle = (article: Article) => ({
+  type: articlesActionsTypes.ADD_ARTICLE,
+  article,
+});
+
+export const deleteArticle = (article: Article) => ({
+  type: articlesActionsTypes.DELETE_ARTICLE,
+  article,
 });

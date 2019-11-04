@@ -20,6 +20,7 @@ export const mapStateToProps: MapStateToProps<CartStateProps, CartOwnProps, Stat
   cartProducts: state.cartProducts,
   formDataState: state.formDataState,
   lang: state.languages.lang,
+  articles: state.articles,
 });
 
 export const mapDispatchToProps: MapDispatchToPropsFunction<CartDispatchProps, CartOwnProps> = (

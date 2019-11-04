@@ -39,7 +39,7 @@ const createRange = (from: number, to: number) => {
 
 interface CategorySettingsOwnProps {}
 interface CategorySettingsStateProps {
-  categories: categoriesState
+  categories: categoriesState[]
 }
 const mapStateToProps: MapStateToProps<
   CategorySettingsStateProps,

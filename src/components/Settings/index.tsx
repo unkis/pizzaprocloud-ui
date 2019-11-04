@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import useLanguage from '../../helpers/useLanguage';
 import { ROOT_URL } from '../../constants/rootUrl';
 import CategorySettings from './subcomponents/CategorySettings';
+import ArticleSettings from './subcomponents/ArticleSettings';
 
 const MainMenu = () => {
   const [categorySettings, articleSettings, saleCategorySettings, setMenu] = useLanguage(
@@ -24,8 +25,10 @@ F8 /
         </Link>
       </Button>
       <Button className="Button_xl">
+        <Link to={`${ROOT_URL}/settings/article`}>
 F9 /
-        {articleSettings}
+          {articleSettings}
+        </Link>
       </Button>
       <Button className="Button_xl">
 F10 /
@@ -99,6 +102,7 @@ const Settings = () => {
       <Divider />
       <Content>
         <Route exact path={`${ROOT_URL}/settings/category`} component={CategorySettings} />
+        <Route exact path={`${ROOT_URL}/settings/article`} component={ArticleSettings} />
         <Route path={`${ROOT_URL}/settings/`} exact component={MainMenu} />
       </Content>
     </Layout>

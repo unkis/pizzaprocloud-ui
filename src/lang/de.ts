@@ -76,6 +76,18 @@ const de = {
   addSubcategory: 'Unterkategorie hinzufügen',
   upload: 'Laden',
   addYourCategory: 'Bitte legen sie hie ihre kategorie ein',
+  articleNumber: 'Karten nummer',
+  description: 'Beschreibung',
+  type: 'Type',
+  allergens: 'Allergen',
+  additionalInfo: 'Zusatzstoffen',
+  numOfFreeIngridients: 'Anzahl kostenlose Zutaten',
+  deliveryCostArticle: 'Liefer Preis',
+  restaurant: 'Restaurant',
+  inActions: 'Bei Action anzeigen',
+  outOfSale: 'Artikel ausverkauft',
+  articleAlreadyExistsDoYouWantToRewriteIt:
+    'Artikel existiert bereits. Willst du es neu schreiben?',
 };
 
 export default de;

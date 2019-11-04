@@ -6,6 +6,7 @@ import {
   formDataActions,
   cartProductsActions,
   categoriesActionsTypes,
+  articlesActionsTypes,
 } from './actions';
 
 import fieldNames from '../constants/fieldNames';
@@ -594,6 +595,55 @@ export const categories = (state: categoriesState[] = [], action: categoriesActi
         return state;
       }
       return [...state.slice(0, catIdx), ...state.slice(catIdx + 1)];
+    }
+    default:
+      return state;
+  }
+};
+
+export interface ArticlePrice {
+  deliveryCost: string | undefined
+  selfPickUp: string | undefined
+  inner: string | undefined
+  restaurant: string | undefined
+}
+export interface Article {
+  categoryName?: string
+  article: string
+  productName: string
+  tax: '7' | '19'
+  description?: string
+  type: string
+  allergens?: string
+  additionalInfo?: string
+  numOfFreeIngridients: string
+  prices: {
+    [name: string]: ArticlePrice
+  }
+  inActions: boolean
+  outOfSale: boolean
+}
+
+interface ArticlesAction extends Action<articlesActionsTypes> {
+  article: Article
+  id?: string
+}
+export const articles = (state: Article[] = [], action: ArticlesAction) => {
+  switch (action.type) {
+    case articlesActionsTypes.ADD_ARTICLE: {
+      console.log('add in reducer');
+      const idx = state.findIndex(({ article }) => action.article.article === article);
+      if (idx === -1) {
+        return [...state, action.article];
+      }
+      return [...state.slice(0, idx), action.article, ...state.slice(idx + 1)];
+    }
+    case articlesActionsTypes.DELETE_ARTICLE: {
+      const idx = state.findIndex(({ article }) => action.article.article === article);
+      if (idx !== -1) {
+        return [...state.slice(0, idx), ...state.slice(idx + 1)];
+      }
+      return state;
     }
     default:
       return state;

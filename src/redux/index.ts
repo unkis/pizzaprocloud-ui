@@ -1,6 +1,12 @@
 import { combineReducers, createStore } from 'redux';
 import {
-  languages, user, formDataState, cartProducts, settings, categories,
+  languages,
+  user,
+  formDataState,
+  cartProducts,
+  settings,
+  categories,
+  articles,
 } from './reducers';
 
 export const appState = combineReducers({
@@ -10,6 +16,7 @@ export const appState = combineReducers({
   cartProducts,
   settings,
   categories,
+  articles,
 } as any);
 const testIsNew = localStorage.getItem('testIndex3') && JSON.parse(localStorage.getItem('testIndex3') as string);
 const initialState = testIsNew ? JSON.parse(localStorage.getItem('pizza-redux') as string) : null;

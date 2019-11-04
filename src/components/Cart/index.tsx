@@ -28,6 +28,7 @@ import {
   ActionColumn,
   TableProduct,
 } from './CartTypes';
+import { Article } from '../../redux/reducers';
 
 import './Cart.css';
 
@@ -42,8 +43,10 @@ const IconStyle = { fontSize: '16px' };
 export const selectSearchInputText = (targetElem?: any) => {
   // функция для выделения текста в поле поиска
   const target = targetElem || (document.querySelector('.cart__products-table .ant-input') as HTMLInputElement);
-  target.focus();
-  target.setRangeText(target.value, 0, target.value.length, 'select');
+  if (target) {
+    target.focus();
+    target.setRangeText(target.value, 0, target.value.length, 'select');
+  }
 };
 
 const ProductNameRenderer = (name: string, { quantity }: { quantity: number | undefined }) => {
@@ -246,7 +249,7 @@ const AdditionalRequestBody = Form.create<
               <Form.Item>
                 {getFieldDecorator('productName', {
                   rules: [{ required: true, message: 'Обязательное поле' }],
-                })(<Input autoFocus />)}
+                })(<Input autoFocus autoComplete="off" />)}
               </Form.Item>
             </div>
             <div
@@ -286,7 +289,7 @@ const AdditionalRequestBody = Form.create<
                       },
                     },
                   ],
-                })(<Input />)}
+                })(<Input autoComplete="off" />)}
               </Form.Item>
             </div>
           </div>
@@ -382,6 +385,7 @@ function Cart({
   decrementAddition,
   decrementProduct,
   history,
+  articles,
 }: CartProps) {
   const [language, setLanguage] = useState(langMap[lang]);
 
@@ -408,6 +412,19 @@ function Cart({
     }
   }, [cartProducts, wasImplisitySetted, setProductInCart]);
 
+  // useEffect(() => {
+  //   setProducts(articles.map(article => {
+  //     const prices = Object.keys(article.prices);
+  //     const price = article.prices[prices[0]].deliveryCost;
+  //     return ({
+  //       ...article,
+  //       type: "product",
+  //       key: article.article,
+  //       id: +article.article,
+  //       price: price !== undefined ? +price : 0
+  //     } as Article & {type: 'product' | 'addition', key: string, id: number, price: number})}
+  //     ))
+  // }, []);
   const sortedProducts = useMemo(() => {
     // сортируем продукты с бека
     const unsortedProducts = ([
@@ -1419,7 +1436,7 @@ function Cart({
       <div className="cart__tables">
         <div className="cart__order-table">
           <div className="cart__order">
-            <Input id="comment-field" placeholder={`F1 / ${language.comment}`} />
+            <Input autoComplete="off" id="comment-field" placeholder={`F1 / ${language.comment}`} />
             <Table
               components={customTableComponents}
               expandIcon={NullComponent}
@@ -1436,6 +1453,7 @@ function Cart({
         </div>
         <div className="cart__products-table">
           <Input
+            autoComplete="off"
             value={search}
             prefix={<Icon type="search" />}
             onChange={onSearchChange}

@@ -7,6 +7,7 @@ import {
   CartProduct,
   CartAddition,
 } from '../../redux/reducersTypes';
+import { Article } from '../../redux/reducers';
 
 export interface SearchItem {
   category?: string
@@ -98,6 +99,7 @@ export interface CartStateProps {
   cartProducts: CartProductsState
   lang: langType
   formDataState: FormDataStateType
+  articles: Article[]
 }
 
 export interface ActionColumn {

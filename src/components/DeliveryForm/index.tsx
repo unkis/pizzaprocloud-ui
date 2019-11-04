@@ -324,6 +324,7 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
                           onSelect={(value) => handleEnterDown(fieldNames.customerNumber, value as string)}
                         >
                           <Input
+                            autoComplete="off"
                             disabled
                             onKeyDown={handleKeyDown}
                             maxLength={6}
@@ -346,6 +347,7 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
                           onSelect={(value) => handleEnterDown(fieldNames.phoneNumber, value as string)}
                         >
                           <Input
+                            autoComplete="off"
                             onKeyDown={handleKeyDown}
                             autoFocus
                             maxLength={15}
@@ -364,7 +366,12 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
                           onSearch={(arg) => handleSearch(arg, fieldNames.name)}
                           onSelect={(value) => handleEnterDown(fieldNames.name, value as string)}
                         >
-                          <Input onKeyDown={handleKeyDown} maxLength={30} id={fieldNames.name} />
+                          <Input
+                            autoComplete="off"
+                            onKeyDown={handleKeyDown}
+                            maxLength={30}
+                            id={fieldNames.name}
+                          />
                         </AutoComplete>,
                       )}
                     </Form.Item>
@@ -372,13 +379,27 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
                       {getFieldDecorator(fieldNames.city, {
                         normalize: startsWithUpperCaseNormalizer,
                         rules: [{ required: true, message: 'Введите название города' }],
-                      })(<Input onKeyDown={handleKeyDown} maxLength={25} id={fieldNames.city} />)}
+                      })(
+                        <Input
+                          autoComplete="off"
+                          onKeyDown={handleKeyDown}
+                          maxLength={25}
+                          id={fieldNames.city}
+                        />,
+                      )}
                     </Form.Item>
                     <Form.Item label={language.street}>
                       {getFieldDecorator(fieldNames.street, {
                         normalize: startsWithUpperCaseNormalizer,
                         rules: [{ required: true, message: 'Введите название улицы' }],
-                      })(<Input onKeyDown={handleKeyDown} maxLength={30} id={fieldNames.street} />)}
+                      })(
+                        <Input
+                          autoComplete="off"
+                          onKeyDown={handleKeyDown}
+                          maxLength={30}
+                          id={fieldNames.street}
+                        />,
+                      )}
                     </Form.Item>
                     <Form.Item label={language.houseNumber}>
                       {getFieldDecorator(fieldNames.houseNumber, {
@@ -389,6 +410,7 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
                         ],
                       })(
                         <Input
+                          autoComplete="off"
                           onKeyDown={handleKeyDown}
                           maxLength={6}
                           id={fieldNames.houseNumber}
@@ -402,13 +424,21 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
                           { required: true, message: 'Введите почтовый индекс' },
                           { pattern: /[0-9]+/, message: 'Разрешены только цифры' },
                         ],
-                      })(<Input onKeyDown={handleKeyDown} maxLength={6} id={fieldNames.plz} />)}
+                      })(
+                        <Input
+                          autoComplete="off"
+                          onKeyDown={handleKeyDown}
+                          maxLength={6}
+                          id={fieldNames.plz}
+                        />,
+                      )}
                     </Form.Item>
                     <Form.Item label={language.clientComment}>
                       {getFieldDecorator(fieldNames.clientComment, {
                         normalize: startsWithUpperCaseNormalizer,
                       })(
                         <Input
+                          autoComplete="off"
                           onKeyDown={handleKeyDown}
                           maxLength={35}
                           id={fieldNames.clientComment}
