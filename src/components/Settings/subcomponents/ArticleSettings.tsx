@@ -190,12 +190,13 @@ const ArticleSettings = Form.create({ name: 'article_settings' })(
           selfPickUp: undefined,
         };
       }
+      const initCategoryName = Array.isArray(categories) && categories.length > 0 ? categories[0].name : undefined;
       const initialArticle = {
         additionalInfo: undefined,
         allergens: undefined,
         articleNumber: undefined,
         articlePrices,
-        categoryName: categories[0].name,
+        categoryName: initCategoryName,
         description: undefined,
         inActions: true,
         name: undefined,
@@ -471,7 +472,10 @@ const ArticleSettings = Form.create({ name: 'article_settings' })(
               <div className="ArticleSettings-LeftPart">
                 <Form.Item label={categoryName}>
                   {getFieldDecorator('categoryName', {
-                    initialValue: categories[0].name,
+                    initialValue:
+                      Array.isArray(categories) && categories.length > 0
+                        ? categories[0].name
+                        : undefined,
                   })(
                     <Select>
                       {categories.map(({ name }) => (
