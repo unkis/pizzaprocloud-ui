@@ -602,7 +602,8 @@ export const categories = (state: categoriesState[] = [], action: categoriesActi
 };
 
 export interface ArticlePrice {
-  deliveryCost: string | undefined
+  deliveryCost?: string | undefined
+  deliveryCostArticle?: string | undefined
   selfPickUp: string | undefined
   inner: string | undefined
   restaurant: string | undefined
@@ -632,14 +633,14 @@ export const articles = (state: Article[] = [], action: ArticlesAction) => {
   switch (action.type) {
     case articlesActionsTypes.ADD_ARTICLE: {
       console.log('add in reducer');
-      const idx = state.findIndex(({ article }) => action.article.article === article);
+      const idx = state.findIndex(({ productName }) => action.article.productName === productName);
       if (idx === -1) {
         return [...state, action.article];
       }
       return [...state.slice(0, idx), action.article, ...state.slice(idx + 1)];
     }
     case articlesActionsTypes.DELETE_ARTICLE: {
-      const idx = state.findIndex(({ article }) => action.article.article === article);
+      const idx = state.findIndex(({ productName }) => action.article.productName === productName);
       if (idx !== -1) {
         return [...state.slice(0, idx), ...state.slice(idx + 1)];
       }

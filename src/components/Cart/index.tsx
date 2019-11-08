@@ -34,6 +34,8 @@ import './Cart.css';
 
 import { ROOT_URL } from '../../constants/rootUrl';
 
+import { selectTypes } from '../Settings/subcomponents/ArticleSettings';
+
 const naturalSort: any = require('javascript-natural-sort'); // FIXME: добавить тайпинги и сделать импорт
 
 const proudctsTableScrollParams = { y: 'calc(100vh - 40px - 32px - 75px - 60px - 1px)' };
@@ -389,7 +391,7 @@ function Cart({
 }: CartProps) {
   const [language, setLanguage] = useState(langMap[lang]);
 
-  const [products] = useState(searchProducts('') as TableProduct[]);
+  const [products, setProducts] = useState<TableProduct[]>([]);
   const [search, setSearch] = useState('');
   const [isAlert, setIsAlert] = useState(false);
   const [isAdditionalRequest, setAdditionalRequest] = useState(false);
@@ -412,24 +414,31 @@ function Cart({
     }
   }, [cartProducts, wasImplisitySetted, setProductInCart]);
 
-  // useEffect(() => {
-  //   setProducts(articles.map(article => {
-  //     const prices = Object.keys(article.prices);
-  //     const price = article.prices[prices[0]].deliveryCost;
-  //     return ({
-  //       ...article,
-  //       type: "product",
-  //       key: article.article,
-  //       id: +article.article,
-  //       price: price !== undefined ? +price : 0
-  //     } as Article & {type: 'product' | 'addition', key: string, id: number, price: number})}
-  //     ))
-  // }, []);
+  useEffect(() => {
+    setProducts(
+      articles.map((article, idx) => {
+        const prices = Object.keys(article.prices);
+        console.log('prices: ', prices);
+        console.log('>>>article.prices: ', article.prices);
+        console.log(article.prices[prices[0]]);
+        const price = Array.isArray(prices)
+          && prices[0]
+          && article.prices
+          && article.prices[prices[0]]
+          && article.prices[prices[0]].deliveryCostArticle;
+        return {
+          ...article,
+          key: article.article,
+          id: Number.isFinite(+article.article) ? +article.article : idx,
+          price: price !== undefined ? +price : 0,
+        } as Article & { type: string; key: string; id: number; price: number };
+      }),
+    );
+  }, []);
   const sortedProducts = useMemo(() => {
     // сортируем продукты с бека
     const unsortedProducts = ([
-      ...products.filter(({ type }) => type === 'product'),
-      ...products.filter(({ type }) => type === 'addition'),
+      ...products.sort((a, b) => a.type.localeCompare(b.type)),
     ] as typeof products).sort((a, b) => {
       if (a.article && b.article) {
         return naturalSort(a.article, b.article);
@@ -483,15 +492,17 @@ function Cart({
     [sortedProducts, currentSelection],
   );
 
-  const filteredProducts = useMemo(
-    () => [
+  const filteredProducts = useMemo(() => {
+    return selectTypes.flatMap((name) => ([{ header: name, key: name }] as (TableProduct & { header?: string })[]).concat(
+      productsWithSelected.filter(({ type }) => type === name),
+    ));
+    return [
       { header: 'ПРОДУКТЫ', key: 'ПРОДУКТЫ' },
       ...productsWithSelected.filter(({ type }) => type === 'product'),
       { header: 'ДОБАВКИ', key: 'ДОБАВКИ' },
       ...productsWithSelected.filter(({ type }) => type === 'addition'),
-    ],
-    [productsWithSelected],
-  );
+    ];
+  }, [productsWithSelected]);
 
   const keyDownListener = useCallback(
     (event: KeyboardEvent) => {
@@ -1382,7 +1393,7 @@ function Cart({
   const currentSelectionProductQuantityInCart = useMemo(() => {
     if (cartProducts && cartProducts[currentSelectedProductInCart]) {
       const { quantity } = cartProducts && cartProducts[currentSelectedProductInCart];
-      if (currentSelectionProduct.type === 'addition') {
+      if (currentSelectionProduct && currentSelectionProduct.type === 'addition') {
         return quantity;
       }
       return signChooseQuantity === '-' ? quantity : 1;

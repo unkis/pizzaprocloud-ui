@@ -16,7 +16,7 @@ export interface SearchItem {
   productName: string
   price: number
   tax: '7' | '19'
-  type: 'product' | 'addition'
+  type: string
 }
 
 export interface TableProduct extends SearchItem {

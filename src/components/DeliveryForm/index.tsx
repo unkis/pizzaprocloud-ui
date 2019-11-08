@@ -211,12 +211,13 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
           const {
             city, street, house, postIndex,
           } = shopAddress;
-          updateFieldsOfFormData({
-            [fieldNames.city]: city,
-            [fieldNames.street]: street,
-            [fieldNames.houseNumber]: house.toString(),
-            [fieldNames.plz]: postIndex,
-          });
+          // updateFieldsOfFormData({
+          //   [fieldNames.city]: city,
+          //   [fieldNames.street]: street,
+          //   [fieldNames.houseNumber]: house.toString(),
+          //   [fieldNames.plz]: postIndex,
+          // });
+          updateFieldsOfFormData(initialFormDataState);
           history.push(`${ROOT_URL}/finish`);
         }, [nextPage, updateFieldsOfFormData, shopAddress]);
 
@@ -224,13 +225,7 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
           const {
             city, street, house, postIndex,
           } = shopAddress;
-          updateFieldsOfFormData({
-            [fieldNames.city]: city,
-            [fieldNames.street]: street,
-            [fieldNames.houseNumber]: house.toString(),
-            [fieldNames.plz]: postIndex,
-            isTaxSecondOnAll: true,
-          });
+          updateFieldsOfFormData({ ...initialFormDataState, isTaxSecondOnAll: true });
           history.push(`${ROOT_URL}/finish`);
         }, [nextPage, updateFieldsOfFormData, shopAddress]);
 

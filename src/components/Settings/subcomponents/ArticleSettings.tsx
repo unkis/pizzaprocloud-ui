@@ -27,6 +27,7 @@ import { State } from '../../../redux/types';
 
 const naturalSort: any = require('javascript-natural-sort'); // FIXME: добавить тайпинги и сделать импорт
 
+export const selectTypes = ['Artikel', 'Zutaten', 'Getränk', 'Pfand', 'Menü'];
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
@@ -172,22 +173,24 @@ const ArticleSettings = Form.create({ name: 'article_settings' })(
           setPrices(['main']);
         }
       }, [catName]);
-      const articlePrices: { [key: string]: ArticlePrice } = {};
+      const articlePrices: {
+        [key: string]: ArticlePrice & { deliveryCostArticle: string | undefined }
+      } = {};
       if (categories.length !== 0 && categories[0].sizes && categories[0].sizes.length !== 0) {
         categories[0].sizes.forEach(({ name }) => {
           articlePrices[name] = {
-            deliveryCost: undefined,
-            inner: undefined,
-            restaurant: undefined,
-            selfPickUp: undefined,
+            deliveryCostArticle: '',
+            inner: '',
+            restaurant: '',
+            selfPickUp: '',
           };
         });
       } else {
         articlePrices.main = {
-          deliveryCost: undefined,
-          inner: undefined,
-          restaurant: undefined,
-          selfPickUp: undefined,
+          deliveryCostArticle: '',
+          inner: '',
+          restaurant: '',
+          selfPickUp: '',
         };
       }
       const initCategoryName = Array.isArray(categories) && categories.length > 0 ? categories[0].name : undefined;
@@ -210,83 +213,97 @@ const ArticleSettings = Form.create({ name: 'article_settings' })(
       };
       const resetForm = useCallback(() => {
         setFieldsValue(initialArticle);
-      }, [setFieldsValue, initialArticle]);
-      const handleOutClick = useCallback((event: React.MouseEvent<HTMLElement, MouseEvent>) => {
-        event && event.preventDefault && event.preventDefault();
-
-        const {
-          categoryName,
-          articleNumber,
-          tax,
-          name: productName,
-          description,
-          type,
-          allergens,
-          additionalInfo,
-          articlePrices,
-          inActions,
-          outOfSale,
-          numOfFreeIngridients,
-        } = getFieldsValue();
-        const article: Article = {
-          categoryName,
-          article: articleNumber,
-          productName,
-          tax,
-          description,
-          type,
-          numOfFreeIngridients,
-          allergens,
-          additionalInfo,
-          prices: articlePrices,
-          inActions,
-          outOfSale,
-        };
-        if (allInSecondHasFirst(initialArticle, getFieldsValue())) {
-          return;
-        }
-        setModalVisible(true);
-        setOpenModal({
-          title: doYouWantToSaveChanges,
-          leftText: save,
-          rightText: dontSave,
-          onSave: () => {
-            validateFields((err: any) => {
-              if (!err) {
-                const articleIdx = articles.findIndex(
-                  ({ productName: articleName }) => articleName === article.productName,
-                );
-                if (articleIdx === -1) {
-                  addArticle(article);
-                  resetForm();
-                  setModalVisible(false);
-                } else {
-                  setOpenModal({
-                    title: articleAlreadyExistsDoYouWantToRewriteIt,
-                    leftText: rewrite,
-                    rightText: cancel,
-                    onSave: () => {
-                      addArticle(article);
-                      resetForm();
-                      setModalVisible(false);
-                    },
-                    onCancel: () => {
-                      resetForm();
-                      setModalVisible(false);
-                    },
-                  });
-                }
-              } else {
-                setModalVisible(false);
+        setTimeout(() => {
+          const articlePricesObj: { [key: string]: string } = {};
+          for (const [key, value] of Object.entries(initialArticle.articlePrices)) {
+            if (value) {
+              for (const [innerKey, innerValue] of Object.entries(value)) {
+                articlePricesObj[`articlePrices[\'${key}\'].${innerKey}`] = innerValue as any;
               }
-            });
-          },
-          onCancel: () => {
-            resetForm();
-            setModalVisible(false);
-          },
-        });
-      }, []);
+            }
+          }
+          setFieldsValue({ ...articlePricesObj });
+        }, 10);
+      }, [setFieldsValue, initialArticle]);
+      const handleOutClick = useCallback(
+        (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+          event && event.preventDefault && event.preventDefault();
+
+          const {
+            categoryName,
+            articleNumber,
+            tax,
+            name: productName,
+            description,
+            type,
+            allergens,
+            additionalInfo,
+            articlePrices,
+            inActions,
+            outOfSale,
+            numOfFreeIngridients,
+          } = getFieldsValue();
+          const article: Article = {
+            categoryName,
+            article: articleNumber,
+            productName,
+            tax,
+            description,
+            type,
+            numOfFreeIngridients,
+            allergens,
+            additionalInfo,
+            prices: articlePrices,
+            inActions,
+            outOfSale,
+          };
+          if (allInSecondHasFirst(initialArticle, getFieldsValue())) {
+            return;
+          }
+          setModalVisible(true);
+          setOpenModal({
+            title: doYouWantToSaveChanges,
+            leftText: save,
+            rightText: dontSave,
+            onSave: () => {
+              validateFields((err: any) => {
+                if (!err) {
+                  const articleIdx = articles.findIndex(
+                    ({ productName: articleName }) => articleName === article.productName,
+                  );
+                  if (articleIdx === -1) {
+                    addArticle(article);
+                    resetForm();
+                    setModalVisible(false);
+                  } else {
+                    setOpenModal({
+                      title: articleAlreadyExistsDoYouWantToRewriteIt,
+                      leftText: rewrite,
+                      rightText: cancel,
+                      onSave: () => {
+                        addArticle(article);
+                        resetForm();
+                        setModalVisible(false);
+                      },
+                      onCancel: () => {
+                        resetForm();
+                        setModalVisible(false);
+                      },
+                    });
+                  }
+                } else {
+                  setModalVisible(false);
+                }
+              });
+            },
+            onCancel: () => {
+              resetForm();
+              setModalVisible(false);
+            },
+          });
+        },
+        [resetForm, addArticle, articles, validateFields, initialArticle],
+      );
       useEffect(() => {
         (window as any).PPC = (window as any).PPC || {};
         if (allInSecondHasFirst(initialArticle, getFieldsValue())) {
@@ -314,8 +331,10 @@ const ArticleSettings = Form.create({ name: 'article_settings' })(
           } = article;
           const articlePricesObj: { [key: string]: string } = {};
           for (const [key, value] of Object.entries(articlePrices)) {
-            for (const [innerKey, innerValue] of Object.entries(value)) {
-              articlePricesObj[`articlePrices[\'${key}\'].${innerKey}`] = innerValue;
+            if (value) {
+              for (const [innerKey, innerValue] of Object.entries(value)) {
+                articlePricesObj[`articlePrices[\'${key}\'].${innerKey}`] = innerValue;
+              }
             }
           }
           setFieldsValue({
@@ -396,10 +415,7 @@ const ArticleSettings = Form.create({ name: 'article_settings' })(
               const articleIdx = articles.findIndex(
                 ({ productName }) => productName === article.productName,
               );
-              console.log('articleIdx: ', articleIdx);
               if (articleIdx !== -1) {
-                console.log('OPEN MODAL');
-
                 setOpenModal({
                   title: articleAlreadyExistsDoYouWantToRewriteIt,
                   leftText: rewrite,
@@ -416,16 +432,14 @@ const ArticleSettings = Form.create({ name: 'article_settings' })(
                 });
                 setModalVisible(true);
               } else {
+                resetForm();
                 addArticle(article);
               }
             }
           });
         },
-        [articles, resetForm, setOpenModal],
+        [articles, resetForm, setOpenModal, addArticle],
       );
-
-      console.log(getFieldsValue());
-
       const sortedProducts = useMemo(() => {
         // сортируем продукты с бека
         const unsortedProducts = articles.sort((a, b) => {
@@ -447,7 +461,6 @@ const ArticleSettings = Form.create({ name: 'article_settings' })(
             || product.productName.toLowerCase().includes(formattedSearch),
         );
       }, [articles, search]);
-      console.log(getFieldsValue());
       return (
         <div>
           <Modal
@@ -485,9 +498,7 @@ const ArticleSettings = Form.create({ name: 'article_settings' })(
                   )}
                 </Form.Item>
                 <Form.Item label={articleNumber}>
-                  {getFieldDecorator('articleNumber', {
-                    rules: [{ required: true, message: "can't be empty" }],
-                  })(<InputNumber />)}
+                  {getFieldDecorator('articleNumber')(<InputNumber />)}
                 </Form.Item>
                 <Form.Item label={tax}>
                   {getFieldDecorator('tax', { initialValue: '7' })(
@@ -508,19 +519,15 @@ const ArticleSettings = Form.create({ name: 'article_settings' })(
                 <Form.Item label={type}>
                   {getFieldDecorator('type', { initialValue: 'Artikel' })(
                     <Select>
-                      <Select.Option key="Artikel">Artikel</Select.Option>
-                      <Select.Option key="Zutaten">Zutaten</Select.Option>
-                      <Select.Option key="Getränk">Getränk</Select.Option>
-                      <Select.Option key="Pfand">Pfand</Select.Option>
-                      <Select.Option key="Menü">Menü</Select.Option>
+                      {selectTypes.map((name) => (
+                        <Select.Option key={name}>{name}</Select.Option>
+                      ))}
                     </Select>,
                   )}
                 </Form.Item>
                 <Form.Item label={allergens}>{getFieldDecorator('allergens')(<Input />)}</Form.Item>
                 <Form.Item label={additionalInfo}>
-                  {getFieldDecorator('additionalInfo', {
-                    rules: [{ required: true, message: "can't be empty" }],
-                  })(<Input />)}
+                  {getFieldDecorator('additionalInfo')(<Input />)}
                 </Form.Item>
                 <Form.Item label={numOfFreeIngridients}>
                   {getFieldDecorator('numOfFreeIngridients', {
@@ -547,19 +554,13 @@ const ArticleSettings = Form.create({ name: 'article_settings' })(
                         })(<Input />)}
                       </Form.Item>
                       <Form.Item>
-                        {getFieldDecorator(`articlePrices['${price}'].selfPickUp`, {
-                          rules: [{ required: true, message: "can't be empty" }],
-                        })(<Input />)}
+                        {getFieldDecorator(`articlePrices['${price}'].selfPickUp`, {})(<Input />)}
                       </Form.Item>
                       <Form.Item>
-                        {getFieldDecorator(`articlePrices['${price}'].inner`, {
-                          rules: [{ required: true, message: "can't be empty" }],
-                        })(<Input />)}
+                        {getFieldDecorator(`articlePrices['${price}'].inner`, {})(<Input />)}
                       </Form.Item>
                       <Form.Item>
-                        {getFieldDecorator(`articlePrices['${price}'].restaurant`, {
-                          rules: [{ required: true, message: "can't be empty" }],
-                        })(<Input />)}
+                        {getFieldDecorator(`articlePrices['${price}'].restaurant`, {})(<Input />)}
                       </Form.Item>
                     </>
                   ))}

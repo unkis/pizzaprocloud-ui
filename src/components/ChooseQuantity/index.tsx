@@ -10,7 +10,7 @@ const selectSearchInputText = (targetElem?: any) => {
 
 interface Product {
   productName: string
-  type: 'addition' | 'product'
+  type: string
 }
 
 interface ChooseQuantityProps {
