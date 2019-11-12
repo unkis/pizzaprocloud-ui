@@ -602,7 +602,6 @@ export const categories = (state: categoriesState[] = [], action: categoriesActi
 };
 
 export interface ArticlePrice {
-  deliveryCost?: string | undefined
   deliveryCostArticle?: string | undefined
   selfPickUp: string | undefined
   inner: string | undefined
