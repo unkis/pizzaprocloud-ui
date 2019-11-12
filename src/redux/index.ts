@@ -18,10 +18,10 @@ export const appState = combineReducers({
   categories,
   articles,
 } as any);
-const testIsNew = localStorage.getItem('testIndex4') && JSON.parse(localStorage.getItem('testIndex4') as string);
+const testIsNew = localStorage.getItem('testIndex5') && JSON.parse(localStorage.getItem('testIndex5') as string);
 const initialState = testIsNew ? JSON.parse(localStorage.getItem('pizza-redux') as string) : null;
 const store = initialState ? createStore(appState, initialState) : createStore(appState);
-localStorage.setItem('testIndex4', JSON.stringify(true));
+localStorage.setItem('testIndex5', JSON.stringify(true));
 store.subscribe(() => localStorage.setItem('pizza-redux', JSON.stringify(store.getState())));
 
 export default store;
