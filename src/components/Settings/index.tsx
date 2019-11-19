@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import useLanguage from '../../helpers/useLanguage';
 import { ROOT_URL } from '../../constants/rootUrl';
 import CategorySettings from './subcomponents/CategorySettings';
+import PrinterSettings from './subcomponents/PrinterSettings';
 import ArticleSettings from './subcomponents/ArticleSettings';
 
 const MainMenu = () => {
@@ -79,8 +80,10 @@ const Settings = () => {
           {progSettings}
         </Button>
         <Button size="large" onClick={onAnyButtonClick}>
-          F2 /
-          {printSettings}
+          <Link to={`${ROOT_URL}/settings/printer`}>
+F2 /
+            {printSettings}
+          </Link>
         </Button>
         <Button size="large" onClick={onAnyButtonClick}>
           F3 /
@@ -103,6 +106,7 @@ const Settings = () => {
       <Content>
         <Route exact path={`${ROOT_URL}/settings/category`} component={CategorySettings} />
         <Route exact path={`${ROOT_URL}/settings/article`} component={ArticleSettings} />
+        <Route exact path={`${ROOT_URL}/settings/printer`} component={PrinterSettings} />
         <Route path={`${ROOT_URL}/settings/`} exact component={MainMenu} />
       </Content>
     </Layout>

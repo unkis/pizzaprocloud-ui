@@ -7,6 +7,7 @@ import {
   cartProductsActions,
   categoriesActionsTypes,
   articlesActionsTypes,
+  printersActionsTypes,
 } from './actions';
 
 import fieldNames from '../constants/fieldNames';
@@ -640,6 +641,38 @@ export const articles = (state: Article[] = [], action: ArticlesAction) => {
     }
     case articlesActionsTypes.DELETE_ARTICLE: {
       const idx = state.findIndex(({ productName }) => action.article.productName === productName);
+      if (idx !== -1) {
+        return [...state.slice(0, idx), ...state.slice(idx + 1)];
+      }
+      return state;
+    }
+    default:
+      return state;
+  }
+};
+
+export interface Printer {
+  printerName: string
+  description: string
+  type: string
+  quantityOfCopies: number
+}
+
+interface PrintersAction extends Action<printersActionsTypes> {
+  printer: Printer
+}
+
+export const printers = (state: Printer[] = [], action: PrintersAction) => {
+  switch (action.type) {
+    case printersActionsTypes.ADD_PRINTER: {
+      const idx = state.findIndex(({ printerName }) => action.printer.printerName === printerName);
+      if (idx === -1) {
+        return [...state, action.printer];
+      }
+      return [...state.slice(0, idx), action.printer, ...state.slice(idx + 1)];
+    }
+    case printersActionsTypes.DELETE_PRINTER: {
+      const idx = state.findIndex(({ printerName }) => action.printer.printerName === printerName);
       if (idx !== -1) {
         return [...state.slice(0, idx), ...state.slice(idx + 1)];
       }

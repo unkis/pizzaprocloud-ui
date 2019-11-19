@@ -2,7 +2,7 @@ import store from './index';
 import {
   LanguagesState, UserState, FormDataStateType, CartProductsState,
 } from './reducersTypes';
-import { categoriesState, Article } from './reducers';
+import { categoriesState, Article, Printer } from './reducers';
 
 export interface State {
   languages: LanguagesState
@@ -11,6 +11,7 @@ export interface State {
   cartProducts: CartProductsState
   categories: categoriesState[]
   articles: Article[]
+  printers: Printer[]
 }
 
 export type storeType = typeof store

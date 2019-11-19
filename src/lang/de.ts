@@ -88,6 +88,12 @@ const de = {
   outOfSale: 'Artikel ausverkauft',
   articleAlreadyExistsDoYouWantToRewriteIt:
     'Artikel existiert bereits. Willst du es neu schreiben?',
+  printerName: 'Drucker Name',
+  quantityOfCopies: 'Anzahl von Exemplaren',
+  frontOrBackPrinter: 'Drucker steht vorne für Fahrer oder hinten für Küche',
+  pleaseTypeNameOfYourPrinter: 'Bitte Legen Sie hier Ihre Druckername, Beschreibung, Type ein',
+  printerAlreadyExistsDoYouWantToRewriteIt:
+    'Drucker Existiert Bereits möchten Sie es neu Schreiben',
 };
 
 export default de;

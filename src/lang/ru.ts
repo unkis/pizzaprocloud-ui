@@ -86,6 +86,11 @@ const ru = {
   inActions: 'Участвует в акциях',
   outOfSale: 'Товар распродан',
   articleAlreadyExistsDoYouWantToRewriteIt: 'Артикль существует, вы хотите перезаписать его?',
+  printerName: 'Имя принтера',
+  quantityOfCopies: 'Количество копий',
+  frontOrBackPrinter: 'Принтер передний для водителя или задний для кухни',
+  pleaseTypeNameOfYourPrinter: 'Пожалуйста, введите название вашего принтера и описание',
+  printerAlreadyExistsDoYouWantToRewriteIt: 'Принтер уже существует вы хотите переписать его',
 };
 
 export default ru;

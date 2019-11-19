@@ -1,5 +1,5 @@
 import { changeLanguageType, addUserType, logoutUserType } from './actionsTypes';
-import { Article } from './reducers';
+import { Article, Printer } from './reducers';
 
 export const CHANGE_LANGUAGE = 'CHANGE_LANGUAGE';
 export const ADD_USER = 'ADD_USER';
@@ -33,6 +33,11 @@ export enum categoriesActionsTypes {
 export enum articlesActionsTypes {
   ADD_ARTICLE = 'ADD_ARTICLE',
   DELETE_ARTICLE = 'DELETE_ARTICLE',
+}
+
+export enum printersActionsTypes {
+  ADD_PRINTER = 'ADD_PRINTER',
+  DELETE_PRINTER = 'DELETE_PRINTER',
 }
 
 export const changeLanguage: changeLanguageType = (lang) => ({ type: CHANGE_LANGUAGE, lang });
@@ -197,4 +202,14 @@ export const addArticle = (article: Article) => ({
 export const deleteArticle = (article: Article) => ({
   type: articlesActionsTypes.DELETE_ARTICLE,
   article,
+});
+
+export const addPrinter = (printer: Printer) => ({
+  type: printersActionsTypes.ADD_PRINTER,
+  printer,
+});
+
+export const deletePrinter = (printer: Printer) => ({
+  type: printersActionsTypes.DELETE_PRINTER,
+  printer,
 });

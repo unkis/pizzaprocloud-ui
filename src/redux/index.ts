@@ -7,6 +7,7 @@ import {
   settings,
   categories,
   articles,
+  printers,
 } from './reducers';
 
 export const appState = combineReducers({
@@ -17,6 +18,7 @@ export const appState = combineReducers({
   settings,
   categories,
   articles,
+  printers,
 } as any);
 const testIsNew = localStorage.getItem('testIndex5') && JSON.parse(localStorage.getItem('testIndex5') as string);
 const initialState = testIsNew ? JSON.parse(localStorage.getItem('pizza-redux') as string) : null;
