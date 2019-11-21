@@ -94,6 +94,7 @@ const de = {
   pleaseTypeNameOfYourPrinter: 'Bitte Legen Sie hier Ihre Druckername, Beschreibung, Type ein',
   printerAlreadyExistsDoYouWantToRewriteIt:
     'Drucker Existiert Bereits möchten Sie es neu Schreiben',
+  notIncludeInMin: 'von Mindestbestellwert ausnehmen',
 };
 
 export default de;

@@ -62,7 +62,10 @@ const mapStateToProps: MapStateToProps<
   categories: state.categories,
   articles: state.articles.map((article) => {
     const pricesCats = Object.keys(article.prices).filter(Boolean);
-    return { ...article, price: article.prices[pricesCats[0]].deliveryCostArticle };
+    return {
+      ...article,
+      price: article.prices[pricesCats[0]] && article.prices[pricesCats[0]].deliveryCostArticle,
+    };
   }),
 });
 
@@ -145,6 +148,7 @@ const ArticleSettings = Form.create({ name: 'article_settings' })(
           cancel,
           articleAlreadyExistsDoYouWantToRewriteIt,
           price,
+          notIncludeInMin,
         ] = useLanguage(
           'addYourArticle',
           'categoryName',
@@ -170,6 +174,7 @@ const ArticleSettings = Form.create({ name: 'article_settings' })(
           'cancel',
           'articleAlreadyExistsDoYouWantToRewriteIt',
           'price',
+          'notIncludeInMin',
         );
         const [prices, setPrices] = useState(['main']);
         const [search, setSearch] = useState('');
@@ -418,6 +423,7 @@ const ArticleSettings = Form.create({ name: 'article_settings' })(
                   outOfSale,
                   numOfFreeIngridients,
                 } = getFieldsValue();
+                console.log('articlePrices: ', articlePrices);
                 const article: Article = {
                   categoryName,
                   article: articleNumber,
@@ -428,7 +434,22 @@ const ArticleSettings = Form.create({ name: 'article_settings' })(
                   numOfFreeIngridients,
                   allergens,
                   additionalInfo,
-                  prices: articlePrices,
+                  prices: articlePrices.map((price: any) => {
+                    console.log('PRICE BEFORE: ', { ...price });
+                    const {
+                      deliveryCostArticle, selfPickUp, inner, restaurant,
+                    } = price;
+                    if (deliveryCostArticle && !selfPickUp && !inner && !restaurant) {
+                      price.selfPickUp = deliveryCostArticle;
+                      price.inner = deliveryCostArticle;
+                      price.restaurant = deliveryCostArticle;
+                    } else if (deliveryCostArticle && selfPickUp && !inner && !restaurant) {
+                      price.inner = selfPickUp;
+                      price.restaurant = selfPickUp;
+                    }
+                    console.log('PRICE AFTER: ', { ...price });
+                    return price;
+                  }),
                   inActions,
                   outOfSale,
                 };
@@ -711,21 +732,21 @@ const ArticleSettings = Form.create({ name: 'article_settings' })(
                         <Form.Item>
                           {getFieldDecorator(`articlePrices['${price}'].deliveryCostArticle`, {
                             rules: [{ required: true, message: "can't be empty" }],
-                          })(<InputNumber />)}
+                          })(<InputNumber decimalSeparator="," />)}
                         </Form.Item>
                         <Form.Item>
                           {getFieldDecorator(`articlePrices['${price}'].selfPickUp`, {})(
-                            <InputNumber />,
+                            <InputNumber decimalSeparator="," />,
                           )}
                         </Form.Item>
                         <Form.Item>
                           {getFieldDecorator(`articlePrices['${price}'].inner`, {})(
-                            <InputNumber />,
+                            <InputNumber decimalSeparator="," />,
                           )}
                         </Form.Item>
                         <Form.Item>
                           {getFieldDecorator(`articlePrices['${price}'].restaurant`, {})(
-                            <InputNumber />,
+                            <InputNumber decimalSeparator="," />,
                           )}
                         </Form.Item>
                       </>
@@ -743,6 +764,12 @@ const ArticleSettings = Form.create({ name: 'article_settings' })(
                         valuePropName: 'checked',
                         initialValue: false,
                       })(<Checkbox>{outOfSale}</Checkbox>)}
+                    </Form.Item>
+                    <Form.Item>
+                      {getFieldDecorator('notIncludeInMin', {
+                        valuePropName: 'checked',
+                        initialValue: false,
+                      })(<Checkbox>{notIncludeInMin}</Checkbox>)}
                     </Form.Item>
                   </div>
                   <div className="Buttons">

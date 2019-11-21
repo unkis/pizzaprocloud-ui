@@ -36,8 +36,14 @@
 }
 
 .Checkboxes {
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+}
+
+.Checkboxes .ant-checkbox-wrapper {
     display: flex;
     flex-flow: row nowrap;
+    align-items: center;
 }
 
 .Buttons {

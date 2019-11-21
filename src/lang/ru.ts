@@ -91,6 +91,7 @@ const ru = {
   frontOrBackPrinter: 'Принтер передний для водителя или задний для кухни',
   pleaseTypeNameOfYourPrinter: 'Пожалуйста, введите название вашего принтера и описание',
   printerAlreadyExistsDoYouWantToRewriteIt: 'Принтер уже существует вы хотите переписать его',
+  notIncludeInMin: 'Не учитывать в мин. стоимости заказа',
 };
 
 export default ru;

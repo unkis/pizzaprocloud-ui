@@ -556,7 +556,7 @@ function Cart({
       const { productName, price, tax } = currentProduct;
       setSignChooseQuantity('-');
       // decrementAddition(currentSelectedProductInCart, currentProduct.id, productName, price, tax);
-    } else if (typeOfCurrentProduct === 'product') {
+    } else if (typeOfCurrentProduct === 'Artikel') {
       const isProductInCart = findLastIndexOf(cartProducts, ({ id }) => id === currentProduct.id);
       if (isProductInCart !== -1) {
         setSignChooseQuantity('-');
@@ -604,7 +604,10 @@ function Cart({
       const {
         id, article, productName, price, tax, type,
       } = currentProduct;
-      if (type === 'addition') {
+      if (type === 'Artikel') {
+        setSignChooseQuantity('+');
+        // addProduct(id, article, productName, price, tax);// FIXME: Проверка на то, есть ли товар в корзине
+      } else {
         const lastAddedProduct = cartProducts[currentSelectedProductInCart];
         if (lastAddedProduct) {
           setSignChooseQuantity('+');
@@ -616,9 +619,6 @@ function Cart({
           });
           setIsAlert(true);
         }
-      } else if (type === 'product') {
-        setSignChooseQuantity('+');
-        // addProduct(id, article, productName, price, tax);// FIXME: Проверка на то, есть ли товар в корзине
       }
     }
     selectSearchInputText();
@@ -713,7 +713,18 @@ function Cart({
         }
         const typeOfCurrentProduct = currentProduct.type;
         const lastAddedProduct = cartProducts[currentSelectedProductInCart];
-        if (typeOfCurrentProduct === 'addition') {
+        if (typeOfCurrentProduct === 'Artikel') {
+          if (lastAddedProduct && lastAddedProduct.id === id) {
+            setSignChooseQuantity('-');
+            // decrementProduct(currentSelectedProductInCart);
+          } else {
+            setAlertMessage({
+              message: 'Не удалось уменьшить количество товара',
+              description: 'В корзине нет такого товара',
+            });
+            setIsAlert(true);
+          }
+        } else {
           const {
             id, productName, tax, price,
           } = currentProduct;
@@ -724,17 +735,6 @@ function Cart({
             setAlertMessage({
               message: 'Не удалось выбрать добавку',
               description: 'В корзине нет товаров',
-            });
-            setIsAlert(true);
-          }
-        } else if (typeOfCurrentProduct === 'product') {
-          if (lastAddedProduct && lastAddedProduct.id === id) {
-            setSignChooseQuantity('-');
-            // decrementProduct(currentSelectedProductInCart);
-          } else {
-            setAlertMessage({
-              message: 'Не удалось уменьшить количество товара',
-              description: 'В корзине нет такого товара',
             });
             setIsAlert(true);
           }
@@ -1051,6 +1051,7 @@ function Cart({
           selectSearchInputText();
           return;
         }
+        console.log('PUPS');
         // потому что открыто окно выбора количества
         onPlusOrEnterKeyDown();
       } else if (event.key === '-') {

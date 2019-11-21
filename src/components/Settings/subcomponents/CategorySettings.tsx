@@ -2,7 +2,7 @@ import React, {
   useCallback, useMemo, useState, useEffect,
 } from 'react';
 import {
-  Typography, Form, Input, Select, Upload, Button, Icon, Table, Modal,
+  Typography, Form, Input, Select, Upload, Button, Icon, Table, Modal, Checkbox,
 } from 'antd';
 
 import './CategorySettings.css';
@@ -113,6 +113,7 @@ const CategorySettings = Form.create({ name: 'categorySettings' })(
         addSubcategory,
         upload,
         addYourCategory,
+        notIncludeInMin,
       ] = useLanguage(
         'categoryName',
         'subcategoryName',
@@ -131,6 +132,7 @@ const CategorySettings = Form.create({ name: 'categorySettings' })(
         'addSubcategory',
         'upload',
         'addYourCategory',
+        'notIncludeInMin',
       );
       const [selectVal, setSelectVal] = useState(sizesQuantities[0]);
       const [isModalVisible, setModalVisible] = useState(false);
@@ -572,6 +574,12 @@ const CategorySettings = Form.create({ name: 'categorySettings' })(
                     </Upload>,
                   )}
                   {/* {imageUrlItem && <img className="ImagePreview" src={imageUrlItem} />} */}
+                </Form.Item>
+                <Form.Item>
+                  {getFieldDecorator('notIncludeInMin', {
+                    valuePropName: 'checked',
+                    initialValue: false,
+                  })(<Checkbox>{notIncludeInMin}</Checkbox>)}
                 </Form.Item>
                 {/* <Form.Item>
                 </Form.Item> */}
