@@ -12,6 +12,7 @@ export interface State {
   categories: categoriesState[]
   articles: Article[]
   printers: Printer[]
+  auth: { email?: string; authorized: boolean }
 }
 
 export type storeType = typeof store

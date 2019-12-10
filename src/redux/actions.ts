@@ -40,6 +40,11 @@ export enum printersActionsTypes {
   DELETE_PRINTER = 'DELETE_PRINTER',
 }
 
+export enum AuthActionsTypes {
+  SET_EMAIL = 'SET_EMAIL',
+  LOGOUT = 'LOGOUT',
+}
+
 export const changeLanguage: changeLanguageType = (lang) => ({ type: CHANGE_LANGUAGE, lang });
 
 export const addUser: addUserType = (role, code) => ({ type: ADD_USER, role, code });
@@ -212,4 +217,14 @@ export const addPrinter = (printer: Printer) => ({
 export const deletePrinter = (printer: Printer) => ({
   type: printersActionsTypes.DELETE_PRINTER,
   printer,
+});
+
+export const setEmail = (email: string) => ({
+  type: AuthActionsTypes.SET_EMAIL,
+  email,
+  authorized: true,
+});
+
+export const logout = () => ({
+  type: AuthActionsTypes.LOGOUT,
 });

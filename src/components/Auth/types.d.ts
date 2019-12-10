@@ -1,25 +1,33 @@
 import { WrappedFormUtils, FormComponentProps } from 'antd/lib/form/Form';
-import { langType } from '../../lang';
 import { RouterProps } from 'react-router';
+import { langType } from '../../lang';
 
-export interface LoginFormOwnProps { //FIXME: add typings by connect func
+export interface LoginFormOwnProps {
+  // FIXME: add typings by connect func
   // form: WrappedFormUtils;
-};
+}
 
 export type LoginFormDispatchProps = {
-  addUser: (role: string, code: string) => void;
-};
+  addUser: (role: string, code: string) => void
+  logout: () => void
+  setEmail: (email: string) => void
+}
 
 export type LoginFormStateProps = {
-  lang: langType;
-  code: string;
-  userRole: string;
-};
+  lang: langType
+  code: string
+  userRole: string
+}
 export type LoginFormValues = {
-  code: string;
-  username: string;
-  password: string;
-  remember: Boolean;
-};
+  code: string
+  username: string
+  password: string
+  remember: Boolean
+}
 
-export interface LoginFormProps extends LoginFormOwnProps, RouterProps, LoginFormDispatchProps, LoginFormStateProps, FormComponentProps {}
+export interface LoginFormProps
+  extends LoginFormOwnProps,
+    RouterProps,
+    LoginFormDispatchProps,
+    LoginFormStateProps,
+    FormComponentProps {}

@@ -30,6 +30,7 @@ const MenuPage = ({
   history,
   collapsed,
   onLangChange,
+  email,
 }: MenuPageProps) => {
   const [language, setLanguage] = useState(langMap[lang]);
 
@@ -40,8 +41,21 @@ const MenuPage = ({
 
   const logout = useCallback(
     (e: ClickParam) => {
-      logoutFromUser();
-      history.push(`${ROOT_URL}/`);
+      fetch(
+        'https://www.liefersoft.de:9011/oauth2/logout?client_id=d6ef13df-7f85-4cca-9de3-502377ca9a88',
+        {
+          headers: {
+            Authorization: localStorage.getItem('token') as string,
+          },
+        },
+      ).then((res) => {
+        console.log('>>> CODE: ', res.status);
+        if (res.ok) {
+          localStorage.clear();
+          logoutFromUser();
+          history.push(`${ROOT_URL}/`);
+        }
+      });
     },
     [logoutFromUser, history],
   );
@@ -126,7 +140,7 @@ const MenuPage = ({
       <Text
         style={{ textAlign: 'center', paddingBottom: '20px', borderRight: '1px solid #e8e8e8' }}
       >
-        {userRole}
+        {email}
       </Text>
     </div>
   );
@@ -135,6 +149,7 @@ const MenuPage = ({
 const mapStatetoProps: MapStateToProps<MenuPageStateProps, MenuPageOwnProps, State> = (state) => ({
   lang: state.languages.lang,
   userRole: state.user.role,
+  email: state.auth.email,
 });
 
 const mapDispatchToProps: MapDispatchToPropsFunction<MenuPageDispatchProps, MenuPageOwnProps> = (

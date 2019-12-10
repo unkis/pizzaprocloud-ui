@@ -8,6 +8,7 @@ import {
   categoriesActionsTypes,
   articlesActionsTypes,
   printersActionsTypes,
+  AuthActionsTypes,
 } from './actions';
 
 import fieldNames from '../constants/fieldNames';
@@ -677,6 +678,23 @@ export const printers = (state: Printer[] = [], action: PrintersAction) => {
         return [...state.slice(0, idx), ...state.slice(idx + 1)];
       }
       return state;
+    }
+    default:
+      return state;
+  }
+};
+
+export const auth = (
+  state: { authorized: boolean; email?: string } = { authorized: false },
+  action: { type: AuthActionsTypes; authorized?: boolean; email?: string },
+) => {
+  switch (action.type) {
+    case AuthActionsTypes.SET_EMAIL: {
+      const { authorized, email } = action;
+      return { authorized, email };
+    }
+    case AuthActionsTypes.LOGOUT: {
+      return { authorized: false };
     }
     default:
       return state;

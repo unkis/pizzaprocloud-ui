@@ -17,6 +17,7 @@ interface MenuPageProps
 interface MenuPageStateProps {
   lang: langType
   userRole: UserState['role'] // FIXME
+  email?: string
 }
 
 interface MenuPageDispatchProps {
