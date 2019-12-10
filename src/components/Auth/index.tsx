@@ -1,17 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import {
-  Form, Icon, Input, Button, Checkbox, Typography, Alert,
-} from 'antd';
-import { connect, MapDispatchToPropsFunction, MapStateToProps } from 'react-redux';
-import { withRouter } from 'react-router-dom';
-import { RouteComponentProps } from 'react-router';
+import React, { useState, useEffect } from 'react'
+import { Form, Icon, Input, Button, Checkbox, Typography, Alert } from 'antd'
+import { connect, MapDispatchToPropsFunction, MapStateToProps } from 'react-redux'
+import { withRouter } from 'react-router-dom'
+import { RouteComponentProps } from 'react-router'
 
-import './Auth.css';
+import './Auth.css'
 
-import { FormComponentProps } from 'antd/es/form';
-import { auth } from '../../fakeBD';
+import { FormComponentProps } from 'antd/es/form'
+import { auth } from '../../fakeBD'
 
-import { addUser, logout, setEmail } from '../../redux/actions';
+import { addUser, logout, setEmail } from '../../redux/actions'
 
 import {
   LoginFormProps,
@@ -19,19 +17,17 @@ import {
   LoginFormDispatchProps,
   LoginFormStateProps,
   LoginFormValues,
-} from './types';
-import { State } from '../../redux/types';
+} from './types'
+import { State } from '../../redux/types'
 
-import { langMap } from '../../lang';
+import { langMap } from '../../lang'
 
-import { ROOT_URL } from '../../constants/rootUrl';
+import { ROOT_URL } from '../../constants/rootUrl'
 
-const { Title } = Typography;
+const { Title } = Typography
 
 export const LoginForm = ({
-  form: {
-    setFieldsValue, getFieldsValue, validateFields, getFieldDecorator,
-  },
+  form: { setFieldsValue, getFieldsValue, validateFields, getFieldDecorator },
   history,
   lang,
   addUser,
@@ -40,25 +36,25 @@ export const LoginForm = ({
   setEmail,
   logout,
 }: LoginFormProps) => {
-  const [errMsg, setErrMsg] = useState('');
-  const [language, setLanguage] = useState(langMap[lang]);
+  const [errMsg, setErrMsg] = useState('')
+  const [language, setLanguage] = useState(langMap[lang])
 
   useEffect(() => {
-    setFieldsValue({ code });
-  }, [setFieldsValue, code]);
+    setFieldsValue({ code })
+  }, [setFieldsValue, code])
 
   useEffect(() => {
     if (userRole) {
-      history.push(`${ROOT_URL}/menu`);
+      history.push(`${ROOT_URL}/menu`)
     }
-  }, [history, userRole]);
+  }, [history, userRole])
 
   useEffect(() => {
-    setLanguage(langMap[lang]);
-  }, [lang]);
+    setLanguage(langMap[lang])
+  }, [lang])
   useEffect(() => {
-    const code = localStorage.getItem('code');
-    const token = localStorage.getItem('token');
+    const code = localStorage.getItem('code')
+    const token = localStorage.getItem('token')
     if (token) {
       fetch('https://www.liefersoft.de:9011/oauth2/userinfo', {
         headers: {
@@ -67,19 +63,19 @@ export const LoginForm = ({
       })
         .then((res) => {
           if (!res.ok) {
-            logout();
-            localStorage.clear();
-            window.location.reload();
+            logout()
+            localStorage.clear()
+            window.location.reload()
           }
-          return res.json();
+          return res.json()
         })
         .then((result) => {
           if (result.email) {
-            setEmail(result.email);
-            window.location.href = `${ROOT_URL}/menu`;
+            setEmail(result.email)
+            window.location.href = `${ROOT_URL}/menu`
           }
-        });
-      return;
+        })
+      return
     }
     if (code) {
       fetch(
@@ -95,14 +91,14 @@ export const LoginForm = ({
           if (res.status !== 200) {
             window.location.replace(`
       https://www.liefersoft.de:9011/oauth2/authorize?client_id=d6ef13df-7f85-4cca-9de3-502377ca9a88&response_type=code&redirect_uri=${window
-    .location.origin + window.location.pathname}
-      `);
+        .location.origin + window.location.pathname}
+      `)
           }
-          return res.json();
+          return res.json()
         })
         .then((result) => {
           if (result.access_token) {
-            localStorage.setItem('token', result.access_token);
+            localStorage.setItem('token', result.access_token)
 
             fetch('https://www.liefersoft.de:9011/oauth2/userinfo', {
               headers: {
@@ -111,28 +107,28 @@ export const LoginForm = ({
             })
               .then((res) => {
                 if (!res.ok) {
-                  localStorage.clear();
-                  window.location.reload();
+                  localStorage.clear()
+                  window.location.reload()
                 }
-                return res.json();
+                return res.json()
               })
               .then(() => {
-                setEmail(result.email);
-                window.location.href = `${ROOT_URL}/menu`;
-              });
+                setEmail(result.email)
+                window.location.href = `${ROOT_URL}/menu`
+              })
           }
-        });
+        })
     }
-    console.log(window.location.search);
-    const match = window.location.search.match(/code=([^&]*)&?/);
+    console.log(window.location.search)
+    const match = window.location.search.match(/code=([^&]*)&?/)
     if (match) {
-      localStorage.setItem('code', match[1]);
+      localStorage.setItem('code', match[1])
     } else {
       window.location.replace(`
-      https://www.liefersoft.de:9011/oauth2/authorize?client_id=d6ef13df-7f85-4cca-9de3-502377ca9a88&response_type=code&redirect_uri=${window.location.href}
-      `);
+      https://www.liefersoft.de:9011/oauth2/authorize?client_id=d6ef13df-7f85-4cca-9de3-502377ca9a88&response_type=code&redirect_uri=${window.location.origin}/login
+      `)
     }
-  }, []);
+  }, [])
   // fetch(
   //   `https://www.liefersoft.de:9011/oauth2/authorize?client_id=d6ef13df-7f85-4cca-9de3-502377ca9a88&response_type=token&username=info%40pizza-programm.de&password=12345678&redirect_uri=http://localhost:8081/login`,
   //   {method: 'POST', headers: {
@@ -140,17 +136,17 @@ export const LoginForm = ({
   //   }}
   // )
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    e.preventDefault()
     validateFields((err: any, values: LoginFormValues) => {
-      const user = auth(values.username, values.password);
+      const user = auth(values.username, values.password)
       if (!err && user) {
-        addUser(user.role, getFieldsValue().code);
-        history.push(`${ROOT_URL}/menu`);
+        addUser(user.role, getFieldsValue().code)
+        history.push(`${ROOT_URL}/menu`)
       } else if (!user) {
-        setErrMsg('Вы неверно ввели логин или пароль');
+        setErrMsg('Вы неверно ввели логин или пароль')
       }
-    });
-  };
+    })
+  }
 
   return (
     <div id="components-form-demo-normal-login">
@@ -212,28 +208,30 @@ export const LoginForm = ({
         </Form.Item>
       </Form>
     </div>
-  );
-};
+  )
+}
 
-const mapStatetoProps: MapStateToProps<LoginFormStateProps, LoginFormOwnProps, State> = (state) => ({
+const mapStatetoProps: MapStateToProps<LoginFormStateProps, LoginFormOwnProps, State> = (
+  state,
+) => ({
   lang: state.languages.lang,
   code: state.user.code,
   userRole: state.user.role,
-});
+})
 
 const mapDispatchToProps: MapDispatchToPropsFunction<LoginFormDispatchProps, LoginFormOwnProps> = (
   dispatch,
 ) => ({
   addUser(role: string, code: string) {
-    dispatch(addUser(role, code));
+    dispatch(addUser(role, code))
   },
   logout() {
-    dispatch(logout());
+    dispatch(logout())
   },
   setEmail(email: string) {
-    dispatch(setEmail(email));
+    dispatch(setEmail(email))
   },
-});
+})
 
 export const Auth = connect(
   mapStatetoProps,
@@ -249,4 +247,4 @@ export const Auth = connect(
       any
     >(LoginForm),
   ),
-);
+)
