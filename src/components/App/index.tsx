@@ -74,6 +74,7 @@ const App = ({ userRole, history }: AppProps) => {
         <Route path={`${ROOT_URL}/settings`} component={Settings} />
         <Route path={`${ROOT_URL}/index.html`} exact component={Auth} />
         <Route path={`${ROOT_URL}/`} exact component={Redirect} />
+        <Route path={`${ROOT_URL}/logout`} exact component={Redirect} />
         <Route path={`${ROOT_URL}/login`} exact component={Auth} />
         <Route path={`${ROOT_URL}/finish`} component={Cart} />
       </Layout>

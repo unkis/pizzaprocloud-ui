@@ -41,21 +41,9 @@ const MenuPage = ({
 
   const logout = useCallback(
     (e: ClickParam) => {
-      fetch(
-        'https://www.liefersoft.de:9011/oauth2/logout?client_id=d6ef13df-7f85-4cca-9de3-502377ca9a88',
-        {
-          headers: {
-            Authorization: localStorage.getItem('token') as string,
-          },
-        },
-      ).then((res) => {
-        console.log('>>> CODE: ', res.status);
-        if (res.ok) {
-          localStorage.clear();
-          logoutFromUser();
-          history.push(`${ROOT_URL}/`);
-        }
-      });
+      window.location.replace(
+        `https://www.liefersoft.de:9011/oauth2/logout?client_id=d6ef13df-7f85-4cca-9de3-502377ca9a88&post_logout_redirect_uri=${window.location.origin}/login`,
+      );
     },
     [logoutFromUser, history],
   );
