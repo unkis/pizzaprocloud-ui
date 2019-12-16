@@ -7,7 +7,8 @@ import { RouteComponentProps } from 'react-router';
 import DeliveryForm from '../../components/DeliveryForm';
 
 // types
-
+// @ts-ignore
+// import '../../webphone-api/webphone_api';
 import { Auth } from '../../components/Auth';
 import Cart from '../../components/Cart';
 import { LeftMenu } from '../../components/LeftMenu';
@@ -38,7 +39,27 @@ const App = ({ userRole, history }: AppProps) => {
     //   history.push(`${ROOT_URL}/`);
     // }
   }, [userRole, history]);
-
+  useEffect(() => {
+    window.onload = () => {
+      (window as any).webphone_api.onLoaded(() => {
+        // Set parameters (Replace upper case worlds with your settings)
+        (window as any).webphone_api.setparameter('serveraddress', '192.168.178.1');
+        (window as any).webphone_api.setparameter('username', 'pizzapro');
+        (window as any).webphone_api.setparameter('password', 'pizzapro1234');
+        (window as any).webphone_api.start();
+        (window as any).webphone_api
+          .getsipmessage(0, 0, (...args: any[]) => console.log('SIP getsipmessage', args))(
+            window as any,
+          )
+          .webphone_api.onCallStateChange((...args: any[]) => {
+            console.log('SIP onCallStateChange: ', args);
+            if (args[0] && args[0] === 'callSetup') {
+              console.log('PEERNAME: ', args[2]);
+            }
+          });
+      });
+    };
+  }, []);
   useEffect(() => {
     setLanguage(langMap[lang]);
   }, [lang]);
