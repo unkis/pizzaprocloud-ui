@@ -76,6 +76,7 @@ export const LoginForm = ({
         .then((result) => {
           if (result.email) {
             setEmail(result.email);
+            console.log('SET EMAIL!', result.email);
             window.location.href = `${ROOT_URL}/menu`;
           }
         });
@@ -120,8 +121,9 @@ export const LoginForm = ({
                 }
                 return res.json();
               })
-              .then(() => {
+              .then((result) => {
                 setEmail(result.email);
+                console.log('SET EMAIL', result.email);
                 window.location.href = `${ROOT_URL}/menu`;
               });
           }
@@ -169,7 +171,7 @@ export const LoginForm = ({
                 }
                 return res.json();
               })
-              .then(() => {
+              .then((result) => {
                 setEmail(result.email);
                 window.location.href = `${ROOT_URL}/menu`;
               });

@@ -41,8 +41,10 @@ const MenuPage = ({
 
   const logout = useCallback(
     (e: ClickParam) => {
+      localStorage.clear();
+      // logout();
       window.location.replace(
-        `https://www.liefersoft.de:9011/oauth2/logout?client_id=d6ef13df-7f85-4cca-9de3-502377ca9a88&post_logout_redirect_uri=${window.location.origin}/login`,
+        `https://www.liefersoft.de:9011/oauth2/logout?telnantId=eadff3cc-6ec6-40a8-b8ca-9403a933cd4f&client_id=d6ef13df-7f85-4cca-9de3-502377ca9a88&post_logout_redirect_uri=${window.location.origin}/login`,
       );
     },
     [logoutFromUser, history],
