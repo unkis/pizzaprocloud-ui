@@ -140,6 +140,20 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
         history,
         shopAddress,
       }: any) => {
+        useEffect(() => {
+          const timeoutId = setTimeout(() => {
+            (window as any).webphone_api.onLoaded(() => {
+              (window as any).webphone_api.onCallStateChange((...args: any[]) => {
+                if (args[0] && args[0] === 'callSetup') {
+                  setFieldsValue({
+                    [fieldNames.phoneNumber]: args[2],
+                  });
+                }
+              });
+            });
+          }, 1000);
+          return () => clearTimeout(timeoutId);
+        }, [setFieldsValue, fieldNames.phoneNumber]);
         const [dataSourceState, dispatchToDataSource] = useReducer(
           dataSourceReducer,
           initialDataSourceState,

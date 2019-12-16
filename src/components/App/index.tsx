@@ -47,16 +47,12 @@ const App = ({ userRole, history }: AppProps) => {
         (window as any).webphone_api.setparameter('username', 'pizzapro');
         (window as any).webphone_api.setparameter('password', 'pizzapro1234');
         (window as any).webphone_api.start();
-        (window as any).webphone_api
-          .getsipmessage(0, 0, (...args: any[]) => console.log('SIP getsipmessage', args))(
-            window as any,
-          )
-          .webphone_api.onCallStateChange((...args: any[]) => {
-            console.log('SIP onCallStateChange: ', args);
-            if (args[0] && args[0] === 'callSetup') {
-              console.log('PEERNAME: ', args[2]);
-            }
-          });
+        (window as any).webphone_api.onCallStateChange((...args: any[]) => {
+          console.log('SIP onCallStateChange: ', args);
+          if (args[0] && args[0] === 'callSetup') {
+            console.log('PEERNAME: ', args[2]);
+          }
+        });
       });
     };
   }, []);
