@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Route, withRouter } from 'react-router-dom';
 
-import { Layout } from 'antd';
+import { Layout, Modal } from 'antd';
 import { connect, MapStateToProps } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
 import DeliveryForm from '../../components/DeliveryForm';
@@ -29,25 +29,32 @@ const Redirect = () => {
   return null;
 };
 
+const Download = withRouter(({ history }: RouteComponentProps) => (
+  <Modal visible onOk={() => history.push(`${ROOT_URL}/menu`)}>
+    <a href={`${ROOT_URL}/WebPhoneService_Install.exe`}>СКАЧАТЬ</a>
+  </Modal>
+));
 const Logs = () => {
   const [logs, setLogs] = useState('');
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      (window as any).webphone_api.onLoaded(() => {
-        setLogs((prev) => `${prev}LOADED\n`)
-        // Set parameters (Replace upper case worlds with your settings)
-        ;(window as any).webphone_api.setparameter('serveraddress', '192.168.178.1');
-        (window as any).webphone_api.setparameter('username', 'pizzapro');
-        (window as any).webphone_api.setparameter('password', 'pizzapro1234');
-        (window as any).webphone_api.start();
-        (window as any).webphone_api.onCallStateChange((...args: any[]) => {
-          setLogs((prev) => `${prev}SIP onCallStateChange: ${args}\n`);
-          if (args[0] && args[0] === 'callSetup') {
-            setLogs((prev) => `${prev}PEERNAME: ${args[2]}\n`);
-          }
+      if ((window as any).webphone_api) {
+        (window as any).webphone_api.onLoaded(() => {
+          setLogs((prev) => `${prev}LOADED\n`)
+          // Set parameters (Replace upper case worlds with your settings)
+          ;(window as any).webphone_api.setparameter('serveraddress', '192.168.178.1');
+          (window as any).webphone_api.setparameter('username', 'pizzapro');
+          (window as any).webphone_api.setparameter('password', 'pizzapro1234');
+          (window as any).webphone_api.start();
+          (window as any).webphone_api.onCallStateChange((...args: any[]) => {
+            setLogs((prev) => `${prev}SIP onCallStateChange: ${args}\n`);
+            if (args[0] && args[0] === 'callSetup') {
+              setLogs((prev) => `${prev}PEERNAME: ${args[2]}\n`);
+            }
+          });
+          (window as any).webphone_api.onEvents((...args: any[]) => setLogs((prev) => `${prev}Eventargs: ${args}\n`));
         });
-        (window as any).webphone_api.onEvents((...args: any[]) => setLogs((prev) => `${prev}Eventargs: ${args}\n`));
-      });
+      }
     }, 2000);
     return () => clearTimeout(timeoutId);
   }, []);
@@ -65,19 +72,21 @@ const App = ({ userRole, history }: AppProps) => {
   }, [userRole, history]);
   useEffect(() => {
     window.onload = () => {
-      (window as any).webphone_api.onLoaded(() => {
-        // Set parameters (Replace upper case worlds with your settings)
-        (window as any).webphone_api.setparameter('serveraddress', '192.168.178.1');
-        (window as any).webphone_api.setparameter('username', 'pizzapro');
-        (window as any).webphone_api.setparameter('password', 'pizzapro1234');
-        (window as any).webphone_api.start();
-        (window as any).webphone_api.onCallStateChange((...args: any[]) => {
-          console.log('SIP onCallStateChange: ', args);
-          if (args[0] && args[0] === 'callSetup') {
-            console.log('PEERNAME: ', args[2]);
-          }
+      if ((window as any).webphone_api) {
+        (window as any).webphone_api.onLoaded(() => {
+          // Set parameters (Replace upper case worlds with your settings)
+          (window as any).webphone_api.setparameter('serveraddress', '192.168.178.1');
+          (window as any).webphone_api.setparameter('username', 'pizzapro');
+          (window as any).webphone_api.setparameter('password', 'pizzapro1234');
+          (window as any).webphone_api.start();
+          (window as any).webphone_api.onCallStateChange((...args: any[]) => {
+            console.log('SIP onCallStateChange: ', args);
+            if (args[0] && args[0] === 'callSetup') {
+              console.log('PEERNAME: ', args[2]);
+            }
+          });
         });
-      });
+      }
     };
   }, []);
   useEffect(() => {
@@ -111,6 +120,7 @@ const App = ({ userRole, history }: AppProps) => {
               <LeftMenu collapsed={collapsed} onLangChange={setLang as any} />
             </Sider>
         )}
+        <Route path={`${ROOT_URL}/native/WebPhoneService_Install.exe`} component={Download} />
         <Route path={`${ROOT_URL}/logs`} component={Logs} />
         <Route path={`${ROOT_URL}/menu`} component={DeliveryForm} />
         <Route path={`${ROOT_URL}/settings`} component={Settings} />
