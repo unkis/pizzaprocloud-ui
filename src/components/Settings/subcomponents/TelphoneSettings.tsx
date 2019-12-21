@@ -29,25 +29,25 @@ const VoipSettings = connect(
       const handleClick = useCallback(() => {
         if ((window as any).webphone_api) {
           ;(window as any).webphone_api.onLoaded(() => {
+            const { ip, login, password } = getFieldsValue()
             // Set parameters (Replace upper case worlds with your settings)
-            ;(window as any).webphone_api.setparameter('serveraddress', '192.168.178.1')
-            ;(window as any).webphone_api.setparameter('username', 'pizzapro')
-            ;(window as any).webphone_api.setparameter('password', 'pizzapro1234')
+            ;(window as any).webphone_api.setparameter('serveraddress', ip)
+            ;(window as any).webphone_api.setparameter('username', login)
+            ;(window as any).webphone_api.setparameter('password', password)
             ;(window as any).webphone_api.start()
             ;(window as any).webphone_api.register()
             ;(window as any).webphone_api.onStart(() => {
               setLogText('CONNECTED')
-              const { ip, login, password } = getFieldsValue()
               addVoip(ip, login, password)
             })
           })
         }
-      }, [])
+      }, [addVoip, getFieldsValue])
       const handleSubmit = useCallback((event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
 
         handleClick()
-      }, [])
+      }, [handleClick])
       return (
         <div className="VoipForm">
           <Form onSubmit={handleSubmit}>
