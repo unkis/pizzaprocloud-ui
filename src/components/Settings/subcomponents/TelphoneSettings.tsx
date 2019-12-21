@@ -12,7 +12,7 @@ const mapStateToProps = (state: State) => {
   }
 }
 const mapDispatchToProps = {
-  addVoipSettings,
+  addVoip: addVoipSettings,
 }
 
 const VoipSettings = connect(
