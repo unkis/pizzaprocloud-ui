@@ -2,13 +2,14 @@ import React, { useCallback } from 'react';
 import { Divider, Layout, Button } from 'antd';
 
 import './index.css';
-import { Route } from 'react-router';
+import { Route, withRouter } from 'react-router';
 import { Link } from 'react-router-dom';
 import useLanguage from '../../helpers/useLanguage';
 import { ROOT_URL } from '../../constants/rootUrl';
 import CategorySettings from './subcomponents/CategorySettings';
 import PrinterSettings from './subcomponents/PrinterSettings';
 import ArticleSettings from './subcomponents/ArticleSettings';
+import VoipSettings from './subcomponents/TelphoneSettings';
 
 const MainMenu = () => {
   const [categorySettings, articleSettings, saleCategorySettings, setMenu] = useLanguage(
@@ -41,7 +42,7 @@ F10 /
 };
 
 const { Header, Content } = Layout;
-const Settings = () => {
+const Settings = withRouter(({ history }) => {
   const [
     progSettings,
     printSettings,
@@ -57,10 +58,12 @@ const Settings = () => {
     'menuSettings',
     'deliverySettings',
   );
-  const onAnyButtonClick = useCallback((event: any) => {
+  const onAnyButtonClick = useCallback((fn?: any) => (event: any) => {
     if ((window as any).PPC && (window as any).PPC.onClick) {
       (window as any).PPC.onClick(event);
       event.preventDefault();
+    } else {
+      fn && fn();
     }
   }, []);
   return (
@@ -89,7 +92,7 @@ F2 /
           F3 /
           {userSettings}
         </Button>
-        <Button size="large" onClick={onAnyButtonClick}>
+        <Button size="large" onClick={onAnyButtonClick(() => history.push(`${ROOT_URL}/settings/voip`))}>
           F4 /
           {voipSettings}
         </Button>
@@ -107,10 +110,11 @@ F2 /
         <Route exact path={`${ROOT_URL}/settings/category`} component={CategorySettings} />
         <Route exact path={`${ROOT_URL}/settings/article`} component={ArticleSettings} />
         <Route exact path={`${ROOT_URL}/settings/printer`} component={PrinterSettings} />
+        <Route exact path={`${ROOT_URL}/settings/voip`} component={VoipSettings} />
         <Route path={`${ROOT_URL}/settings/`} exact component={MainMenu} />
       </Content>
     </Layout>
   );
-};
+});
 
 export default Settings;

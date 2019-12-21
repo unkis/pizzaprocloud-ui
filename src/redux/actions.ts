@@ -45,6 +45,10 @@ export enum AuthActionsTypes {
   LOGOUT = 'LOGOUT',
 }
 
+export enum VoipActionsTypes {
+  ADD_VOIP_SETTINGS = 'ADD_VOIP_SETTINGS',
+}
+
 export const changeLanguage: changeLanguageType = (lang) => ({ type: CHANGE_LANGUAGE, lang });
 
 export const addUser: addUserType = (role, code) => ({ type: ADD_USER, role, code });
@@ -228,3 +232,10 @@ export const setEmail = (email: string) => ({
 export const logout = () => ({
   type: AuthActionsTypes.LOGOUT,
 });
+
+export const addVoipSettings = (ip: string, login: string, password: string) => ({
+  type: VoipActionsTypes.ADD_VOIP_SETTINGS,
+  ip,
+  login,
+  password,
+})

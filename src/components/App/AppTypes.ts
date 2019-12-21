@@ -1,12 +1,12 @@
-import { UserState } from '../../redux/reducersTypes';
-import { RouteComponentProps } from 'react-router';
+import { UserState } from '../../redux/reducersTypes'
+import { RouteComponentProps } from 'react-router'
+import { State } from '../../redux/types'
 
-export interface AppOwnProps {
-
-};
+export interface AppOwnProps {}
 
 export interface AppStateProps {
-  userRole: UserState['role'];
+  userRole: UserState['role']
+  voip: State['voip']
 }
 
 export interface AppProps extends AppStateProps, AppOwnProps, RouteComponentProps {}
