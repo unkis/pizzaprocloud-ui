@@ -1,12 +1,16 @@
 .Button_xl {
-  height: 100px;
-  min-width: 240px;
-  margin-bottom: 20px;
-  font-size: 28px;
+    height: 100px;
+    min-width: 240px;
+    margin-bottom: 20px;
+    font-size: 28px;
 }
 
 .Settings-Buttons {
-  display: flex;
-  flex-flow: column nowrap;
-  padding: 10px 40px;
+    display: flex;
+    flex-flow: column nowrap;
+    padding: 10px 40px;
+}
+
+.ant-row {
+    height: 40px;
 }
