@@ -28,9 +28,12 @@ const VoipSettings = connect(
       const [logText, setLogText] = useState('')
       const handleClick = useCallback(() => {
         if ((window as any).webphone_api) {
-          ;(window as any).webphone_api.onLoaded(() => {
+          // ;(window as any).webphone_api.onLoaded(() => {
             const { ip, login, password } = getFieldsValue()
             // Set parameters (Replace upper case worlds with your settings)
+            ;(window as any).webphone_api.stop();
+            ;(window as any).webphone_api.stopengine();
+            ;(window as any).webphone_api.unregister();
             ;(window as any).webphone_api.setparameter('serveraddress', ip)
             ;(window as any).webphone_api.setparameter('username', login)
             ;(window as any).webphone_api.setparameter('password', password)
@@ -40,12 +43,12 @@ const VoipSettings = connect(
               setLogText('CONNECTED')
               addVoip(ip, login, password)
             })
-          })
+          // })
         }
       }, [addVoip, getFieldsValue])
       const handleSubmit = useCallback((event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-
+        console.log("HANDLE!")
         handleClick()
       }, [handleClick])
       return (
