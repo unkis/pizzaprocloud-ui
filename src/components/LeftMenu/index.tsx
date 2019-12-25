@@ -31,6 +31,7 @@ const MenuPage = ({
   collapsed,
   onLangChange,
   email,
+  voip,
 }: MenuPageProps) => {
   const [language, setLanguage] = useState(langMap[lang]);
 
@@ -132,6 +133,19 @@ const MenuPage = ({
       >
         {email}
       </Text>
+      <Text
+        style={{
+          display: 'flex', flexFlow: 'row nowrap', alignItems: 'center', padding: '0 20px',
+        }}
+      >
+        Voip Status:
+        {' '}
+        <Icon
+          type="bulb"
+          style={{ color: voip && voip.connected ? 'green' : 'grey' }}
+          theme="filled"
+        />
+      </Text>
     </div>
   );
 };
@@ -140,6 +154,7 @@ const mapStatetoProps: MapStateToProps<MenuPageStateProps, MenuPageOwnProps, Sta
   lang: state.languages.lang,
   userRole: state.user.role,
   email: state.auth.email,
+  voip: state.voip,
 });
 
 const mapDispatchToProps: MapDispatchToPropsFunction<MenuPageDispatchProps, MenuPageOwnProps> = (
@@ -156,9 +171,4 @@ const mapDispatchToProps: MapDispatchToPropsFunction<MenuPageDispatchProps, Menu
 export const LeftMenu = connect(
   mapStatetoProps,
   mapDispatchToProps,
-)(
-  withRouter<
-    RouteComponentProps<MenuPageDispatchProps & MenuPageOwnProps & MenuPageStateProps>,
-    any
-  >(MenuPage),
-); // FIXME
+)(withRouter<RouteComponentProps<any>, any>(MenuPage)); // FIXME

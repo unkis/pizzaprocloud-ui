@@ -47,6 +47,8 @@ export enum AuthActionsTypes {
 
 export enum VoipActionsTypes {
   ADD_VOIP_SETTINGS = 'ADD_VOIP_SETTINGS',
+  SET_VOIP_CONNECTED = 'SET_VOIP_CONNECTED',
+  SET_VOIP_DISCONNECTED = 'SET_VOIP_DISCONNECTED',
 }
 
 export const changeLanguage: changeLanguageType = (lang) => ({ type: CHANGE_LANGUAGE, lang });
@@ -233,9 +235,25 @@ export const logout = () => ({
   type: AuthActionsTypes.LOGOUT,
 });
 
-export const addVoipSettings = (ip: string, login: string, password: string) => ({
+export const addVoipSettings = (
+  provider: string,
+  ip: string,
+  login: string,
+  password: string,
+  registar: string,
+) => ({
   type: VoipActionsTypes.ADD_VOIP_SETTINGS,
   ip,
   login,
   password,
-})
+  provider,
+  registar,
+});
+
+export const setVoipConnected = () => ({
+  type: VoipActionsTypes.SET_VOIP_CONNECTED,
+});
+
+export const setVoipDisconnected = () => ({
+  type: VoipActionsTypes.SET_VOIP_DISCONNECTED,
+});

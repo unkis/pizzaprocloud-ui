@@ -2,6 +2,7 @@ import { CollapseType } from 'antd/lib/layout/Sider';
 import { RouterProps } from 'react-router';
 import { langType } from '../../lang';
 import { UserState } from '../../redux/reducersTypes';
+import { State } from '../../redux/types';
 
 interface MenuPageOwnProps {
   collapsed: boolean
@@ -18,6 +19,7 @@ interface MenuPageStateProps {
   lang: langType
   userRole: UserState['role'] // FIXME
   email?: string
+  voip: State['voip']
 }
 
 interface MenuPageDispatchProps {

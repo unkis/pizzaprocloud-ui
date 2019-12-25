@@ -13,7 +13,14 @@ export interface State {
   articles: Article[]
   printers: Printer[]
   auth: { email?: string; authorized: boolean }
-  voip: null | { ip: string; login: string; password: string }
+  voip: null | {
+    ip: string
+    login: string
+    password: string
+    provider: string
+    registar: string
+    connected: boolean
+  }
 }
 
 export type storeType = typeof store

@@ -1,4 +1,4 @@
-import { Action } from 'redux'
+import { Action } from 'redux';
 import {
   CHANGE_LANGUAGE,
   ADD_USER,
@@ -10,10 +10,10 @@ import {
   printersActionsTypes,
   AuthActionsTypes,
   VoipActionsTypes,
-} from './actions'
+} from './actions';
 
-import fieldNames from '../constants/fieldNames'
-import { selectValues } from '../constants/selectValues'
+import fieldNames from '../constants/fieldNames';
+import { selectValues } from '../constants/selectValues';
 
 import {
   LanguagesState,
@@ -26,16 +26,16 @@ import {
   CartProductsAction,
   SettingsAction,
   SettingsState,
-} from './reducersTypes'
+} from './reducersTypes';
 
 export const languages = (state: LanguagesState = { lang: 'ru' }, action: LanguageAction) => {
   switch (action.type) {
     case CHANGE_LANGUAGE:
-      return { lang: action.lang }
+      return { lang: action.lang };
     default:
-      return state
+      return state;
   }
-}
+};
 
 export const settings = (
   state: SettingsState = {
@@ -50,26 +50,26 @@ export const settings = (
 ) => {
   switch (action.type) {
     default:
-      return state
+      return state;
   }
-}
+};
 
 export const user = (state: UserState = { role: '', code: '' }, action: UserAction) => {
   switch (action.type) {
     case ADD_USER: {
-      const { role, code } = action
-      return { role, code }
+      const { role, code } = action;
+      return { role, code };
     }
     case LOGOUT_USER: {
       return {
         ...state,
         role: '',
-      }
+      };
     }
     default:
-      return state
+      return state;
   }
-}
+};
 
 export const initialFormDataState: any = {
   // TODO: add types
@@ -85,7 +85,7 @@ export const initialFormDataState: any = {
   [fieldNames.clientComment]: undefined,
   [fieldNames.deliveryCost]: '0,00',
   isTaxSecondOnAll: undefined,
-}
+};
 
 export const formDataState = (
   state: FormDataStateType = initialFormDataState,
@@ -96,22 +96,22 @@ export const formDataState = (
       return {
         ...state,
         [action.fieldName]: action.fieldValue,
-      }
+      };
     case formDataActions.UPDATE_ALL_FIELDS: {
-      const newState = { ...state }
+      const newState = { ...state };
       for (const [key, value] of Object.entries(action.newState)) {
-        newState[key] = value
+        newState[key] = value;
       }
-      return newState
+      return newState;
     }
     case formDataActions.CLEAR_ALL_FIELDS:
-      return { ...initialFormDataState }
+      return { ...initialFormDataState };
     default:
-      return state
+      return state;
   }
-}
+};
 
-export const initialCartProductsState = []
+export const initialCartProductsState = [];
 
 export const cartProducts = (
   state: CartProductsState = initialCartProductsState,
@@ -119,11 +119,13 @@ export const cartProducts = (
 ) => {
   switch (action.type) {
     case cartProductsActions.ADD_PRODUCT_TO_CART: {
-      const { id, article, productName, price, tax } = action
+      const {
+        id, article, productName, price, tax,
+      } = action;
 
       if (state[state.length - 1] && state[state.length - 1].id === id) {
-        const prevQuantity = state[state.length - 1].quantity
-        return [...state.slice(0, -1), { ...state[state.length - 1], quantity: prevQuantity + 1 }]
+        const prevQuantity = state[state.length - 1].quantity;
+        return [...state.slice(0, -1), { ...state[state.length - 1], quantity: prevQuantity + 1 }];
       }
       return [
         ...state,
@@ -135,11 +137,11 @@ export const cartProducts = (
           tax,
           quantity: 1,
         },
-      ]
+      ];
     }
 
     case cartProductsActions.ADD_CUSTOM_PRODUCT_TO_CART: {
-      const { productName, price, tax } = action
+      const { productName, price, tax } = action;
 
       return [
         ...state,
@@ -149,23 +151,25 @@ export const cartProducts = (
           tax,
           quantity: 1,
         },
-      ]
+      ];
     }
 
     case cartProductsActions.ADD_MANY_PRODUCT_TO_CART: {
-      const { id, article, productName, price, tax, quantity } = action
+      const {
+        id, article, productName, price, tax, quantity,
+      } = action;
       if (quantity <= 0 || isNaN(quantity)) {
         if (!isNaN(quantity) && state[state.length - 1] && state[state.length - 1].id === id) {
-          const prevQuantity = state[state.length - 1].quantity
+          const prevQuantity = state[state.length - 1].quantity;
           if (prevQuantity === -quantity) {
-            return [...state.slice(0, -1)]
+            return [...state.slice(0, -1)];
           }
           return [
             ...state.slice(0, -1),
             { ...state[state.length - 1], quantity: prevQuantity + quantity },
-          ]
+          ];
         }
-        return state
+        return state;
       }
       return [
         ...state,
@@ -177,18 +181,20 @@ export const cartProducts = (
           tax,
           quantity,
         },
-      ]
+      ];
     }
 
     case cartProductsActions.ADD_ADDITION_TO_PRODUCT_IN_CART: {
-      const { productIdx, additionId, additionName, additionPrice, additionTax } = action
-      const productIndex = productIdx
+      const {
+        productIdx, additionId, additionName, additionPrice, additionTax,
+      } = action;
+      const productIndex = productIdx;
       if (productIndex !== -1) {
-        const oldAdditions = state[productIndex].additions
+        const oldAdditions = state[productIndex].additions;
         if (state[productIndex] && Array.isArray(oldAdditions)) {
-          const additionArticleIndex = oldAdditions.findIndex(({ id }) => id === additionId)
+          const additionArticleIndex = oldAdditions.findIndex(({ id }) => id === additionId);
           if (additionArticleIndex !== -1 && Array.isArray(state[productIndex].additions)) {
-            const prevQiantity = oldAdditions[additionArticleIndex].quantity
+            const prevQiantity = oldAdditions[additionArticleIndex].quantity;
             if (prevQiantity !== -1) {
               return [
                 ...state.slice(0, productIndex),
@@ -201,7 +207,7 @@ export const cartProducts = (
                   ],
                 },
                 ...state.slice(productIndex + 1),
-              ]
+              ];
             }
             return [
               ...state.slice(0, productIndex),
@@ -213,9 +219,9 @@ export const cartProducts = (
                 ],
               },
               ...state.slice(productIndex + 1),
-            ]
+            ];
           }
-          const productAdditions = state[productIndex].additions
+          const productAdditions = state[productIndex].additions;
           if (productAdditions !== undefined) {
             return [
               ...state.slice(0, productIndex),
@@ -233,7 +239,7 @@ export const cartProducts = (
                 ],
               },
               ...state.slice(productIndex + 1),
-            ]
+            ];
           }
           return [
             ...state.slice(0, productIndex),
@@ -250,7 +256,7 @@ export const cartProducts = (
               ],
             },
             ...state.slice(productIndex + 1),
-          ]
+          ];
         }
         return [
           ...state.slice(0, productIndex),
@@ -267,23 +273,25 @@ export const cartProducts = (
             ],
           },
           ...state.slice(productIndex + 1),
-        ]
+        ];
       }
-      return state
+      return state;
     }
 
     case cartProductsActions.ADD_MANY_ADDITION_TO_PRODUCT_IN_CART: {
-      const { productIdx, additionId, additionName, additionPrice, additionTax, quantity } = action
+      const {
+        productIdx, additionId, additionName, additionPrice, additionTax, quantity,
+      } = action;
       if (isNaN(quantity)) {
-        return state
+        return state;
       }
-      const productIndex = productIdx
+      const productIndex = productIdx;
       if (productIndex !== -1) {
-        const oldAdditions = state[productIndex].additions
+        const oldAdditions = state[productIndex].additions;
         if (state[productIndex] && Array.isArray(oldAdditions)) {
-          const additionArticleIndex = oldAdditions.findIndex(({ id }) => id === additionId)
+          const additionArticleIndex = oldAdditions.findIndex(({ id }) => id === additionId);
           if (additionArticleIndex !== -1 && Array.isArray(state[productIndex].additions)) {
-            const prevQuantity = oldAdditions[additionArticleIndex].quantity
+            const prevQuantity = oldAdditions[additionArticleIndex].quantity;
             if (prevQuantity !== -1) {
               if (prevQuantity === -quantity) {
                 return [
@@ -296,7 +304,7 @@ export const cartProducts = (
                     ],
                   },
                   ...state.slice(productIndex + 1),
-                ]
+                ];
               }
               return [
                 ...state.slice(0, productIndex),
@@ -309,7 +317,7 @@ export const cartProducts = (
                   ],
                 },
                 ...state.slice(productIndex + 1),
-              ]
+              ];
             }
             return [
               ...state.slice(0, productIndex),
@@ -321,9 +329,9 @@ export const cartProducts = (
                 ],
               },
               ...state.slice(productIndex + 1),
-            ]
+            ];
           }
-          const productAdditions = state[productIndex].additions
+          const productAdditions = state[productIndex].additions;
           if (productAdditions !== undefined) {
             return [
               ...state.slice(0, productIndex),
@@ -341,7 +349,7 @@ export const cartProducts = (
                 ],
               },
               ...state.slice(productIndex + 1),
-            ]
+            ];
           }
           return [
             ...state.slice(0, productIndex),
@@ -358,7 +366,7 @@ export const cartProducts = (
               ],
             },
             ...state.slice(productIndex + 1),
-          ]
+          ];
         }
         return [
           ...state.slice(0, productIndex),
@@ -375,72 +383,72 @@ export const cartProducts = (
             ],
           },
           ...state.slice(productIndex + 1),
-        ]
+        ];
       }
-      return state
+      return state;
     }
     /* FIXME TESTS */
     case cartProductsActions.DELETE_PRODUCT_FROM_CART: {
-      const { productIdx } = action
-      return state.filter((_, idx) => idx !== productIdx)
+      const { productIdx } = action;
+      return state.filter((_, idx) => idx !== productIdx);
     }
 
     case cartProductsActions.DELETE_ADDITION_OF_PRODUCT_FROM_CART: {
-      const { productIdx, additionId } = action
-      const productIndex = productIdx
+      const { productIdx, additionId } = action;
+      const productIndex = productIdx;
       if (productIndex !== -1) {
-        const { additions } = state[productIndex]
+        const { additions } = state[productIndex];
         if (additions) {
           return [
             ...state.slice(0, productIndex),
             { ...state[productIndex], additions: additions.filter(({ id }) => id !== additionId) },
             ...state.slice(productIndex + 1),
-          ]
+          ];
         }
       }
-      return state
+      return state;
     }
     /* END FIXME */
     case cartProductsActions.INCREMENT_QUANTITY_OF_PRODUCT_IN_CART: {
-      const { productIdx } = action
-      const productIndex = productIdx
+      const { productIdx } = action;
+      const productIndex = productIdx;
       if (productIndex !== -1) {
         return [
           ...state.slice(0, productIndex),
           { ...state[productIndex], quantity: state[productIndex].quantity + 1 },
           ...state.slice(productIndex + 1),
-        ]
+        ];
       }
-      return state
+      return state;
     }
 
     case cartProductsActions.DECREMENT_QUANTITY_OF_PRODUCT_IN_CART: {
-      const { productIdx } = action
-      const productIndex = productIdx
+      const { productIdx } = action;
+      const productIndex = productIdx;
       if (productIndex !== -1) {
-        const currentQuantity = state[productIndex].quantity
+        const currentQuantity = state[productIndex].quantity;
         if (currentQuantity > 1) {
           return [
             ...state.slice(0, productIndex),
             { ...state[productIndex], quantity: currentQuantity - 1 },
             ...state.slice(productIndex + 1),
-          ]
+          ];
         }
-        return [...state.slice(0, productIndex), ...state.slice(productIndex + 1)]
+        return [...state.slice(0, productIndex), ...state.slice(productIndex + 1)];
       }
-      return state
+      return state;
     }
 
     case cartProductsActions.INCREMENT_QUANTITY_OF_ADDITION_OF_PRODUCT: {
-      const { productIdx, additionId } = action
-      const productIndex = productIdx
+      const { productIdx, additionId } = action;
+      const productIndex = productIdx;
       if (productIndex !== -1) {
-        const { additions } = state[productIndex]
+        const { additions } = state[productIndex];
         if (additions) {
-          const additionIndex = additions.findIndex(({ id }) => id === additionId)
+          const additionIndex = additions.findIndex(({ id }) => id === additionId);
           if (additionIndex !== -1) {
-            const addition = additions[additionIndex]
-            const oldQuantity = addition.quantity
+            const addition = additions[additionIndex];
+            const oldQuantity = addition.quantity;
             if (oldQuantity !== -1) {
               return [
                 ...state.slice(0, productIndex),
@@ -453,7 +461,7 @@ export const cartProducts = (
                   ],
                 },
                 ...state.slice(productIndex + 1),
-              ]
+              ];
             }
             return [
               ...state.slice(0, productIndex),
@@ -465,22 +473,24 @@ export const cartProducts = (
                 ],
               },
               ...state.slice(productIndex + 1),
-            ]
+            ];
           }
         }
       }
-      return state
+      return state;
     }
 
     case cartProductsActions.DECREMENT_QUANTITY_OF_ADDITION_OF_PRODUCT: {
-      const { productIdx, additionId, productName, price, tax } = action
-      const productIndex = productIdx
+      const {
+        productIdx, additionId, productName, price, tax,
+      } = action;
+      const productIndex = productIdx;
       if (productIndex !== -1) {
-        const { additions } = state[productIndex]
+        const { additions } = state[productIndex];
         if (additions) {
-          const additionIndex = additions.findIndex(({ id }) => id === additionId)
+          const additionIndex = additions.findIndex(({ id }) => id === additionId);
           if (additionIndex !== -1) {
-            const addition = additions[additionIndex]
+            const addition = additions[additionIndex];
             if (addition.quantity !== 1) {
               return [
                 ...state.slice(0, productIndex),
@@ -493,7 +503,7 @@ export const cartProducts = (
                   ],
                 },
                 ...state.slice(productIndex + 1),
-              ]
+              ];
             }
             return [
               ...state.slice(0, productIndex),
@@ -505,7 +515,7 @@ export const cartProducts = (
                 ],
               },
               ...state.slice(productIndex + 1),
-            ]
+            ];
           }
           return [
             ...state.slice(0, productIndex),
@@ -522,15 +532,15 @@ export const cartProducts = (
                 },
               ],
             },
-          ]
+          ];
         }
       }
-      return state
+      return state;
     }
     default:
-      return state
+      return state;
   }
-}
+};
 
 export interface categoriesState {
   name: string
@@ -551,8 +561,10 @@ interface categoriesActions extends Action<categoriesActionsTypes> {
 export const categories = (state: categoriesState[] = [], action: categoriesActions) => {
   switch (action.type) {
     case categoriesActionsTypes.ADD_CATEGORY: {
-      const { name, printer, sizes, subcategories, iconUrl, imageUrl } = action
-      const catIdx = state.findIndex(({ name: catName }) => name === catName)
+      const {
+        name, printer, sizes, subcategories, iconUrl, imageUrl,
+      } = action;
+      const catIdx = state.findIndex(({ name: catName }) => name === catName);
       if (catIdx === -1) {
         return [
           ...state,
@@ -564,7 +576,7 @@ export const categories = (state: categoriesState[] = [], action: categoriesActi
             iconUrl,
             imageUrl,
           },
-        ]
+        ];
       }
       return [
         ...state.slice(0, catIdx),
@@ -577,20 +589,20 @@ export const categories = (state: categoriesState[] = [], action: categoriesActi
           imageUrl,
         },
         ...state.slice(catIdx + 1),
-      ]
+      ];
     }
     case categoriesActionsTypes.DELETE_CATEGORY: {
-      const { name: deletedName } = action
-      const catIdx = state.findIndex(({ name }) => name === deletedName)
+      const { name: deletedName } = action;
+      const catIdx = state.findIndex(({ name }) => name === deletedName);
       if (catIdx === -1) {
-        return state
+        return state;
       }
-      return [...state.slice(0, catIdx), ...state.slice(catIdx + 1)]
+      return [...state.slice(0, catIdx), ...state.slice(catIdx + 1)];
     }
     default:
-      return state
+      return state;
   }
-}
+};
 
 export interface ArticlePrice {
   deliveryCostArticle?: string | undefined
@@ -622,24 +634,24 @@ interface ArticlesAction extends Action<articlesActionsTypes> {
 export const articles = (state: Article[] = [], action: ArticlesAction) => {
   switch (action.type) {
     case articlesActionsTypes.ADD_ARTICLE: {
-      console.log('add in reducer')
-      const idx = state.findIndex(({ productName }) => action.article.productName === productName)
+      console.log('add in reducer');
+      const idx = state.findIndex(({ productName }) => action.article.productName === productName);
       if (idx === -1) {
-        return [...state, action.article]
+        return [...state, action.article];
       }
-      return [...state.slice(0, idx), action.article, ...state.slice(idx + 1)]
+      return [...state.slice(0, idx), action.article, ...state.slice(idx + 1)];
     }
     case articlesActionsTypes.DELETE_ARTICLE: {
-      const idx = state.findIndex(({ productName }) => action.article.productName === productName)
+      const idx = state.findIndex(({ productName }) => action.article.productName === productName);
       if (idx !== -1) {
-        return [...state.slice(0, idx), ...state.slice(idx + 1)]
+        return [...state.slice(0, idx), ...state.slice(idx + 1)];
       }
-      return state
+      return state;
     }
     default:
-      return state
+      return state;
   }
-}
+};
 
 export interface Printer {
   printerName: string
@@ -655,23 +667,23 @@ interface PrintersAction extends Action<printersActionsTypes> {
 export const printers = (state: Printer[] = [], action: PrintersAction) => {
   switch (action.type) {
     case printersActionsTypes.ADD_PRINTER: {
-      const idx = state.findIndex(({ printerName }) => action.printer.printerName === printerName)
+      const idx = state.findIndex(({ printerName }) => action.printer.printerName === printerName);
       if (idx === -1) {
-        return [...state, action.printer]
+        return [...state, action.printer];
       }
-      return [...state.slice(0, idx), action.printer, ...state.slice(idx + 1)]
+      return [...state.slice(0, idx), action.printer, ...state.slice(idx + 1)];
     }
     case printersActionsTypes.DELETE_PRINTER: {
-      const idx = state.findIndex(({ printerName }) => action.printer.printerName === printerName)
+      const idx = state.findIndex(({ printerName }) => action.printer.printerName === printerName);
       if (idx !== -1) {
-        return [...state.slice(0, idx), ...state.slice(idx + 1)]
+        return [...state.slice(0, idx), ...state.slice(idx + 1)];
       }
-      return state
+      return state;
     }
     default:
-      return state
+      return state;
   }
-}
+};
 
 export const auth = (
   state: { authorized: boolean; email?: string } = { authorized: false },
@@ -679,30 +691,72 @@ export const auth = (
 ) => {
   switch (action.type) {
     case AuthActionsTypes.SET_EMAIL: {
-      const { authorized, email } = action
-      return { authorized, email }
+      const { authorized, email } = action;
+      return { authorized, email };
     }
     case AuthActionsTypes.LOGOUT: {
-      return { authorized: false }
+      return { authorized: false };
     }
     default:
-      return state
+      return state;
   }
-}
+};
 
 export const voip = (
-  state = null,
-  action: { type: VoipActionsTypes; ip: string; login: string; password: string },
-): null | { ip: string; login: string; password: string } => {
+  state: null | {
+    ip: string
+    login: string
+    password: string
+    registar: string
+    provider: string
+    connected: boolean
+  } = null,
+  action: {
+    type: VoipActionsTypes
+    ip: string
+    login: string
+    password: string
+    registar: string
+    provider: string
+  },
+): null | {
+  ip: string
+  login: string
+  password: string
+  registar: string
+  provider: string
+  connected: boolean
+} => {
   switch (action.type) {
     case VoipActionsTypes.ADD_VOIP_SETTINGS: {
-      const { ip, login, password } = action;
+      const {
+        ip, login, password, registar, provider,
+      } = action;
       return {
         ip,
         login,
         password,
+        registar,
+        provider,
+        connected: false,
+      };
+    }
+    case VoipActionsTypes.SET_VOIP_CONNECTED: {
+      if (state) {
+        return {
+          ...state,
+          connected: true,
+        };
+      }
+    }
+    case VoipActionsTypes.SET_VOIP_DISCONNECTED: {
+      if (state) {
+        return {
+          ...state,
+          connected: false,
+        };
       }
     }
   }
-  return state
-}
+  return state;
+};

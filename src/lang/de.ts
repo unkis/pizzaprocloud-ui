@@ -95,6 +95,10 @@ const de = {
   printerAlreadyExistsDoYouWantToRewriteIt:
     'Drucker Existiert Bereits möchten Sie es neu Schreiben',
   notIncludeInMin: 'von Mindestbestellwert ausnehmen',
+  telefonProvider: 'Telefon Provider',
+  domain: 'Domain',
+  registar: 'Registar',
+  voipHeader: 'Bitte richten Sie telefonie Einstellungen für VOIP-Telefonie/ Kundenmonitor.',
 };
 
 export default de;

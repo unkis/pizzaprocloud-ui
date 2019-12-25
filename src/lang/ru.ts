@@ -92,6 +92,10 @@ const ru = {
   pleaseTypeNameOfYourPrinter: 'Пожалуйста, введите название вашего принтера и описание',
   printerAlreadyExistsDoYouWantToRewriteIt: 'Принтер уже существует вы хотите переписать его',
   notIncludeInMin: 'Не учитывать в мин. стоимости заказа',
+  telefonProvider: 'Телефонный провайдер',
+  domain: 'Домен',
+  registar: 'Registar',
+  voipHeader: 'Пожалуйста, настройте параметры телефонии для VOIP телефонии / монитора клиента',
 };
 
 export default ru;

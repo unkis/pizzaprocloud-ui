@@ -285,215 +285,217 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
           return () => window.removeEventListener('keydown', handleKeyDown);
         }, [handleKeyDown]);
         return (
-          <Layout>
-            <Header
-              style={{
-                background: '#fff',
-                marginTop: '24px',
-                height: 'auto',
-                display: 'flex',
-                flexFlow: 'row nowrap',
-                justifyContent: 'space-around',
-              }}
-            >
-              <Button type="dashed" size="large">
-                {language.tableOrders}
-                {' '}
+          <div className="DeliveryFormPage">
+            <Layout>
+              <Header
+                style={{
+                  background: '#fff',
+                  marginTop: '24px',
+                  height: 'auto',
+                  display: 'flex',
+                  flexFlow: 'row nowrap',
+                  justifyContent: 'space-around',
+                }}
+              >
+                <Button type="dashed" size="large">
+                  {language.tableOrders}
+                  {' '}
 / F4
-              </Button>
-              <Button type="dashed" size="large" onClick={onSelfPickUpClick}>
-                {language.selfPickUp}
-                {' '}
+                </Button>
+                <Button type="dashed" size="large" onClick={onSelfPickUpClick}>
+                  {language.selfPickUp}
+                  {' '}
 / F5
-              </Button>
-              <Button type="dashed" size="large" onClick={onInnerClick}>
-                {language.inner}
-                {' '}
+                </Button>
+                <Button type="dashed" size="large" onClick={onInnerClick}>
+                  {language.inner}
+                  {' '}
 / F6
-              </Button>
-              <Button type="dashed" size="large">
-                {language.phoneMonitor}
-                {' '}
+                </Button>
+                <Button type="dashed" size="large">
+                  {language.phoneMonitor}
+                  {' '}
 / F3
-              </Button>
-            </Header>
-            <Divider />
-            <Content style={{ margin: '0 16px', background: 'inherit' }}>
-              <div>
-                <Form onSubmit={handleSubmit} onKeyDown={handleKeyDown} {...formItemLayout}>
-                  <Card style={{ width: '60%', maxWidth: '500px' }}>
-                    <Form.Item label={language.customerNumber}>
-                      {getFieldDecorator(fieldNames.customerNumber, {
-                        normalize: onlyNumbersNormalize,
-                        rules: [{ pattern: /[0-9]+/, message: 'Разрешены только цифры' }],
-                      })(
-                        <AutoComplete
-                          dataSource={dataSourceLiveState[fieldNames.customerNumber]}
-                          onSearch={(arg) => handleSearch(arg, fieldNames.customerNumber)}
-                          onSelect={(value) => handleEnterDown(fieldNames.customerNumber, value as string)}
-                        >
+                </Button>
+              </Header>
+              <Divider />
+              <Content style={{ margin: '0 16px', background: 'inherit' }}>
+                <div>
+                  <Form onSubmit={handleSubmit} onKeyDown={handleKeyDown} {...formItemLayout}>
+                    <Card style={{ width: '60%', maxWidth: '500px' }}>
+                      <Form.Item label={language.customerNumber}>
+                        {getFieldDecorator(fieldNames.customerNumber, {
+                          normalize: onlyNumbersNormalize,
+                          rules: [{ pattern: /[0-9]+/, message: 'Разрешены только цифры' }],
+                        })(
+                          <AutoComplete
+                            dataSource={dataSourceLiveState[fieldNames.customerNumber]}
+                            onSearch={(arg) => handleSearch(arg, fieldNames.customerNumber)}
+                            onSelect={(value) => handleEnterDown(fieldNames.customerNumber, value as string)}
+                          >
+                            <Input
+                              autoComplete="off"
+                              disabled
+                              onKeyDown={handleKeyDown}
+                              maxLength={6}
+                              id={fieldNames.customerNumber}
+                            />
+                          </AutoComplete>,
+                        )}
+                      </Form.Item>
+                      <Form.Item label={language.phoneNumber}>
+                        {getFieldDecorator(fieldNames.phoneNumber, {
+                          normalize: onlyNumbersNormalize,
+                          rules: [
+                            { required: true, message: 'Введите номер телефона клиента' },
+                            { pattern: /[0-9]+/, message: 'Разрешены только цифры' },
+                          ],
+                        })(
+                          <AutoComplete
+                            dataSource={dataSourceLiveState[fieldNames.phoneNumber]}
+                            onSearch={(arg) => handleSearch(arg, fieldNames.phoneNumber)}
+                            onSelect={(value) => handleEnterDown(fieldNames.phoneNumber, value as string)}
+                          >
+                            <Input
+                              autoComplete="off"
+                              onKeyDown={handleKeyDown}
+                              autoFocus
+                              maxLength={15}
+                              id={fieldNames.phoneNumber}
+                            />
+                          </AutoComplete>,
+                        )}
+                      </Form.Item>
+                      <Form.Item label={language.name}>
+                        {getFieldDecorator(fieldNames.name, {
+                          normalize: startsWithUpperCaseNormalizer,
+                          rules: [{ required: true, message: 'Введите имя клиента' }],
+                        })(
+                          <AutoComplete
+                            dataSource={dataSourceLiveState[fieldNames.name]}
+                            onSearch={(arg) => handleSearch(arg, fieldNames.name)}
+                            onSelect={(value) => handleEnterDown(fieldNames.name, value as string)}
+                          >
+                            <Input
+                              autoComplete="off"
+                              onKeyDown={handleKeyDown}
+                              maxLength={30}
+                              id={fieldNames.name}
+                            />
+                          </AutoComplete>,
+                        )}
+                      </Form.Item>
+                      <Form.Item label={language.city}>
+                        {getFieldDecorator(fieldNames.city, {
+                          normalize: startsWithUpperCaseNormalizer,
+                          rules: [{ required: true, message: 'Введите название города' }],
+                        })(
                           <Input
                             autoComplete="off"
-                            disabled
                             onKeyDown={handleKeyDown}
-                            maxLength={6}
-                            id={fieldNames.customerNumber}
-                          />
-                        </AutoComplete>,
-                      )}
-                    </Form.Item>
-                    <Form.Item label={language.phoneNumber}>
-                      {getFieldDecorator(fieldNames.phoneNumber, {
-                        normalize: onlyNumbersNormalize,
-                        rules: [
-                          { required: true, message: 'Введите номер телефона клиента' },
-                          { pattern: /[0-9]+/, message: 'Разрешены только цифры' },
-                        ],
-                      })(
-                        <AutoComplete
-                          dataSource={dataSourceLiveState[fieldNames.phoneNumber]}
-                          onSearch={(arg) => handleSearch(arg, fieldNames.phoneNumber)}
-                          onSelect={(value) => handleEnterDown(fieldNames.phoneNumber, value as string)}
-                        >
-                          <Input
-                            autoComplete="off"
-                            onKeyDown={handleKeyDown}
-                            autoFocus
-                            maxLength={15}
-                            id={fieldNames.phoneNumber}
-                          />
-                        </AutoComplete>,
-                      )}
-                    </Form.Item>
-                    <Form.Item label={language.name}>
-                      {getFieldDecorator(fieldNames.name, {
-                        normalize: startsWithUpperCaseNormalizer,
-                        rules: [{ required: true, message: 'Введите имя клиента' }],
-                      })(
-                        <AutoComplete
-                          dataSource={dataSourceLiveState[fieldNames.name]}
-                          onSearch={(arg) => handleSearch(arg, fieldNames.name)}
-                          onSelect={(value) => handleEnterDown(fieldNames.name, value as string)}
-                        >
+                            maxLength={25}
+                            id={fieldNames.city}
+                          />,
+                        )}
+                      </Form.Item>
+                      <Form.Item label={language.street}>
+                        {getFieldDecorator(fieldNames.street, {
+                          normalize: startsWithUpperCaseNormalizer,
+                          rules: [{ required: true, message: 'Введите название улицы' }],
+                        })(
                           <Input
                             autoComplete="off"
                             onKeyDown={handleKeyDown}
                             maxLength={30}
-                            id={fieldNames.name}
-                          />
-                        </AutoComplete>,
-                      )}
-                    </Form.Item>
-                    <Form.Item label={language.city}>
-                      {getFieldDecorator(fieldNames.city, {
-                        normalize: startsWithUpperCaseNormalizer,
-                        rules: [{ required: true, message: 'Введите название города' }],
-                      })(
-                        <Input
-                          autoComplete="off"
-                          onKeyDown={handleKeyDown}
-                          maxLength={25}
-                          id={fieldNames.city}
-                        />,
-                      )}
-                    </Form.Item>
-                    <Form.Item label={language.street}>
-                      {getFieldDecorator(fieldNames.street, {
-                        normalize: startsWithUpperCaseNormalizer,
-                        rules: [{ required: true, message: 'Введите название улицы' }],
-                      })(
-                        <Input
-                          autoComplete="off"
-                          onKeyDown={handleKeyDown}
-                          maxLength={30}
-                          id={fieldNames.street}
-                        />,
-                      )}
-                    </Form.Item>
-                    <Form.Item label={language.houseNumber}>
-                      {getFieldDecorator(fieldNames.houseNumber, {
-                        normalize: startsWithUpperCaseNormalizer,
-                        rules: [
-                          { required: true, message: 'Введите номер дома' },
-                          { pattern: /[0-9]+/, message: 'Разрешены только цифры' },
-                        ],
-                      })(
-                        <Input
-                          autoComplete="off"
-                          onKeyDown={handleKeyDown}
-                          maxLength={6}
-                          id={fieldNames.houseNumber}
-                        />,
-                      )}
-                    </Form.Item>
-                    <Form.Item label={language.plz}>
-                      {getFieldDecorator(fieldNames.plz, {
-                        normalize: onlyNumbersNormalize,
-                        rules: [
-                          { required: true, message: 'Введите почтовый индекс' },
-                          { pattern: /[0-9]+/, message: 'Разрешены только цифры' },
-                        ],
-                      })(
-                        <Input
-                          autoComplete="off"
-                          onKeyDown={handleKeyDown}
-                          maxLength={6}
-                          id={fieldNames.plz}
-                        />,
-                      )}
-                    </Form.Item>
-                    <Form.Item label={language.clientComment}>
-                      {getFieldDecorator(fieldNames.clientComment, {
-                        normalize: startsWithUpperCaseNormalizer,
-                      })(
-                        <Input
-                          autoComplete="off"
-                          onKeyDown={handleKeyDown}
-                          maxLength={35}
-                          id={fieldNames.clientComment}
-                        />,
-                      )}
-                    </Form.Item>
-                    <Form.Item label={language.deliveryCost}>
-                      {getFieldDecorator(fieldNames.deliveryCost, { initialValue: '0,00' })(
-                        <Select
-                          onChange={(value: string) => onFieldChange(fieldNames.deliveryCost, value)}
-                          id={fieldNames.deliveryCost}
-                        >
-                          {selectValues.map((value) => (
-                            <Option key={value} value={value}>
-                              {value}
-                            </Option>
-                          ))}
-                        </Select>,
-                      )}
-                    </Form.Item>
-                  </Card>
-                  <Divider />
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexFlow: 'row nowrap',
-                      justifyContent: 'space-between',
-                    }}
-                  >
-                    <Button type="danger" size="large" onClick={handleClearClick}>
-                      {language.clear}
-                      {' '}
-/ ESC
-                    </Button>
-                    <Form.Item>
-                      <Button htmlType="submit" type="primary" size="large">
-                        {language.goToOrder}
+                            id={fieldNames.street}
+                          />,
+                        )}
+                      </Form.Item>
+                      <Form.Item label={language.houseNumber}>
+                        {getFieldDecorator(fieldNames.houseNumber, {
+                          normalize: startsWithUpperCaseNormalizer,
+                          rules: [
+                            { required: true, message: 'Введите номер дома' },
+                            { pattern: /[0-9]+/, message: 'Разрешены только цифры' },
+                          ],
+                        })(
+                          <Input
+                            autoComplete="off"
+                            onKeyDown={handleKeyDown}
+                            maxLength={6}
+                            id={fieldNames.houseNumber}
+                          />,
+                        )}
+                      </Form.Item>
+                      <Form.Item label={language.plz}>
+                        {getFieldDecorator(fieldNames.plz, {
+                          normalize: onlyNumbersNormalize,
+                          rules: [
+                            { required: true, message: 'Введите почтовый индекс' },
+                            { pattern: /[0-9]+/, message: 'Разрешены только цифры' },
+                          ],
+                        })(
+                          <Input
+                            autoComplete="off"
+                            onKeyDown={handleKeyDown}
+                            maxLength={6}
+                            id={fieldNames.plz}
+                          />,
+                        )}
+                      </Form.Item>
+                      <Form.Item label={language.clientComment}>
+                        {getFieldDecorator(fieldNames.clientComment, {
+                          normalize: startsWithUpperCaseNormalizer,
+                        })(
+                          <Input
+                            autoComplete="off"
+                            onKeyDown={handleKeyDown}
+                            maxLength={35}
+                            id={fieldNames.clientComment}
+                          />,
+                        )}
+                      </Form.Item>
+                      <Form.Item label={language.deliveryCost}>
+                        {getFieldDecorator(fieldNames.deliveryCost, { initialValue: '0,00' })(
+                          <Select
+                            onChange={(value: string) => onFieldChange(fieldNames.deliveryCost, value)}
+                            id={fieldNames.deliveryCost}
+                          >
+                            {selectValues.map((value) => (
+                              <Option key={value} value={value}>
+                                {value}
+                              </Option>
+                            ))}
+                          </Select>,
+                        )}
+                      </Form.Item>
+                    </Card>
+                    <Divider />
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexFlow: 'row nowrap',
+                        justifyContent: 'space-between',
+                      }}
+                    >
+                      <Button type="danger" size="large" onClick={handleClearClick}>
+                        {language.clear}
                         {' '}
-/ F2
+/ ESC
                       </Button>
-                    </Form.Item>
-                  </div>
-                </Form>
-              </div>
-            </Content>
-          </Layout>
+                      <Form.Item>
+                        <Button htmlType="submit" type="primary" size="large">
+                          {language.goToOrder}
+                          {' '}
+/ F2
+                        </Button>
+                      </Form.Item>
+                    </div>
+                  </Form>
+                </div>
+              </Content>
+            </Layout>
+          </div>
         );
       },
     ),
