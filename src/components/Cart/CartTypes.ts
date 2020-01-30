@@ -100,7 +100,7 @@ export interface CartStateProps {
   lang: langType
   formDataState: FormDataStateType
   articles: Article[]
-  printer: boolean | Printer
+  printer: false | Printer
 }
 
 export interface ActionColumn {
