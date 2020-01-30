@@ -388,6 +388,7 @@ function Cart({
   decrementProduct,
   history,
   articles,
+  printer,
 }: CartProps) {
   const [language, setLanguage] = useState(langMap[lang]);
 
@@ -1405,7 +1406,13 @@ function Cart({
   }, [cartProducts, currentSelectionProduct, currentSelectedProductInCart, signChooseQuantity]);
 
   const onPrintClick = useCallback(() => {
-    setChoosePaymentTypeVisible(true);
+    // setChoosePaymentTypeVisible(true);
+    if ((window as any).inElectron) {
+      (window as any).electronAPI.print(
+        printer && printer.printerName,
+        printer && printer.quantityOfCopies,
+      );
+    }
   }, [setChoosePaymentTypeVisible]);
 
   return (

@@ -7,7 +7,7 @@ import {
   CartProduct,
   CartAddition,
 } from '../../redux/reducersTypes';
-import { Article } from '../../redux/reducers';
+import { Article, Printer } from '../../redux/reducers';
 
 export interface SearchItem {
   category?: string
@@ -100,6 +100,7 @@ export interface CartStateProps {
   lang: langType
   formDataState: FormDataStateType
   articles: Article[]
+  printer: null | Printer
 }
 
 export interface ActionColumn {

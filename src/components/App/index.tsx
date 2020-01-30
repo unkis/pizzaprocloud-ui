@@ -1,33 +1,33 @@
-import React, { useState, useCallback, useEffect } from 'react'
-import { Route, withRouter } from 'react-router-dom'
+import React, { useState, useCallback, useEffect } from 'react';
+import { Route, withRouter } from 'react-router-dom';
 
-import { Layout, Modal, notification } from 'antd'
-import { connect, MapStateToProps } from 'react-redux'
-import { RouteComponentProps } from 'react-router'
-import DeliveryForm from '../../components/DeliveryForm'
+import { Layout, Modal, notification } from 'antd';
+import { connect, MapStateToProps } from 'react-redux';
+import { RouteComponentProps } from 'react-router';
+import DeliveryForm from '../../components/DeliveryForm';
 
 // types
 // @ts-ignore
 // import '../../webphone-api/webphone_api';
-import { Auth } from '../../components/Auth'
-import Cart from '../../components/Cart'
-import { LeftMenu } from '../../components/LeftMenu'
-import Settings from '../../components/Settings'
+import { Auth } from '../../components/Auth';
+import Cart from '../../components/Cart';
+import { LeftMenu } from '../../components/LeftMenu';
+import Settings from '../../components/Settings';
 
-import { ROOT_URL } from '../../constants/rootUrl'
+import { ROOT_URL } from '../../constants/rootUrl';
 
-import { State } from '../../redux/types'
-import { AppOwnProps, AppStateProps, AppProps } from './AppTypes'
+import { State } from '../../redux/types';
+import { AppOwnProps, AppStateProps, AppProps } from './AppTypes';
 
-import { LanguageCtx } from '../../helpers/useLanguage'
-import { langMap } from '../../lang'
+import { LanguageCtx } from '../../helpers/useLanguage';
+import { langMap } from '../../lang';
 
-const { Sider } = Layout
+const { Sider } = Layout;
 
 const Redirect = () => {
-  window.location.href = `${ROOT_URL}/login`
-  return null
-}
+  window.location.href = `${ROOT_URL}/login`;
+  return null;
+};
 
 const Download = withRouter(({ history, location, match }: RouteComponentProps<{ id: string }>) => (
   <Modal
@@ -37,7 +37,7 @@ const Download = withRouter(({ history, location, match }: RouteComponentProps<{
   >
     <a href={`${ROOT_URL}/${match.params.id}`}>СКАЧАТЬ ПЛАГИН</a>
   </Modal>
-))
+));
 // const Logs = () => {
 //   const [logs, setLogs] = useState('')
 //   useEffect(() => {
@@ -67,71 +67,71 @@ const Download = withRouter(({ history, location, match }: RouteComponentProps<{
 //   return <div>{logs}</div>
 // }
 const App = ({ userRole, history, voip }: AppProps) => {
-  const [collapsed, setCollapsed] = useState(false)
-  const [lang, setLang] = useState<'ru' | 'de'>('ru')
-  const [language, setLanguage] = useState(langMap[lang])
+  const [collapsed, setCollapsed] = useState(false);
+  const [lang, setLang] = useState<'ru' | 'de'>('ru');
+  const [language, setLanguage] = useState(langMap[lang]);
   useEffect(() => {
     function renderNotification(event: {
       detail: { message: string; description: string }
       [key: string]: any
     }) {
-      console.log(event)
-      notification.error(event.detail)
+      console.log(event);
+      notification.error(event.detail);
     }
     function pushState({ detail: { page } }: any) {
-      history.push(page)
+      history.push(page);
     }
-    window.addEventListener('notification', renderNotification as any)
-    window.addEventListener('pushPage', pushState)
+    window.addEventListener('notification', renderNotification as any);
+    window.addEventListener('pushPage', pushState);
     return () => {
-      window.removeEventListener('notification', renderNotification as any)
-      window.removeEventListener('pushPage', pushState as any)
-    }
-  }, [])
+      window.removeEventListener('notification', renderNotification as any);
+      window.removeEventListener('pushPage', pushState as any);
+    };
+  }, []);
   useEffect(() => {
     // if (!userRole) {
     //   history.push(`${ROOT_URL}/`);
     // }
-  }, [userRole, history])
+  }, [userRole, history]);
   useEffect(() => {
     if (voip) {
       window.onload = () => {
-        if ((window as any).webphone_api) {
-          ;(window as any).webphone_api.onLoaded(() => {
-            // Set parameters (Replace upper case worlds with your settings)
-            ;(window as any).webphone_api.setparameter('serveraddress', voip.ip)
-            ;(window as any).webphone_api.setparameter('username', voip.login)
-            ;(window as any).webphone_api.setparameter('password', voip.password)
-            ;(window as any).webphone_api.start()
-            ;(window as any).webphone_api.onCallStateChange((...args: any[]) => {
-              console.log('SIP onCallStateChange: ', args)
-              if (args[0] && args[0] === 'callSetup') {
-                console.log('PEERNAME: ', args[2])
-              }
-            })
-          })
-        }
-      }
+        // if ((window as any).webphone_api) {
+        //   ;(window as any).webphone_api.onLoaded(() => {
+        //     // Set parameters (Replace upper case worlds with your settings)
+        //     ;(window as any).webphone_api.setparameter('serveraddress', voip.ip)
+        //     ;(window as any).webphone_api.setparameter('username', voip.login)
+        //     ;(window as any).webphone_api.setparameter('password', voip.password)
+        //     ;(window as any).webphone_api.start()
+        //     ;(window as any).webphone_api.onCallStateChange((...args: any[]) => {
+        //       console.log('SIP onCallStateChange: ', args)
+        //       if (args[0] && args[0] === 'callSetup') {
+        //         console.log('PEERNAME: ', args[2])
+        //       }
+        //     })
+        //   })
+        // }
+      };
     }
-  }, [voip])
+  }, [voip]);
   useEffect(() => {
-    setLanguage(langMap[lang])
-  }, [lang])
+    setLanguage(langMap[lang]);
+  }, [lang]);
 
   const handleCollapse = useCallback(
     (collapsed: boolean) => {
-      setCollapsed(collapsed)
+      setCollapsed(collapsed);
     },
     [setCollapsed],
-  )
+  );
 
   return (
     <LanguageCtx.Provider value={language}>
       <Layout
         style={{ minHeight: '100vh', '--left-menu-width': collapsed ? '80px' : '200px' } as any}
       >
-        {window.location.pathname !== `${ROOT_URL}/` &&
-          window.location.pathname !== `${ROOT_URL}/login` && (
+        {window.location.pathname !== `${ROOT_URL}/`
+          && window.location.pathname !== `${ROOT_URL}/login` && (
             <Sider
               collapsible
               onCollapse={handleCollapse}
@@ -144,7 +144,7 @@ const App = ({ userRole, history, voip }: AppProps) => {
             >
               <LeftMenu collapsed={collapsed} onLangChange={setLang as any} />
             </Sider>
-          )}
+        )}
         <Route path={`${ROOT_URL}/native/:id`} component={Download} />
         {/* <Route path={`${ROOT_URL}/logs`} component={Logs} /> */}
         <Route path={`${ROOT_URL}/menu`} component={DeliveryForm} />
@@ -156,14 +156,14 @@ const App = ({ userRole, history, voip }: AppProps) => {
         <Route path={`${ROOT_URL}/finish`} component={Cart} />
       </Layout>
     </LanguageCtx.Provider>
-  )
-}
+  );
+};
 
 const mapStatetoProps: MapStateToProps<AppStateProps, AppOwnProps, State> = (state) => ({
   userRole: state.user.role,
   voip: state.voip,
-})
+});
 
 export default connect(mapStatetoProps)(
   withRouter<RouteComponentProps<AppOwnProps & AppStateProps>, any>(App),
-) // FIXME
+); // FIXME

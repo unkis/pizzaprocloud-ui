@@ -21,6 +21,7 @@ export const mapStateToProps: MapStateToProps<CartStateProps, CartOwnProps, Stat
   formDataState: state.formDataState,
   lang: state.languages.lang,
   articles: state.articles,
+  printer: Array.isArray(state.printers) && state.printers[0],
 });
 
 export const mapDispatchToProps: MapDispatchToPropsFunction<CartDispatchProps, CartOwnProps> = (

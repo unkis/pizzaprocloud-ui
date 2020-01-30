@@ -119,6 +119,16 @@ const PrinterSettings = Form.create({ name: 'printerSettings' })(
           'rewrite',
           'cancel',
         );
+        const [printersList, setPrintersList] = useState([]);
+        useEffect(() => {
+          if ((window as any).inElectron) {
+            (window as any).electronAPI.getPrinters();
+            window.addEventListener('PIZZA__printers', (e: any) => {
+              const parsedPrinters = JSON.parse(e.detail);
+              setPrintersList(parsedPrinters.map(({ name }: any) => name));
+            });
+          }
+        }, []);
         const [isModalVisible, setModalVisible] = useState(false);
         const initialForm = useMemo(
           () => ({
@@ -129,6 +139,7 @@ const PrinterSettings = Form.create({ name: 'printerSettings' })(
           }),
           [],
         );
+        useEffect(() => {}, []);
         useEffect(() => {
           (window as any).PPC = (window as any).PPC || {};
           const {
@@ -202,14 +213,15 @@ const PrinterSettings = Form.create({ name: 'printerSettings' })(
             title: '',
             dataIndex: 'action',
             key: 'action',
-            render: (name: string) => (
+            render: (name: string, printer: any) => (
               <div className="CategorySettings-ActionsIcons">
                 <Icon
                   type="edit"
                   onClick={() => handleEditClick(name)}
                   style={{ width: '20px', height: '20px' }}
                 />
-                <Icon type="delete" onClick={() => deleteCategory(name)} />
+                {console.log(printer)}
+                <Icon type="delete" onClick={() => deletePrinter(printer)} />
               </div>
             ),
           },

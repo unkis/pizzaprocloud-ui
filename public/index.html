@@ -22,13 +22,44 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <script src="%PUBLIC_URL%/webphone_api.js?jscodeversion=783" defer></script>
+    <!-- <script src="%PUBLIC_URL%/webphone_api.js?jscodeversion=783" defer></script>
     <script src="%PUBLIC_URL%/api_helper.js?jscodeversion=783" defer></script>
     <script src="%PUBLIC_URL%/adapter.js?jscodeversion=783" defer></script>
     <script src="%PUBLIC_URL%/stringres.js?jscodeversion=783" defer></script>
     <script src="%PUBLIC_URL%/lib2.js?jscodeversion=783" defer></script>
     <script src="%PUBLIC_URL%/mwpdeploy.js?jscodeversion=783" defer></script>
-    <script src="%PUBLIC_URL%/translations.js?jscodeversion=783" defer></script>
+    <script src="%PUBLIC_URL%/translations.js?jscodeversion=783" defer></script> -->
+    <script>
+        // localStorage.setItem('token', "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCIsImtpZCI6IlJSZExWT3o4QmJjMjhxUnpnaEZ3YU15TzJpUSJ9.eyJhdWQiOiJkNmVmMTNkZi03Zjg1LTRjY2EtOWRlMy01MDIzNzdjYTlhODgiLCJleHAiOjE1ODAzNzA2MzIsImlhdCI6MTU4MDM2NzAzMiwiaXNzIjoiUGl6emFQcm9DbG91ZCIsInN1YiI6ImNkY2Q0YzgwLTRkMzAtNGUzMS1hZmVhLTJhOWNmMGIxYWU2MCIsImF1dGhlbnRpY2F0aW9uVHlwZSI6IlBBU1NXT1JEIiwiZW1haWwiOiJpbmZvQHBpenphLXByb2dyYW1tLmRlIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInByZWZlcnJlZF91c2VybmFtZSI6Im93bmVyIiwiYXBwbGljYXRpb25JZCI6ImQ2ZWYxM2RmLTdmODUtNGNjYS05ZGUzLTUwMjM3N2NhOWE4OCIsInJvbGVzIjpbIm93bmVyIl19.av_mMsDS_KF9v4y2sZKCXBbbJm07W79_t9rk3p_LQhh5O62YdrNOJhZWga44TdJLL7WkeEGq3JTY-YE8GB51LIr-ILHB4fY8VUhtZTqDj-isDX_05gDJebeNlmtoRKisSybR66EPYx5tkrsukbeVR7tHm1h4SMOmYWh-vvz4Z38r3SrQhoxohNpgna1gSCviau7L6qYWyMx-rmbdmTVjkFdjDxaBBJIkysUBhrjVVlWWvenV8UPnxSSMmRZvNZeiCwo-gmAvunzufWHVaYzfshDqgzMeo3PIG2yFsCJ3uSeEuXTzTwWxmvYTHwe2uP0bkap1tOTK9DRRcf63S8GDvFSZwuC73pJobDD21XPWju5lgx1XSnX_RAJ_rQRZURt4Okxcro9FPK3SDA5aUAQEIIzUF0pkcsHgjV-yBunB4OK8I3ZZaV82HYIXdwVgBMZULfoC1SbHV9W_72zFgVhXnEiW5F5p0J1JsPmedd53ihauO3srdA9RgFkM4bR3XmDHsSgEJIi2SmCJInZPe4fuiuBrNdxXZVlRLWE1CVujO0JLaQT7nJmKpuPeFwD7tZMCGNzKv25W8iUSIzSH73NBf8HtQkymkL9aP5QtjQZZq3ZUfHPj4gYAjIsodXddCn7Kq9At7LpO1B-H3j9AyerIjTuQw64CONnD_bVdnopH0a8")
+        if (!!window.require) {
+            window.inElectron = true;
+            const {
+                ipcRenderer
+            } = require('electron')
+                // ipcRenderer.sendSync('synchronous-message', 'ping') // prints "pong"
+            function getPrinters() {
+                console.log("PRINT")
+                ipcRenderer.send('PIZZA__getPrinters', 'ping')
+                    // printEmiter.emit('PIZZA__print')
+            }
+
+            function print(printerName, numOfCopies) {
+                ipcRenderer.send('PIZZA__print', JSON.stringify({
+                    printerName,
+                    numOfCopies
+                }))
+            }
+            ipcRenderer.on('PIZZA__printers', (sender, message) => {
+                window.dispatchEvent(new CustomEvent('PIZZA__printers', {
+                    detail: message
+                }), )
+            });
+            window.electronAPI = {
+                getPrinters,
+                print
+            }
+        }
+    </script>
     <title>React App</title>
 </head>
 
