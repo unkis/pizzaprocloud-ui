@@ -1,5 +1,5 @@
 import React, {
-  useReducer, useEffect, useCallback, useState,
+  useReducer, useEffect, useCallback, useState, useMemo,
 } from 'react';
 import {
   Button, Form, Input, AutoComplete, Select, Divider, Card, Layout,
@@ -22,8 +22,13 @@ import { initialFormDataState } from '../../redux/reducers';
 import { addToFormData, updateAllFieldsOfFormData, clearAllFields } from '../../redux/actions';
 
 import { ROOT_URL } from '../../constants/rootUrl';
+import { Header } from '../Header';
+import { DeliveryForm as DeliveryFormNew } from '../DeliveryForm2';
+import { NavigationButtons } from '../NavigationButtons';
 
-const { Header, Content } = Layout;
+import './DeliveryPage.css';
+
+const { /* Header, */ Content } = Layout;
 
 const { Option } = Select;
 
@@ -123,6 +128,24 @@ const startsWithUpperCaseNormalizer = (value: string) => {
   return `${value[0].toLocaleUpperCase()}${value.slice(1)}`;
 };
 
+enum Buttons {
+  PHONE_MONITOR = 'PHONE_MONITOR',
+  TABLE_ORDERS = 'TABLE_ORDERS',
+  SELF_PICK_UP = 'SELF_PICK_UP',
+  INNER = 'INNER',
+}
+
+const idToName: { [key: string]: string } = {
+  customerNumber: 'Kundennummer',
+  phoneNumber: 'Telefonnummer',
+  name: 'Name',
+  city: 'Stadt',
+  street: 'Strassen',
+  houseNumber: 'Hausnummer',
+  plz: 'PLZ',
+  clientComment: 'Bemerkung',
+  deliveryCost: 'Anfahrtskosten',
+};
 const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
   connect(
     mapStateToProps,
@@ -135,7 +158,9 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
         addDataToFormData,
         clearFields,
         updateFieldsOfFormData,
-        form: { getFieldDecorator, setFieldsValue, getFieldsValue },
+        form: {
+          getFieldDecorator, setFieldsValue, getFieldsValue, setFieldValue,
+        },
         form,
         history,
         shopAddress,
@@ -214,8 +239,8 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
         }, [setFieldsValue, clearFields]);
 
         const handleSubmit = useCallback(
-          (e: React.FormEvent<HTMLFormElement>) => {
-            e.preventDefault();
+          (e?: React.FormEvent<HTMLFormElement>) => {
+            e && e.preventDefault();
             nextPage();
           },
           [nextPage],
@@ -284,10 +309,44 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
           window.addEventListener('keydown', handleKeyDown);
           return () => window.removeEventListener('keydown', handleKeyDown);
         }, [handleKeyDown]);
+        const buttons = useMemo(
+          () => [
+            { value: Buttons.PHONE_MONITOR, label: `F3 - ${language.phoneMonitor}` },
+            { value: Buttons.TABLE_ORDERS, label: `F4 - ${language.tableOrders}` },
+            { value: Buttons.SELF_PICK_UP, label: `F5 - ${language.selfPickUp}` },
+            { value: Buttons.INNER, label: `F3 - ${language.inner}` },
+          ],
+          [language],
+        );
+        const handleNavButtonClick = useCallback(
+          (button: Buttons) => {
+            switch (button) {
+              case Buttons.PHONE_MONITOR: {
+                return;
+              }
+              case Buttons.TABLE_ORDERS: {
+                return;
+              }
+              case Buttons.SELF_PICK_UP: {
+                return onSelfPickUpClick();
+              }
+              case Buttons.INNER: {
+                return onInnerClick();
+              }
+            }
+          },
+          [onSelfPickUpClick],
+        );
+        const fvs = getFieldsValue();
+        const fieldsValues = Object.keys(fvs).reduce(
+          (acc, key) => ({ ...acc, [key]: { name: idToName[key], value: fvs[key] } }),
+          {},
+        );
         return (
           <div className="DeliveryFormPage">
-            <Layout>
-              <Header
+            <div>
+              {/* <Header onHelpClick={console.log} onLogoutClick={} /> */}
+              {/* <Header
                 style={{
                   background: '#fff',
                   marginTop: '24px',
@@ -317,9 +376,19 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
                   {' '}
 / F3
                 </Button>
-              </Header>
-              <Divider />
-              <Content style={{ margin: '0 16px', background: 'inherit' }}>
+              </Header> */}
+              {/* <Divider /> */}
+              {console.log(getFieldsValue())}
+              <div className="DeliveryPage">
+                <DeliveryFormNew
+                  fieldsValues={fieldsValues}
+                  onFieldChange={(key, value) => setFieldsValue({ [key]: value })}
+                  onResetClick={handleClearClick}
+                  onNextClick={handleSubmit}
+                />
+                <NavigationButtons buttons={buttons} onButtonClick={handleNavButtonClick} />
+              </div>
+              <Content style={{ margin: '0 16px', background: 'inherit', display: 'none' }}>
                 <div>
                   <Form onSubmit={handleSubmit} onKeyDown={handleKeyDown} {...formItemLayout}>
                     <Card style={{ width: '60%', maxWidth: '500px' }}>
@@ -471,7 +540,7 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
                       </Form.Item>
                     </Card>
                     <Divider />
-                    <div
+                    {/* <div
                       style={{
                         display: 'flex',
                         flexFlow: 'row nowrap',
@@ -479,22 +548,18 @@ const DeliveryForm = Form.create<DeliveryFormProps>({ name: 'delivery_form' })(
                       }}
                     >
                       <Button type="danger" size="large" onClick={handleClearClick}>
-                        {language.clear}
-                        {' '}
-/ ESC
+                        {language.clear} / ESC
                       </Button>
                       <Form.Item>
                         <Button htmlType="submit" type="primary" size="large">
-                          {language.goToOrder}
-                          {' '}
-/ F2
+                          {language.goToOrder} / F2
                         </Button>
                       </Form.Item>
-                    </div>
+                    </div> */}
                   </Form>
                 </div>
               </Content>
-            </Layout>
+            </div>
           </div>
         );
       },

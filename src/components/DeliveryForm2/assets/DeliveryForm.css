@@ -1,0 +1,80 @@
+.DeliveryForm {
+    display: grid;
+    overflow: auto;
+
+    padding: 20px 14px;
+
+    background: #FFFFFF;
+
+    grid-template-rows: auto 1fr auto;
+    row-gap: 1vh;
+}
+
+.DeliveryForm-Title {
+    text-align: center;
+
+    color: #141B25;
+
+    font-size: 1.9rem;
+}
+
+.DeliveryForm-Fields {
+    display: grid;
+    overflow: auto;
+
+    row-gap: 10px;
+    grid-template-rows: repeat(9, 5vh);
+}
+
+@media(max-height: 600px) {
+    .DeliveryForm-Fields {
+        grid-template-rows: repeat(9, 20px);
+    }
+}
+
+.DeliveryForm-Fields::-webkit-scrollbar {
+    width: 0;
+}
+
+.Field {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+    column-gap: 15px;
+}
+
+.Field-Label {
+    text-align: right;
+
+    color: #141B25;
+
+    font-size: 1.35rem;
+}
+
+@media(max-height: 700px) {
+    .Field-Label {
+        font-size: 1rem;
+    }
+}
+
+.Field-Value {
+    box-sizing: border-box;
+    padding: 0 10px;
+
+    border: 2px solid rgba(128, 146, 160, 0.65);
+    border-radius: 10px;
+}
+
+.Field-Value:focus {
+    outline: none;
+}
+
+.DeliveryForm-Buttons {
+    display: grid;
+
+    text-transform: uppercase;
+
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 50px;
+    justify-self: flex-end;
+}

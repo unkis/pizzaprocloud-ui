@@ -1,0 +1,42 @@
+.Header {
+    display: grid;
+
+    color: #F7F8F9;
+    border-bottom: 4px solid rgba(255, 202, 177, 0.77);
+    background: #141B25;
+
+    font-size: 1.35rem;
+
+    grid-template-columns: 188px calc(100vw - 188px);
+}
+
+.Header-VoipStatus {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-right: 1px solid #384955;
+}
+
+.Header-Actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 52px 0 29px;
+}
+
+.Header-ActionsButtons {
+    display: grid;
+
+    grid-template-columns: repeat(3, auto);
+    column-gap: 53px;
+}
+
+.Header-ActionButton {
+    cursor: pointer;
+}
+
+.Header-ActionButton:hover {
+    opacity: 0.7;
+}

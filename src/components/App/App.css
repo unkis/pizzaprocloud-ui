@@ -1,0 +1,30 @@
+@import url('https://fonts.googleapis.com/css?family=Cairo&display=swap');
+html {
+    font-size: 20px;
+}
+
+body {
+    margin: 0;
+}
+
+@media (max-height: 1000px) {
+    html {
+        font-size: 15px;
+    }
+}
+
+.App {
+    display: grid;
+
+    font-family: Cairo;
+
+    grid-template-rows: 10vh 90vh;
+}
+
+.App-Main {
+    display: grid;
+
+    background-color: rgba(234, 236, 237, 0.36);
+
+    grid-template-columns: 188px 1fr;
+}

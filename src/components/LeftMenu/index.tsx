@@ -6,7 +6,7 @@ import { RadioChangeEvent } from 'antd/lib/radio';
 import { withRouter } from 'react-router-dom';
 import { RouteComponentProps } from 'react-router';
 import { connect, MapStateToProps, MapDispatchToPropsFunction } from 'react-redux';
-
+import { LeftMenu as LeftMenuNew, Buttons } from '../LeftMenu2';
 import './Menu.css';
 
 import { ClickParam } from 'antd/lib/menu';
@@ -19,6 +19,7 @@ import {
 } from './types';
 
 import { ROOT_URL } from '../../constants/rootUrl';
+import { Header } from '../Header';
 
 const { Text } = Typography;
 
@@ -32,6 +33,7 @@ const MenuPage = ({
   onLangChange,
   email,
   voip,
+  children,
 }: MenuPageProps) => {
   const [language, setLanguage] = useState(langMap[lang]);
 
@@ -82,71 +84,34 @@ const MenuPage = ({
   const onDeliveryClick = useCallback(() => {
     history.push(`${ROOT_URL}/menu`);
   }, []);
-
+  const handleButtonClick = useCallback(
+    (button: Buttons, event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      switch (button) {
+        case Buttons.DELIVERY: {
+          return onAnyButtonClick(onDeliveryClick)(event);
+        }
+        case Buttons.CART:
+        case Buttons.DRIVER_MONITOR:
+        case Buttons.KITCHEN_MONITOR:
+        case Buttons.REPORTS: {
+          return onAnyButtonClick()(event);
+        }
+      }
+    },
+    [onDeliveryClick, onAnyButtonClick],
+  );
   return (
-    <div className="menu">
-      <Menu style={{ height: '100vh' }} defaultSelectedKeys={['2']} mode="inline">
-        <Menu.Item disabled>
-          <Icon type="tag" />
-          {!collapsed && (
-            <Radio.Group value={lang} onChange={handleLangChange}>
-              <Radio.Button value="ru">ru</Radio.Button>
-              <Radio.Button value="de">de</Radio.Button>
-            </Radio.Group>
-          )}
-        </Menu.Item>
-        <Menu.Item key="1" onClick={onAnyButtonClick(logout)} className="logout-button">
-          <Icon type="logout" />
-          <span>{language.logout}</span>
-        </Menu.Item>
-        <Menu.Item key="2" onClick={onAnyButtonClick(onDeliveryClick)}>
-          <Icon type="phone" />
-          <span>{language.callForm}</span>
-        </Menu.Item>
-        <Menu.Item key="3" onClick={onAnyButtonClick()}>
-          <Icon type="shopping-cart" />
-          <span>{language.allOrders}</span>
-        </Menu.Item>
-        <Menu.Item key="4" onClick={onAnyButtonClick()}>
-          <Icon type="dashboard" />
-          <span>{language.cookingMonitor}</span>
-        </Menu.Item>
-        <Menu.Item key="5" onClick={onAnyButtonClick()}>
-          <Icon type="car" />
-          <span>{language.carMonitor}</span>
-        </Menu.Item>
-        <Menu.Item key="6" onClick={onAnyButtonClick()}>
-          <Icon type="bar-chart" />
-          <span>{language.report}</span>
-        </Menu.Item>
-        <Menu.Item key="7" onClick={onAnyButtonClick(onSettingsClick)}>
-          <Icon type="setting" />
-          <span>{language.settings}</span>
-        </Menu.Item>
-        <Menu.Item key="8" onClick={onAnyButtonClick()}>
-          <Icon type="question-circle" />
-          <span>{language.help}</span>
-        </Menu.Item>
-      </Menu>
-      <Text
-        style={{ textAlign: 'center', paddingBottom: '20px', borderRight: '1px solid #e8e8e8' }}
-      >
-        {email}
-      </Text>
-      <Text
-        style={{
-          display: 'flex', flexFlow: 'row nowrap', alignItems: 'center', padding: '0 20px',
-        }}
-      >
-        Voip Status:
-        {' '}
-        <Icon
-          type="bulb"
-          style={{ color: voip && voip.connected ? 'green' : 'grey' }}
-          theme="filled"
-        />
-      </Text>
-    </div>
+    <>
+      <Header
+        onHelpClick={console.log}
+        onLogoutClick={onAnyButtonClick(logout)}
+        onSettingsClick={onAnyButtonClick(onSettingsClick)}
+      />
+      <div className="App-Main">
+        <LeftMenuNew onButtonClick={handleButtonClick} />
+        {children}
+      </div>
+    </>
   );
 };
 

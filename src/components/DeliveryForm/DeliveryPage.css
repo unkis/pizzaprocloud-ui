@@ -1,0 +1,10 @@
+.DeliveryPage {
+    display: grid;
+
+    box-sizing: border-box;
+    padding: 2vh calc(3vh + 1vw);
+
+    grid-template-columns: 770fr 337fr;
+    grid-template-rows: 1fr;
+    column-gap: calc(3vh + 1vw);
+}

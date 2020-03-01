@@ -56,6 +56,7 @@ export const LoginForm = ({
   useEffect(() => {
     setLanguage(langMap[lang]);
   }, [lang]);
+  /*
   useEffect(() => {
     const code = localStorage.getItem('code');
     const token = localStorage.getItem('token');
@@ -183,6 +184,7 @@ export const LoginForm = ({
       `);
     }
   }, []);
+  */
   // fetch(
   //   `https://www.liefersoft.de:9011/oauth2/authorize?client_id=d6ef13df-7f85-4cca-9de3-502377ca9a88&response_type=token&username=info%40pizza-programm.de&password=12345678&redirect_uri=http://localhost:8081/login`,
   //   {method: 'POST', headers: {

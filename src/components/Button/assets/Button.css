@@ -1,0 +1,25 @@
+.Button {
+    padding: 4px 20px;
+
+    cursor: pointer;
+    text-align: center;
+
+    background: #FFFFFF;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+
+    font-size: 1.35rem;
+}
+
+.Button:hover {
+    transition: 1s background;
+
+    background: #FFCAB1;
+}
+
+.Button_type_red {
+    color: rgba(241, 6, 6, 0.4);
+}
+
+.Button_type_green {
+    color: #2A853D;
+}

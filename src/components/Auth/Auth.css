@@ -1,16 +1,16 @@
-#components-form-demo-normal-login{
+#components-form-demo-normal-login {
     display: flex;
-    width: 100vw;
-    height: 100vh;
-  }
-  #components-form-demo-normal-login .login-form  {
-      width: 50vw;
-      max-width: 300px;
-      margin: auto;
-  }
-  #components-form-demo-normal-login .login-form-forgot {
+}
+
+#components-form-demo-normal-login .login-form {
+    height: 10px;
+    margin: calc((100vh - 400px) / 2) auto;
+}
+
+#components-form-demo-normal-login .login-form-forgot {
     float: right;
-  }
-  #components-form-demo-normal-login .login-form-button {
+}
+
+#components-form-demo-normal-login .login-form-button {
     width: 100%;
-  }
+}

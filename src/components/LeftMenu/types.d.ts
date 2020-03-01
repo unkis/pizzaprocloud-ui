@@ -7,6 +7,7 @@ import { State } from '../../redux/types';
 interface MenuPageOwnProps {
   collapsed: boolean
   onLangChange: (lang: 'ru' | 'de') => void
+  children?: any
 }
 
 interface MenuPageProps
