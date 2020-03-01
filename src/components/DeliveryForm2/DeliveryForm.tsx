@@ -14,6 +14,8 @@ export const DeliveryForm: React.FC<DeliveryFormProps> = ({
   fieldsValues,
   onNextClick,
   onResetClick,
+
+  
 }) => {
   const handleFieldChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
