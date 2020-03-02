@@ -60,6 +60,24 @@ export const LeftMenu: React.FC<LeftMenuProps> = ({ onButtonClick }) => {
         </div>
         <div className="LeftMenu-ButtonText">Berichten</div>
       </div>
+      <div className="LeftMenu-Button">
+        <div className="LeftMenu-ButtonIcon">
+          <ReportsIcon className="LeftMenu-ButtonIconSvg" />
+        </div>
+        <div className="LeftMenu-ButtonText">Button 1</div>
+      </div>
+      <div className="LeftMenu-Button">
+        <div className="LeftMenu-ButtonIcon">
+          <ReportsIcon className="LeftMenu-ButtonIconSvg" />
+        </div>
+        <div className="LeftMenu-ButtonText">Button 2</div>
+      </div>
+      <div className="LeftMenu-Button">
+        <div className="LeftMenu-ButtonIcon">
+          <ReportsIcon className="LeftMenu-ButtonIconSvg" />
+        </div>
+        <div className="LeftMenu-ButtonText">Button 3</div>
+      </div>
     </div>
   );
 };
